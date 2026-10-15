@@ -1,0 +1,13 @@
+{
+  "game_id": "837392218124",
+  "client_id": "837392218124-oibe2ur3hterj4miav8s99s1dimkg0ff.apps.googleusercontent.com",
+  "plugin_version": "3.4.0",
+  "plugin_source": "https://github.com/godot-sdk-integrations/godot-play-game-services/releases/tag/v3.4.0",
+  "enabled": true,
+  "auto_sign_in": false,
+  "saved_games_enabled": true,
+  "snapshot_name": "pirateplunder_progress_v2",
+  "achievement_ids": {},
+  "leaderboard_ids": {},
+  "notes": "Public identifiers, not secrets. Fill mappings with IDs from Play Console or set google_play_id on data definitions. Client ID is recorded for setup only; this client-only game does not request server authorization codes."
+}

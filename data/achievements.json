@@ -1,0 +1,453 @@
+{
+  "schema_version": 1,
+  "achievements": [
+    {
+      "id": "sea_legs",
+      "name": "Sea Legs",
+      "description": "Launch your first voyage.",
+      "icon_key": "sea_legs",
+      "icon": "res://store/achievements/sea_legs.png",
+      "metric": "runs_started",
+      "target": 1,
+      "condition": {
+        "metric": "runs_started",
+        "target": 1
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "first_broadside",
+      "name": "First Broadside",
+      "description": "Fire a cannon broadside.",
+      "icon_key": "first_broadside",
+      "icon": "res://store/achievements/first_broadside.png",
+      "metric": "cannon_shots",
+      "target": 1,
+      "condition": {
+        "metric": "cannon_shots",
+        "target": 1
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "first_plunder",
+      "name": "Pocket Change",
+      "description": "Collect 25 coins across your voyages.",
+      "icon_key": "first_plunder",
+      "icon": "res://store/achievements/first_plunder.png",
+      "metric": "coins_collected",
+      "target": 25,
+      "condition": {
+        "metric": "coins_collected",
+        "target": 25
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "deck_clear",
+      "name": "Deck Clear",
+      "description": "Sink 25 enemy ships.",
+      "icon_key": "deck_clear",
+      "icon": "res://store/achievements/deck_clear.png",
+      "metric": "enemies_sunk",
+      "target": 25,
+      "condition": {
+        "metric": "enemies_sunk",
+        "target": 25
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "fleet_breaker",
+      "name": "Fleet Breaker",
+      "description": "Sink 100 enemy ships.",
+      "icon_key": "fleet_breaker",
+      "icon": "res://store/achievements/fleet_breaker.png",
+      "metric": "enemies_sunk",
+      "target": 100,
+      "condition": {
+        "metric": "enemies_sunk",
+        "target": 100
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "sea_scourge",
+      "name": "Scourge of the Sea",
+      "description": "Sink 500 enemy ships.",
+      "icon_key": "sea_scourge",
+      "icon": "res://store/achievements/sea_scourge.png",
+      "metric": "enemies_sunk",
+      "target": 500,
+      "condition": {
+        "metric": "enemies_sunk",
+        "target": 500
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "powder_monkey",
+      "name": "Powder Monkey",
+      "description": "Fire 250 cannonballs.",
+      "icon_key": "powder_monkey",
+      "icon": "res://store/achievements/powder_monkey.png",
+      "metric": "cannon_shots",
+      "target": 250,
+      "condition": {
+        "metric": "cannon_shots",
+        "target": 250
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "flawless_voyage",
+      "name": "Flawless Voyage",
+      "description": "Win a campaign level without taking damage.",
+      "icon_key": "flawless_voyage",
+      "icon": "res://store/achievements/flawless_voyage.png",
+      "metric": "perfect_victories",
+      "target": 1,
+      "condition": {
+        "metric": "perfect_victories",
+        "target": 1
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "shoal_sheriff",
+      "name": "Sheriff of the Shoals",
+      "description": "Complete 10 campaign levels.",
+      "icon_key": "shoal_sheriff",
+      "icon": "res://store/achievements/shoal_sheriff.png",
+      "metric": "campaign_levels_completed",
+      "target": 10,
+      "condition": {
+        "metric": "campaign_levels_completed",
+        "target": 10
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "swamp_escape",
+      "name": "Mangrove Marauder",
+      "description": "Complete 20 campaign levels.",
+      "icon_key": "swamp_escape",
+      "icon": "res://store/achievements/swamp_escape.png",
+      "metric": "campaign_levels_completed",
+      "target": 20,
+      "condition": {
+        "metric": "campaign_levels_completed",
+        "target": 20
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "hot_streak",
+      "name": "Too Hot to Handle",
+      "description": "Complete 30 campaign levels.",
+      "icon_key": "hot_streak",
+      "icon": "res://store/achievements/hot_streak.png",
+      "metric": "campaign_levels_completed",
+      "target": 30,
+      "condition": {
+        "metric": "campaign_levels_completed",
+        "target": 30
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "ice_breaker",
+      "name": "Ice Breaker",
+      "description": "Complete 40 campaign levels.",
+      "icon_key": "ice_breaker",
+      "icon": "res://store/achievements/ice_breaker.png",
+      "metric": "campaign_levels_completed",
+      "target": 40,
+      "condition": {
+        "metric": "campaign_levels_completed",
+        "target": 40
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "pirate_king",
+      "name": "Pirate Monarch",
+      "description": "Complete all 50 campaign levels.",
+      "icon_key": "pirate_king",
+      "icon": "res://store/achievements/pirate_king.png",
+      "metric": "campaign_levels_completed",
+      "target": 50,
+      "condition": {
+        "metric": "campaign_levels_completed",
+        "target": 50
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "boss_buster",
+      "name": "Boss Buster",
+      "description": "Sink your first campaign boss.",
+      "icon_key": "boss_buster",
+      "icon": "res://store/achievements/boss_buster.png",
+      "metric": "bosses_sunk",
+      "target": 1,
+      "condition": {
+        "metric": "bosses_sunk",
+        "target": 1
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "tyrant_tamer",
+      "name": "Tyrant Tamer",
+      "description": "Sink 5 bosses across your voyages.",
+      "icon_key": "tyrant_tamer",
+      "icon": "res://store/achievements/tyrant_tamer.png",
+      "metric": "bosses_sunk",
+      "target": 5,
+      "condition": {
+        "metric": "bosses_sunk",
+        "target": 5
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "treasure_tide",
+      "name": "Treasure Tide",
+      "description": "Collect 1,000 coins across your voyages.",
+      "icon_key": "treasure_tide",
+      "icon": "res://store/achievements/treasure_tide.png",
+      "metric": "coins_collected",
+      "target": 1000,
+      "condition": {
+        "metric": "coins_collected",
+        "target": 1000
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "power_pirate",
+      "name": "Power Pirate",
+      "description": "Collect 25 powerups.",
+      "icon_key": "power_pirate",
+      "icon": "res://store/achievements/power_pirate.png",
+      "metric": "powerups_collected",
+      "target": 25,
+      "condition": {
+        "metric": "powerups_collected",
+        "target": 25
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "four_of_a_kind",
+      "name": "Four of a Kind",
+      "description": "Take all four ships on a voyage.",
+      "icon_key": "four_of_a_kind",
+      "icon": "res://store/achievements/four_of_a_kind.png",
+      "metric": "ships_played",
+      "target": 4,
+      "condition": {
+        "metric": "ships_played",
+        "target": 4
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "seasoned_captain",
+      "name": "Seasoned Captain",
+      "description": "Raise any ship to rank 5.",
+      "icon_key": "seasoned_captain",
+      "icon": "res://store/achievements/seasoned_captain.png",
+      "metric": "ship_rank_max",
+      "target": 5,
+      "condition": {
+        "metric": "ship_rank_max",
+        "target": 5
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "fleet_of_legends",
+      "name": "Fleet of Legends",
+      "description": "Reach a combined ship rank of 20.",
+      "icon_key": "fleet_of_legends",
+      "icon": "res://store/achievements/fleet_of_legends.png",
+      "metric": "total_ship_ranks",
+      "target": 20,
+      "condition": {
+        "metric": "total_ship_ranks",
+        "target": 20
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "endless_appetite",
+      "name": "Endless Appetite",
+      "description": "Survive 2 minutes in Endless Ocean.",
+      "icon_key": "endless_appetite",
+      "icon": "res://store/achievements/endless_appetite.png",
+      "metric": "endless_best_seconds",
+      "target": 120,
+      "condition": {
+        "metric": "endless_best_seconds",
+        "target": 120
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "marathon_marauder",
+      "name": "Marathon Marauder",
+      "description": "Survive 5 minutes in Endless Ocean.",
+      "icon_key": "marathon_marauder",
+      "icon": "res://store/achievements/marathon_marauder.png",
+      "metric": "endless_best_seconds",
+      "target": 300,
+      "condition": {
+        "metric": "endless_best_seconds",
+        "target": 300
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "high_tide",
+      "name": "High Tide",
+      "description": "Score 20,000 points in one Endless Ocean voyage.",
+      "icon_key": "high_tide",
+      "icon": "res://store/achievements/high_tide.png",
+      "metric": "endless_best_score",
+      "target": 20000,
+      "condition": {
+        "metric": "endless_best_score",
+        "target": 20000
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "star_chart",
+      "name": "Star Chart",
+      "description": "Earn 75 stars across the campaign.",
+      "icon_key": "star_chart",
+      "icon": "res://store/achievements/star_chart.png",
+      "metric": "campaign_stars",
+      "target": 75,
+      "condition": {
+        "metric": "campaign_stars",
+        "target": 75
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "constellation_captain",
+      "name": "Constellation Captain",
+      "description": "Earn all 150 campaign stars.",
+      "icon_key": "constellation_captain",
+      "icon": "res://store/achievements/constellation_captain.png",
+      "metric": "campaign_stars",
+      "target": 150,
+      "condition": {
+        "metric": "campaign_stars",
+        "target": 150
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "daily_deckhand",
+      "name": "Daily Deckhand",
+      "description": "Complete 3 daily quests.",
+      "icon_key": "daily_deckhand",
+      "icon": "res://store/achievements/daily_deckhand.png",
+      "metric": "quests_completed",
+      "target": 3,
+      "condition": {
+        "metric": "quests_completed",
+        "target": 3
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "welcome_aboard",
+      "name": "Crew Regular",
+      "description": "Claim a daily reward on 3 different days.",
+      "icon_key": "welcome_aboard",
+      "icon": "res://store/achievements/welcome_aboard.png",
+      "metric": "daily_rewards_claimed",
+      "target": 3,
+      "condition": {
+        "metric": "daily_rewards_claimed",
+        "target": 3
+      },
+      "incremental": true,
+      "google_play_id": "",
+      "hidden": false
+    },
+    {
+      "id": "chain_reaction",
+      "name": "Chain Reaction",
+      "description": "Build a 10-sink combo in one voyage.",
+      "icon_key": "chain_reaction",
+      "icon": "res://store/achievements/chain_reaction.png",
+      "metric": "combo_max",
+      "target": 10,
+      "condition": {
+        "metric": "combo_max",
+        "target": 10
+      },
+      "incremental": false,
+      "google_play_id": "",
+      "hidden": false
+    }
+  ]
+}

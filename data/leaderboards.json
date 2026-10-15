@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "leaderboards": [
+    {
+      "id": "endless_score",
+      "name": "Endless Ocean: Score",
+      "description": "Your highest score in a single Endless Ocean voyage.",
+      "icon_key": "endless_score",
+      "metric": "endless_best_score",
+      "order": "descending",
+      "format": "integer",
+      "value_multiplier": 1,
+      "google_play_id": "",
+      "icon": "res://store/leaderboards/endless_score.png"
+    },
+    {
+      "id": "endless_survival",
+      "name": "Endless Ocean: Survival",
+      "description": "Your longest Endless Ocean voyage, measured in milliseconds for Play Games.",
+      "icon_key": "endless_survival",
+      "metric": "endless_best_seconds",
+      "order": "descending",
+      "format": "time_milliseconds",
+      "value_multiplier": 1000,
+      "google_play_id": "",
+      "icon": "res://store/leaderboards/endless_survival.png"
+    },
+    {
+      "id": "campaign_stars",
+      "name": "Campaign: Star Captains",
+      "description": "Your total campaign stars, up to 150. Best result per level counts.",
+      "icon_key": "campaign_stars",
+      "metric": "campaign_stars",
+      "order": "descending",
+      "format": "integer",
+      "value_multiplier": 1,
+      "google_play_id": "",
+      "icon": "res://store/leaderboards/campaign_stars.png"
+    },
+    {
+      "id": "total_plunder",
+      "name": "Lifetime: Total Plunder",
+      "description": "All coins collected across your voyages, including treasure bonuses.",
+      "icon_key": "total_plunder",
+      "metric": "coins_collected",
+      "order": "descending",
+      "format": "integer",
+      "value_multiplier": 1,
+      "google_play_id": "",
+      "icon": "res://store/leaderboards/total_plunder.png"
+    }
+  ]
+}

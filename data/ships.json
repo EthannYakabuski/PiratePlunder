@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "rank_xp_formula": "xp_per_rank * rank * (rank + 1) / 2",
+  "ship_progression_shared": false,
+  "ships": [
+    {
+      "id": "swiftfin",
+      "name": "Swiftfin",
+      "subtitle": "Quick turns • fast cannons",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (4).png",
+      "hp": 85,
+      "speed": 170,
+      "turn_speed": 3.8,
+      "damage": 20,
+      "cannon_count": 2,
+      "cooldown": 0.8,
+      "color": "#8FD866",
+      "perk": {
+        "id": "nimble",
+        "name": "Nimble",
+        "description": "The fastest ship with the quickest reload. Fragile hull, sharp turns.",
+        "pickup_radius": 88,
+        "coin_multiplier": 1
+      },
+      "progression": {
+        "xp_per_rank": 120,
+        "max_rank": 20,
+        "hp_per_rank": 3,
+        "damage_per_rank": 0.7,
+        "cooldown_reduction_per_rank": 0.01
+      }
+    },
+    {
+      "id": "ironclad",
+      "name": "Ironclad",
+      "subtitle": "Thick hull • heavy broadsides",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (2).png",
+      "hp": 150,
+      "speed": 110,
+      "turn_speed": 2.6,
+      "damage": 26,
+      "cannon_count": 3,
+      "cooldown": 1.4,
+      "color": "#9BAEAE",
+      "perk": {
+        "id": "bulwark",
+        "name": "Bulwark",
+        "description": "A sturdy hull and three cannonballs per broadside. Turn early and hold your line.",
+        "pickup_radius": 76,
+        "coin_multiplier": 1
+      },
+      "progression": {
+        "xp_per_rank": 120,
+        "max_rank": 20,
+        "hp_per_rank": 4,
+        "damage_per_rank": 0.7,
+        "cooldown_reduction_per_rank": 0.01
+      }
+    },
+    {
+      "id": "redwake",
+      "name": "Redwake",
+      "subtitle": "Balanced hull • crushing hits",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (3).png",
+      "hp": 110,
+      "speed": 140,
+      "turn_speed": 3.2,
+      "damage": 28,
+      "cannon_count": 2,
+      "cooldown": 1.1,
+      "color": "#EF715F",
+      "perk": {
+        "id": "broadside",
+        "name": "Broadside",
+        "description": "The hardest-hitting cannonballs and steady handling. An all-round brawler.",
+        "pickup_radius": 80,
+        "coin_multiplier": 1
+      },
+      "progression": {
+        "xp_per_rank": 120,
+        "max_rank": 20,
+        "hp_per_rank": 3,
+        "damage_per_rank": 0.9,
+        "cooldown_reduction_per_rank": 0.01
+      }
+    },
+    {
+      "id": "golden_gull",
+      "name": "Golden Gull",
+      "subtitle": "Treasure hunter • generous loot",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (6).png",
+      "hp": 100,
+      "speed": 150,
+      "turn_speed": 3.5,
+      "damage": 22,
+      "cannon_count": 2,
+      "cooldown": 1,
+      "color": "#FFD95F",
+      "perk": {
+        "id": "scavenger",
+        "name": "Scavenger",
+        "description": "Attracts treasure from farther away and earns 20% more coins.",
+        "pickup_radius": 130,
+        "coin_multiplier": 1.2
+      },
+      "progression": {
+        "xp_per_rank": 120,
+        "max_rank": 20,
+        "hp_per_rank": 3,
+        "damage_per_rank": 0.7,
+        "cooldown_reduction_per_rank": 0.01
+      }
+    }
+  ]
+}

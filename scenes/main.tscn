@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bap5yxpphrrap"]
+
+[ext_resource type="Script" uid="uid://bnob47hrky5op" path="res://scripts/main.gd" id="1"]
+
+[node name="PiratePlunder" type="Node2D"]
+script = ExtResource("1")

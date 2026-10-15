@@ -1,0 +1,27 @@
+{
+  "locale": "en-US",
+  "status": "submission_draft",
+  "category_suggestion": "GAME_ARCADE",
+  "title": "PiratePlunder",
+  "short_description": "Steer, blast and plunder through 50 pirate levels or an endless ocean",
+  "full_description": "Tiny ship. Huge trouble.\n\nPiratePlunder is a fast, portrait pirate arcade game for quick voyages and glorious cannon chaos. Pick a ship, grab the wheel and send rival crews to the bottom of the sea.\n\nONE THUMB TO SAIL\nDrag the big wooden wheel to steer. Your cannons can fire automatically when rivals cross your sides, so you can focus on finding the perfect angle. For hands-on broadside timing, use the left and right cannon buttons. Each side reloads separately: line up a rival, unleash a volley, then swing around for the other side.\n\nFOUR SHIPS, FOUR WAYS TO PLUNDER\nSwiftfin turns sharply and reloads quickly. Ironclad brings a thick hull and heavy volleys. Redwake lands crushing cannon hits. Golden Gull pulls in more treasure. Every ship earns its own experience and ranks, while your campaign progress is shared across the fleet.\n\nA 50-LEVEL PIRATE ADVENTURE\nFollow the Ocean Crown chart through five themed seas: Sunlit Shoals, Mangrove Maze, Ember Archipelago, Frostwake Reach and Tempest Crown. Hunt treasure runners, outmaneuver chasing pirates, survive hostile waters and challenge boss captains. Earn up to three stars per voyage and return with a different ship to improve your best result.\n\nAN OCEAN THAT KEEPS GOING\nIn Endless Ocean, sail through an expanding sea of islands and enemies. Rival ships grow stronger as your voyage continues. Chase a new score, stretch your survival record and see how long your hull can hold together.\n\nQUICK REWARDS, BIG CANNON ENERGY\nCollect repairs, shields and cannon powerups. Build a combo, dodge incoming fire and turn a close call into a treasure shower. Daily quests, a fresh Daily Drift challenge and login rewards give you another reason to raise the sails. Unlock 28 achievements as you master the seas.\n\nMADE FOR SHORT VOYAGES\nPortrait controls keep the action within reach. A first-voyage tutorial helps you get moving, and local saving keeps your fleet ranks, stars and achievements between sessions. Music, sound and control assistance can be adjusted to suit your play style.\n\nWhimsical seas. Tiny pirates. One more voyage.",
+  "character_counts": {
+    "title": 13,
+    "short_description": 69,
+    "full_description": 2093
+  },
+  "limits": {
+    "title": 30,
+    "short_description": 80,
+    "full_description": 4000
+  },
+  "suggested_achievement_points_total": 795,
+  "support_email": "",
+  "privacy_policy_url": "",
+  "alt_text": {
+    "app_icon": "A coral skull-sail pirate ship fires side cannons over a teal ocean.",
+    "feature_graphic": "PiratePlunder: colorful pirate ships trade broadsides beside a tropical island."
+  },
+  "cloud_services_claimed_in_copy": false,
+  "worksheet_note": "Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility."
+}

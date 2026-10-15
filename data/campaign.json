@@ -1,0 +1,4186 @@
+{
+  "schema_version": 1,
+  "title": "The Ocean Crown",
+  "unlock_policy": "Complete a level to unlock the next; progress is shared across all four ships.",
+  "star_policy": "One star for winning, one for finishing within star_targets.time, one for remaining health ratio >= star_targets.health. Best earned stars per level persist.",
+  "biomes": [
+    {
+      "id": "sunlit_shoals",
+      "name": "Sunlit Shoals",
+      "subtitle": "Warm water. Cold steel.",
+      "levels": [
+        1,
+        10
+      ],
+      "colors": {
+        "water": "#178FAE",
+        "deep": "#096985",
+        "foam": "#77DFD4",
+        "sand": "#F5D699",
+        "accent": "#FFD35A",
+        "hazard": "#D5B773"
+      },
+      "enemy_behavior": "Chasers approach slowly; runners carry treasure and flee.",
+      "hazard": "reef",
+      "hazard_name": "Coral shoals",
+      "environment": "Turquoise ocean, sandy islets, palms, coral reefs.",
+      "music_mood": "Bouncy tropical adventure",
+      "introduction": "Steer, skim past an enemy, and fire a broadside."
+    },
+    {
+      "id": "mangrove_maze",
+      "name": "Mangrove Maze",
+      "subtitle": "The swamp has eyes.",
+      "levels": [
+        11,
+        20
+      ],
+      "colors": {
+        "water": "#28796C",
+        "deep": "#144B49",
+        "foam": "#70C9A0",
+        "sand": "#C5BE80",
+        "accent": "#A6E35E",
+        "hazard": "#578853"
+      },
+      "enemy_behavior": "Skirmishers circle while rammers emerge from narrow channels.",
+      "hazard": "current",
+      "hazard_name": "Tidal channels",
+      "environment": "Emerald shallows, dense mangrove islands, wooden wrecks.",
+      "music_mood": "Playful creeping percussion",
+      "introduction": "Keep your broadside toward circling raiders and ride the currents."
+    },
+    {
+      "id": "ember_archipelago",
+      "name": "Ember Archipelago",
+      "subtitle": "Hot shots. Bigger explosions.",
+      "levels": [
+        21,
+        30
+      ],
+      "colors": {
+        "water": "#315C83",
+        "deep": "#1C334E",
+        "foam": "#79A6B0",
+        "sand": "#67534C",
+        "accent": "#FF995B",
+        "hazard": "#FF6944"
+      },
+      "enemy_behavior": "Snipers keep distance; explosive mines punish straight approaches.",
+      "hazard": "mine",
+      "hazard_name": "Powder kegs",
+      "environment": "Volcanic islands, black sand, warm ember lights, drifting powder kegs.",
+      "music_mood": "Driving drums and brass",
+      "introduction": "Angle between cannon shots and give glowing powder kegs room."
+    },
+    {
+      "id": "frostwake_reach",
+      "name": "Frostwake Reach",
+      "subtitle": "Cool head. Quick hands.",
+      "levels": [
+        31,
+        40
+      ],
+      "colors": {
+        "water": "#3C7BA0",
+        "deep": "#294A73",
+        "foam": "#BDEBFA",
+        "sand": "#D6E9EF",
+        "accent": "#C7A6FF",
+        "hazard": "#99D9EF"
+      },
+      "enemy_behavior": "Fast rammers pressure turns; snipers use iceberg cover.",
+      "hazard": "reef",
+      "hazard_name": "Icebergs",
+      "environment": "Arctic blue water, snow-capped islands, ice floes.",
+      "music_mood": "Bright bells over adventurous drums",
+      "introduction": "Use wide turns around the ice and punish fast ships as they pass."
+    },
+    {
+      "id": "tempest_crown",
+      "name": "Tempest Crown",
+      "subtitle": "One sea. One pirate king.",
+      "levels": [
+        41,
+        50
+      ],
+      "colors": {
+        "water": "#414775",
+        "deep": "#202A4B",
+        "foam": "#9FAFE6",
+        "sand": "#A69AB8",
+        "accent": "#FFC766",
+        "hazard": "#BBA6FF"
+      },
+      "enemy_behavior": "Mixed formations use storms and whirlpools to surround the player.",
+      "hazard": "maelstrom",
+      "hazard_name": "Whirlpools",
+      "environment": "Midnight purple ocean, storm-lit islands, bright magical whirlpools.",
+      "music_mood": "Triumphant storm shanty",
+      "introduction": "Read the whole fleet, escape the whirlpool, and claim the crown."
+    }
+  ],
+  "enemies": {
+    "chaser": {
+      "name": "Deckhand",
+      "behavior": "chase",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (2).png",
+      "hp": 40,
+      "speed": 76,
+      "damage": 12,
+      "cooldown": 2.5,
+      "cannon_count": 1,
+      "score": 100,
+      "coin_drop": 2,
+      "xp": 8,
+      "radius": 25
+    },
+    "skirmisher": {
+      "name": "Swashbuckler",
+      "behavior": "orbit",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (3).png",
+      "hp": 60,
+      "speed": 100,
+      "damage": 14,
+      "cooldown": 2.2,
+      "cannon_count": 1,
+      "score": 150,
+      "coin_drop": 3,
+      "xp": 12,
+      "radius": 28
+    },
+    "sniper": {
+      "name": "Longshot",
+      "behavior": "kite",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (5).png",
+      "hp": 55,
+      "speed": 65,
+      "damage": 20,
+      "cooldown": 3,
+      "cannon_count": 1,
+      "score": 175,
+      "coin_drop": 3,
+      "xp": 14,
+      "radius": 28
+    },
+    "rammer": {
+      "name": "Reef Ram",
+      "behavior": "ram",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (8).png",
+      "hp": 85,
+      "speed": 124,
+      "damage": 18,
+      "cooldown": 3.5,
+      "cannon_count": 1,
+      "score": 200,
+      "coin_drop": 4,
+      "xp": 16,
+      "radius": 30
+    },
+    "runner": {
+      "name": "Treasure Tender",
+      "behavior": "flee",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (6).png",
+      "hp": 35,
+      "speed": 92,
+      "damage": 8,
+      "cooldown": 3.5,
+      "cannon_count": 1,
+      "score": 120,
+      "coin_drop": 6,
+      "xp": 10,
+      "radius": 25
+    },
+    "boss": {
+      "name": "Sea Tyrant",
+      "behavior": "boss",
+      "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (15).png",
+      "hp": 300,
+      "speed": 65,
+      "damage": 22,
+      "cooldown": 2,
+      "cannon_count": 3,
+      "score": 1500,
+      "coin_drop": 25,
+      "xp": 100,
+      "radius": 52
+    }
+  },
+  "levels": [
+    {
+      "id": 1,
+      "name": "First Broadside",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "kills",
+        "target": 4
+      },
+      "duration_limit": 90,
+      "spawn_interval": 6,
+      "max_enemies": 3,
+      "enemy_pool": [
+        "chaser"
+      ],
+      "enemy_strength": 1,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 30,
+        "xp": 54,
+        "first_clear_bonus": 53
+      },
+      "star_targets": {
+        "time": 60,
+        "health": 0.6,
+        "score": 400
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 16,
+          "enemies": [
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Sink 4 deckhands. Turn the wheel, then tap either cannon.",
+      "design_note": "Guided opener. Single predictable enemies, no hazards, and a guaranteed repair.",
+      "powerups": [
+        "repair",
+        "rapid_fire"
+      ],
+      "powerup_interval": 16,
+      "tutorial": true
+    },
+    {
+      "id": 2,
+      "name": "Coral Courtesy",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "kills",
+        "target": 6
+      },
+      "duration_limit": 95,
+      "spawn_interval": 5.5,
+      "max_enemies": 3,
+      "enemy_pool": [
+        "chaser"
+      ],
+      "enemy_strength": 1.012,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 1,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 35,
+        "xp": 58,
+        "first_clear_bonus": 56
+      },
+      "star_targets": {
+        "time": 65,
+        "health": 0.6,
+        "score": 600
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 22,
+          "enemies": [
+            "chaser",
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Sink 6 deckhands while giving the coral island room.",
+      "design_note": "One wide reef introduces steering around terrain. No advanced enemies.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 16,
+      "tutorial": false
+    },
+    {
+      "id": 3,
+      "name": "Two-Sided Trouble",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "kills",
+        "target": 8
+      },
+      "duration_limit": 105,
+      "spawn_interval": 5,
+      "max_enemies": 3,
+      "enemy_pool": [
+        "chaser",
+        "chaser",
+        "runner"
+      ],
+      "enemy_strength": 1.024,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 40,
+        "xp": 62,
+        "first_clear_bonus": 59
+      },
+      "star_targets": {
+        "time": 75,
+        "health": 0.6,
+        "score": 800
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 25,
+          "enemies": [
+            "chaser",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Sink 8 ships. Both sides reload separately: keep the cannons singing.",
+      "design_note": "Introduces a treasure runner among slow chasers; rewards switching broadsides.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 16,
+      "tutorial": false
+    },
+    {
+      "id": 4,
+      "name": "Gold Rush Bay",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "coins",
+        "target": 12
+      },
+      "duration_limit": 100,
+      "spawn_interval": 5,
+      "max_enemies": 4,
+      "enemy_pool": [
+        "runner",
+        "runner",
+        "chaser"
+      ],
+      "enemy_strength": 1.036,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 12,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 45,
+        "xp": 66,
+        "first_clear_bonus": 62
+      },
+      "star_targets": {
+        "time": 70,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "chaser"
+          ]
+        },
+        {
+          "at": 25,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 12 treasure coins from the bay and fleeing ships.",
+      "design_note": "First treasure objective. Stationary pickups allow a movement-focused route.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 5,
+      "name": "Round the Palms",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "survive",
+        "target": 50
+      },
+      "duration_limit": 80,
+      "spawn_interval": 5,
+      "max_enemies": 4,
+      "enemy_pool": [
+        "chaser",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.048,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 50,
+        "xp": 70,
+        "first_clear_bonus": 65
+      },
+      "star_targets": {
+        "time": 60,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 20,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "chaser",
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Stay afloat for 50 seconds through a playful pirate parade.",
+      "design_note": "Introduces the orbiting skirmisher; survival teaches retreat and repair pickup.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 6,
+      "name": "Broadside Boulevard",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "kills",
+        "target": 12
+      },
+      "duration_limit": 110,
+      "spawn_interval": 4.5,
+      "max_enemies": 4,
+      "enemy_pool": [
+        "chaser",
+        "chaser",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.06,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 55,
+        "xp": 74,
+        "first_clear_bonus": 68
+      },
+      "star_targets": {
+        "time": 75,
+        "health": 0.6,
+        "score": 1200
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "chaser"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "skirmisher",
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Sink 12 ships along the open water between the shoals.",
+      "design_note": "Open broadside lanes with two coral obstacles; alternating side pressure.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 7,
+      "name": "Treasure Tailwind",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "coins",
+        "target": 18
+      },
+      "duration_limit": 115,
+      "spawn_interval": 4.6,
+      "max_enemies": 4,
+      "enemy_pool": [
+        "runner",
+        "chaser",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.072,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 1,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 18,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 60,
+        "xp": 78,
+        "first_clear_bonus": 71
+      },
+      "star_targets": {
+        "time": 80,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "runner",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Gather 18 coins. A gentle tailwind carries you toward treasure.",
+      "design_note": "First current has zero direct damage and encourages wide pickup sweeps.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 8,
+      "name": "Sloop Soup",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "kills",
+        "target": 15
+      },
+      "duration_limit": 120,
+      "spawn_interval": 4,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "chaser",
+        "skirmisher",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.084,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 65,
+        "xp": 82,
+        "first_clear_bonus": 74
+      },
+      "star_targets": {
+        "time": 85,
+        "health": 0.6,
+        "score": 1500
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "chaser",
+            "chaser",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Sink 15 ships without getting boxed in by the shoals.",
+      "design_note": "Small fleet pressure tests turning while firing.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 9,
+      "name": "Sunset Skirmish",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "survive",
+        "target": 70
+      },
+      "duration_limit": 100,
+      "spawn_interval": 3.8,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "chaser",
+        "skirmisher",
+        "runner"
+      ],
+      "enemy_strength": 1.096,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 4,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 70,
+        "xp": 86,
+        "first_clear_bonus": 77
+      },
+      "star_targets": {
+        "time": 80,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "runner"
+          ]
+        },
+        {
+          "at": 25,
+          "enemies": [
+            "skirmisher",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 50,
+          "enemies": [
+            "chaser",
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Survive the sunset fleet for 70 seconds.",
+      "design_note": "Final warm-up mixes loot, orbiting fire, and light obstacle density.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 10,
+      "name": "Captain Coconut",
+      "biome": "sunlit_shoals",
+      "objective": {
+        "type": "boss",
+        "target": 1
+      },
+      "duration_limit": 150,
+      "spawn_interval": 7,
+      "max_enemies": 4,
+      "enemy_pool": [
+        "chaser",
+        "runner"
+      ],
+      "enemy_strength": 1.108,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Coral reef"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 150,
+        "xp": 170,
+        "first_clear_bonus": 80
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": {
+        "name": "Captain Coconut",
+        "hp": 220,
+        "damage": 16,
+        "speed": 55,
+        "pattern": "broadside",
+        "at": 8,
+        "cooldown": 2.6,
+        "cannon_count": 2,
+        "color": "#FFE197",
+        "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (15).png",
+        "score": 1500
+      },
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Sink Captain Coconut and win passage to the mangroves.",
+      "design_note": "Slow, readable first boss with long gaps between broadside volleys.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 27,
+      "tutorial": false
+    },
+    {
+      "id": 11,
+      "name": "Greenwater Greeting",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "kills",
+        "target": 12
+      },
+      "duration_limit": 110,
+      "spawn_interval": 4.2,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "skirmisher",
+        "chaser"
+      ],
+      "enemy_strength": 1.14,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 80,
+        "xp": 94,
+        "first_clear_bonus": 83
+      },
+      "star_targets": {
+        "time": 75,
+        "health": 0.6,
+        "score": 1200
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "chaser",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Sink 12 ships in the winding greenwater channels.",
+      "design_note": "Biome opener uses one current and moderate skirmisher pressure.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 12,
+      "name": "Current Affairs",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "coins",
+        "target": 20
+      },
+      "duration_limit": 110,
+      "spawn_interval": 4.5,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "runner",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.152,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 2,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 1,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 20,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 85,
+        "xp": 98,
+        "first_clear_bonus": 86
+      },
+      "star_targets": {
+        "time": 80,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "runner",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Collect 20 coins while the tides tug at your sails.",
+      "design_note": "Two currents form a movement challenge without heavy combat.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 13,
+      "name": "Mangrove Mouths",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "kills",
+        "target": 14
+      },
+      "duration_limit": 120,
+      "spawn_interval": 4.3,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "chaser",
+        "skirmisher",
+        "rammer"
+      ],
+      "enemy_strength": 1.164,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 4,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 90,
+        "xp": 102,
+        "first_clear_bonus": 89
+      },
+      "star_targets": {
+        "time": 85,
+        "health": 0.6,
+        "score": 1400
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 14 ships. Dodge the first Reef Ram as it charges.",
+      "design_note": "First rammer arrives after 30 seconds; ample open space outside the mangroves.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 14,
+      "name": "Driftwood Derby",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "survive",
+        "target": 75
+      },
+      "duration_limit": 105,
+      "spawn_interval": 4.8,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "rammer",
+        "chaser"
+      ],
+      "enemy_strength": 1.176,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 2,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 95,
+        "xp": 106,
+        "first_clear_bonus": 92
+      },
+      "star_targets": {
+        "time": 85,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 25,
+          "enemies": [
+            "rammer"
+          ]
+        },
+        {
+          "at": 50,
+          "enemies": [
+            "rammer",
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Survive 75 seconds in a drifting derby of charging ships.",
+      "design_note": "Rammer-focused survival with currents complicating straight escapes.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 15,
+      "name": "Smuggler's Shortcut",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "coins",
+        "target": 24
+      },
+      "duration_limit": 115,
+      "spawn_interval": 4,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "runner",
+        "runner",
+        "rammer"
+      ],
+      "enemy_strength": 1.188,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 3,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 24,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 100,
+        "xp": 110,
+        "first_clear_bonus": 95
+      },
+      "star_targets": {
+        "time": 80,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "rammer",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 24 coins before the smugglers vanish into the swamp.",
+      "design_note": "No solid terrain; a fast treasure chase threaded by currents.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 16,
+      "name": "Root and Cannon",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "kills",
+        "target": 18
+      },
+      "duration_limit": 125,
+      "spawn_interval": 3.6,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "skirmisher",
+        "skirmisher",
+        "rammer"
+      ],
+      "enemy_strength": 1.2,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 4,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 105,
+        "xp": 114,
+        "first_clear_bonus": 98
+      },
+      "star_targets": {
+        "time": 90,
+        "health": 0.6,
+        "score": 1800
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "rammer",
+            "chaser"
+          ]
+        }
+      ],
+      "briefing": "Sink 18 ships around the mangrove roots.",
+      "design_note": "Dense islands favor deliberate turns and close broadside windows.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 17,
+      "name": "Swamp Carousel",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "survive",
+        "target": 85
+      },
+      "duration_limit": 115,
+      "spawn_interval": 3.6,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "skirmisher",
+        "skirmisher",
+        "runner"
+      ],
+      "enemy_strength": 1.212,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 3,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 110,
+        "xp": 118,
+        "first_clear_bonus": 101
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "skirmisher",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 60,
+          "enemies": [
+            "runner",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Stay afloat for 85 seconds as raiders circle your ship.",
+      "design_note": "Orbiting pressure rewards switching cannons and moving against the current.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 18,
+      "name": "Ram Jam",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "kills",
+        "target": 16
+      },
+      "duration_limit": 125,
+      "spawn_interval": 4,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "rammer",
+        "rammer",
+        "chaser"
+      ],
+      "enemy_strength": 1.224,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 4,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 115,
+        "xp": 122,
+        "first_clear_bonus": 104
+      },
+      "star_targets": {
+        "time": 90,
+        "health": 0.6,
+        "score": 1600
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 25,
+          "enemies": [
+            "rammer",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 16 ships, including a rowdy gang of Reef Rams.",
+      "design_note": "Few hazards and fewer enemy slots offset the aggressive rammer composition.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 19,
+      "name": "Last Light Lagoon",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "coins",
+        "target": 28
+      },
+      "duration_limit": 130,
+      "spawn_interval": 3.5,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "runner",
+        "skirmisher",
+        "rammer"
+      ],
+      "enemy_strength": 1.236,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 3,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 28,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 120,
+        "xp": 126,
+        "first_clear_bonus": 107
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "rammer",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Gather 28 coins from the lagoon before the admiral arrives.",
+      "design_note": "Mixed combat treasure race provides final mangrove skill check.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 20,
+      "name": "Admiral Alligator",
+      "biome": "mangrove_maze",
+      "objective": {
+        "type": "boss",
+        "target": 1
+      },
+      "duration_limit": 160,
+      "spawn_interval": 7.5,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "skirmisher",
+        "runner"
+      ],
+      "enemy_strength": 1.248,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "current",
+          "count": 2,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        },
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Mangrove island"
+        }
+      ],
+      "treasure_count": 5,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 200,
+        "xp": 210,
+        "first_clear_bonus": 110
+      },
+      "star_targets": {
+        "time": 115,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": {
+        "name": "Admiral Alligator",
+        "hp": 300,
+        "damage": 18,
+        "speed": 80,
+        "pattern": "charge",
+        "at": 8,
+        "cooldown": 2.8,
+        "cannon_count": 2,
+        "color": "#9ADD81",
+        "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (15).png",
+        "score": 2000
+      },
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Outturn Admiral Alligator and sink the swamp's flagship.",
+      "design_note": "Fast charge boss with a long reload and two tidal channels.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 25,
+      "tutorial": false
+    },
+    {
+      "id": 21,
+      "name": "Welcome to the Boom",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "kills",
+        "target": 16
+      },
+      "duration_limit": 120,
+      "spawn_interval": 3.8,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "chaser",
+        "sniper"
+      ],
+      "enemy_strength": 1.28,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 2,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 5,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 130,
+        "xp": 134,
+        "first_clear_bonus": 113
+      },
+      "star_targets": {
+        "time": 85,
+        "health": 0.6,
+        "score": 1600
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 25,
+          "enemies": [
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Sink 16 ships and keep clear of glowing powder kegs.",
+      "design_note": "Introduces snipers and two widely separated mines.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 22,
+      "name": "Powder Keg Picnic",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "coins",
+        "target": 26
+      },
+      "duration_limit": 125,
+      "spawn_interval": 4,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "runner",
+        "sniper"
+      ],
+      "enemy_strength": 1.292,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 4,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        },
+        {
+          "type": "reef",
+          "count": 1,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Black-sand rocks"
+        }
+      ],
+      "treasure_count": 26,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 135,
+        "xp": 138,
+        "first_clear_bonus": 116
+      },
+      "star_targets": {
+        "time": 90,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "sniper",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 26 coins between the floating powder kegs.",
+      "design_note": "Treasure route requires gaps between fixed explosive hazards.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 23,
+      "name": "Longshot Lookout",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "kills",
+        "target": 18
+      },
+      "duration_limit": 130,
+      "spawn_interval": 3.7,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "sniper",
+        "sniper",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.304,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 2,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        },
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Black-sand rocks"
+        }
+      ],
+      "treasure_count": 5,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 140,
+        "xp": 142,
+        "first_clear_bonus": 119
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 1800
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "sniper",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Sink 18 ships. Close the distance on the Longshots.",
+      "design_note": "Kiting snipers force aggressive approach angles.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 24,
+      "name": "Black Sand Sprint",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "survive",
+        "target": 85
+      },
+      "duration_limit": 115,
+      "spawn_interval": 4,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "rammer",
+        "sniper"
+      ],
+      "enemy_strength": 1.316,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 3,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 6,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 145,
+        "xp": 146,
+        "first_clear_bonus": 122
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "rammer"
+          ]
+        },
+        {
+          "at": 60,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Survive 85 seconds along the black sand coast.",
+      "design_note": "Alternating long-range and charge pressure; one cross-current changes approach angles.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 25,
+      "name": "Cinder Smugglers",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "coins",
+        "target": 30
+      },
+      "duration_limit": 130,
+      "spawn_interval": 3.5,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "runner",
+        "runner",
+        "sniper",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.328,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 5,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 30,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 150,
+        "xp": 150,
+        "first_clear_bonus": 125
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "skirmisher",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 30 coins from the smugglers' glowing cargo.",
+      "design_note": "Treasure runners are numerous, but mine density makes pursuit risky.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 26,
+      "name": "Ash and Splash",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "kills",
+        "target": 22
+      },
+      "duration_limit": 135,
+      "spawn_interval": 3.3,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "chaser",
+        "sniper",
+        "rammer"
+      ],
+      "enemy_strength": 1.34,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 3,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        },
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Black-sand rocks"
+        }
+      ],
+      "treasure_count": 6,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 155,
+        "xp": 154,
+        "first_clear_bonus": 128
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 2200
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "sniper"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Sink 22 ships through smoke, splashes, and flying cannonballs.",
+      "design_note": "Balanced fleet brawl with three explosive and three solid obstacles.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 27,
+      "name": "Ember Evasion",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "survive",
+        "target": 95
+      },
+      "duration_limit": 125,
+      "spawn_interval": 3.5,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "sniper",
+        "sniper",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.352,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 4,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        },
+        {
+          "type": "storm",
+          "count": 1,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        }
+      ],
+      "treasure_count": 6,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 160,
+        "xp": 158,
+        "first_clear_bonus": 131
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "skirmisher",
+            "sniper"
+          ]
+        },
+        {
+          "at": 65,
+          "enemies": [
+            "sniper",
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Stay afloat for 95 seconds as the ember storm rolls in.",
+      "design_note": "First periodic danger zone is readable among a sniper-heavy fleet.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 28,
+      "name": "Barrel Roll Bay",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "kills",
+        "target": 20
+      },
+      "duration_limit": 135,
+      "spawn_interval": 3.6,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "rammer",
+        "skirmisher",
+        "sniper"
+      ],
+      "enemy_strength": 1.364,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 6,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 7,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 165,
+        "xp": 162,
+        "first_clear_bonus": 134
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 2000
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "rammer",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 20 ships while weaving around the barrel field.",
+      "design_note": "Open sea packed with mines: tight turns and firing angles matter.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 29,
+      "name": "The Last Hot Haul",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "coins",
+        "target": 36
+      },
+      "duration_limit": 140,
+      "spawn_interval": 3.3,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "runner",
+        "sniper",
+        "rammer"
+      ],
+      "enemy_strength": 1.376,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 4,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        },
+        {
+          "type": "current",
+          "count": 2,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 36,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 170,
+        "xp": 166,
+        "first_clear_bonus": 137
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "sniper"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "runner",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Collect 36 coins before the volcanic flagship sails.",
+      "design_note": "High-value treasure objective combines mines and drifting approaches.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 30,
+      "name": "Commodore Cinder",
+      "biome": "ember_archipelago",
+      "objective": {
+        "type": "boss",
+        "target": 1
+      },
+      "duration_limit": 170,
+      "spawn_interval": 8,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "sniper",
+        "runner"
+      ],
+      "enemy_strength": 1.388,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "mine",
+          "count": 3,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 7,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 250,
+        "xp": 250,
+        "first_clear_bonus": 140
+      },
+      "star_targets": {
+        "time": 125,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": {
+        "name": "Commodore Cinder",
+        "hp": 380,
+        "damage": 22,
+        "speed": 65,
+        "pattern": "fan",
+        "at": 8,
+        "cooldown": 2.5,
+        "cannon_count": 3,
+        "color": "#FFAC7B",
+        "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (15).png",
+        "score": 2500
+      },
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper"
+          ]
+        },
+        {
+          "at": 50,
+          "enemies": [
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Sink Commodore Cinder before the sea becomes a firework.",
+      "design_note": "Three-shot fan volleys and powder kegs make positioning the core challenge.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 23,
+      "tutorial": false
+    },
+    {
+      "id": 31,
+      "name": "Cold Open",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "kills",
+        "target": 20
+      },
+      "duration_limit": 130,
+      "spawn_interval": 3.7,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "chaser",
+        "rammer"
+      ],
+      "enemy_strength": 1.42,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        }
+      ],
+      "treasure_count": 7,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 180,
+        "xp": 174,
+        "first_clear_bonus": 143
+      },
+      "star_targets": {
+        "time": 95,
+        "health": 0.6,
+        "score": 2000
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "chaser"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 20 ships in the bright, icy reach.",
+      "design_note": "Biome reset trades explosive hazards for large icebergs.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 32,
+      "name": "Iceberg Express",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "coins",
+        "target": 32
+      },
+      "duration_limit": 135,
+      "spawn_interval": 3.5,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "runner",
+        "rammer"
+      ],
+      "enemy_strength": 1.432,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 5,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 32,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 185,
+        "xp": 178,
+        "first_clear_bonus": 146
+      },
+      "star_targets": {
+        "time": 100,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "rammer",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 32 coins between the drifting icebergs.",
+      "design_note": "Obstacle-heavy route with charging pursuers and a slow cross-current.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 33,
+      "name": "Snowball Fight",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "kills",
+        "target": 24
+      },
+      "duration_limit": 140,
+      "spawn_interval": 3.2,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "sniper",
+        "skirmisher",
+        "rammer"
+      ],
+      "enemy_strength": 1.444,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        }
+      ],
+      "treasure_count": 8,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 190,
+        "xp": 182,
+        "first_clear_bonus": 149
+      },
+      "star_targets": {
+        "time": 100,
+        "health": 0.6,
+        "score": 2400
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Sink 24 ships as cannonballs pepper the frosty sea.",
+      "design_note": "Mixed-range crossfire behind a few large icebergs.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 34,
+      "name": "Polar Pursuit",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "survive",
+        "target": 95
+      },
+      "duration_limit": 125,
+      "spawn_interval": 3.8,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "rammer",
+        "rammer",
+        "chaser"
+      ],
+      "enemy_strength": 1.456,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 4,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 8,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 195,
+        "xp": 186,
+        "first_clear_bonus": 152
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "rammer",
+            "rammer"
+          ]
+        },
+        {
+          "at": 65,
+          "enemies": [
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Survive 95 seconds against relentless polar pursuers.",
+      "design_note": "Rammer-weighted chase asks players to predict large turning arcs.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 35,
+      "name": "Frozen Fortune",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "coins",
+        "target": 38
+      },
+      "duration_limit": 140,
+      "spawn_interval": 3.2,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "runner",
+        "runner",
+        "sniper"
+      ],
+      "enemy_strength": 1.468,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 6,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        }
+      ],
+      "treasure_count": 38,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 200,
+        "xp": 190,
+        "first_clear_bonus": 155
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "sniper",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 38 coins from the frozen treasure fleet.",
+      "design_note": "Dense iceberg slalom with runners and occasional long shots.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 36,
+      "name": "Hull on Ice",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "kills",
+        "target": 26
+      },
+      "duration_limit": 145,
+      "spawn_interval": 3.1,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "rammer",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.48,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 4,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        },
+        {
+          "type": "current",
+          "count": 2,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 9,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 205,
+        "xp": 194,
+        "first_clear_bonus": 158
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 2600
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "rammer",
+            "skirmisher",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 26 ships while the polar currents tug your hull.",
+      "design_note": "Combines close orbiters and fast rams in opposing currents.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 37,
+      "name": "Whiteout Watch",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "survive",
+        "target": 105
+      },
+      "duration_limit": 135,
+      "spawn_interval": 3.2,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "sniper",
+        "rammer"
+      ],
+      "enemy_strength": 1.492,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        },
+        {
+          "type": "storm",
+          "count": 2,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        }
+      ],
+      "treasure_count": 9,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 210,
+        "xp": 198,
+        "first_clear_bonus": 161
+      },
+      "star_targets": {
+        "time": 115,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper"
+          ]
+        },
+        {
+          "at": 30,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        },
+        {
+          "at": 70,
+          "enemies": [
+            "sniper",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Survive 105 seconds in the sparkling whiteout.",
+      "design_note": "Two timed storm zones force movement during long-range pressure.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 38,
+      "name": "Berg Brawl",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "kills",
+        "target": 28
+      },
+      "duration_limit": 150,
+      "spawn_interval": 3,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "rammer",
+        "rammer",
+        "skirmisher",
+        "sniper"
+      ],
+      "enemy_strength": 1.504,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 5,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        }
+      ],
+      "treasure_count": 9,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 215,
+        "xp": 202,
+        "first_clear_bonus": 164
+      },
+      "star_targets": {
+        "time": 110,
+        "health": 0.6,
+        "score": 2800
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher",
+            "rammer"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "sniper",
+            "rammer",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 28 ships in a crowded iceberg brawl.",
+      "design_note": "Strong mixed enemies around bulky cover, with a generous time limit.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 39,
+      "name": "Northern Lights Heist",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "coins",
+        "target": 42
+      },
+      "duration_limit": 150,
+      "spawn_interval": 3.1,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "runner",
+        "sniper",
+        "rammer"
+      ],
+      "enemy_strength": 1.516,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 4,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        },
+        {
+          "type": "current",
+          "count": 2,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 42,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 220,
+        "xp": 206,
+        "first_clear_bonus": 167
+      },
+      "star_targets": {
+        "time": 110,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "sniper"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "runner",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Collect 42 coins beneath the northern lights.",
+      "design_note": "Frost biome culmination focuses on reading a dense treasure route.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 40,
+      "name": "Baron Blizzard",
+      "biome": "frostwake_reach",
+      "objective": {
+        "type": "boss",
+        "target": 1
+      },
+      "duration_limit": 180,
+      "spawn_interval": 8.5,
+      "max_enemies": 5,
+      "enemy_pool": [
+        "rammer",
+        "runner"
+      ],
+      "enemy_strength": 1.528,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "reef",
+          "count": 3,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Iceberg"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 10,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 300,
+        "xp": 290,
+        "first_clear_bonus": 170
+      },
+      "star_targets": {
+        "time": 130,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": {
+        "name": "Baron Blizzard",
+        "hp": 460,
+        "damage": 24,
+        "speed": 85,
+        "pattern": "charge",
+        "at": 8,
+        "cooldown": 2.3,
+        "cannon_count": 3,
+        "color": "#C2E9FF",
+        "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (15).png",
+        "score": 3000
+      },
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "rammer"
+          ]
+        },
+        {
+          "at": 55,
+          "enemies": [
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Break Baron Blizzard's hull and sail toward the storm crown.",
+      "design_note": "Fast charging boss makes icebergs useful cover as well as obstacles.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 21,
+      "tutorial": false
+    },
+    {
+      "id": 41,
+      "name": "Eye of the Tide",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "kills",
+        "target": 26
+      },
+      "duration_limit": 145,
+      "spawn_interval": 3.2,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "chaser",
+        "skirmisher",
+        "sniper"
+      ],
+      "enemy_strength": 1.56,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 1,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        }
+      ],
+      "treasure_count": 10,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 230,
+        "xp": 214,
+        "first_clear_bonus": 173
+      },
+      "star_targets": {
+        "time": 110,
+        "health": 0.6,
+        "score": 2600
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 40,
+          "enemies": [
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Sink 26 ships. Steer wide of the magical whirlpool.",
+      "design_note": "One whirlpool introduces suction without dense secondary hazards.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 42,
+      "name": "Stormbound Spoils",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "coins",
+        "target": 40
+      },
+      "duration_limit": 145,
+      "spawn_interval": 3,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "runner",
+        "sniper",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.572,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "storm",
+          "count": 2,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        },
+        {
+          "type": "maelstrom",
+          "count": 1,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        }
+      ],
+      "treasure_count": 40,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 235,
+        "xp": 218,
+        "first_clear_bonus": 176
+      },
+      "star_targets": {
+        "time": 105,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "sniper",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Collect 40 coins through storm-lit water.",
+      "design_note": "Two telegraphed storm zones surround a central whirlpool treasure route.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 43,
+      "name": "Crown's Crossfire",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "kills",
+        "target": 30
+      },
+      "duration_limit": 150,
+      "spawn_interval": 2.8,
+      "max_enemies": 8,
+      "enemy_pool": [
+        "sniper",
+        "sniper",
+        "rammer",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.584,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 1,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Storm rocks"
+        }
+      ],
+      "treasure_count": 10,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 240,
+        "xp": 222,
+        "first_clear_bonus": 179
+      },
+      "star_targets": {
+        "time": 115,
+        "health": 0.6,
+        "score": 3000
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "sniper",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Sink 30 ships in the crown fleet's crossfire.",
+      "design_note": "Sniper weighting and a charging flank reward decisive movement.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 44,
+      "name": "Whirlpool Waltz",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "survive",
+        "target": 110
+      },
+      "duration_limit": 140,
+      "spawn_interval": 3.2,
+      "max_enemies": 7,
+      "enemy_pool": [
+        "skirmisher",
+        "rammer"
+      ],
+      "enemy_strength": 1.596,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 2,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "current",
+          "count": 1,
+          "radius": 88,
+          "damage": 0,
+          "force": 28,
+          "period": 0,
+          "duration": 0,
+          "label": "Tidal current"
+        }
+      ],
+      "treasure_count": 11,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 245,
+        "xp": 226,
+        "first_clear_bonus": 182
+      },
+      "star_targets": {
+        "time": 120,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "rammer",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 75,
+          "enemies": [
+            "skirmisher",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Survive 110 seconds in the whirlpools' tug-of-war.",
+      "design_note": "Two suction zones and close-range enemies create a navigation endurance test.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 45,
+      "name": "Royal Ransom",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "coins",
+        "target": 46
+      },
+      "duration_limit": 150,
+      "spawn_interval": 2.8,
+      "max_enemies": 8,
+      "enemy_pool": [
+        "runner",
+        "runner",
+        "rammer",
+        "sniper"
+      ],
+      "enemy_strength": 1.608,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 1,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "mine",
+          "count": 3,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 46,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 250,
+        "xp": 230,
+        "first_clear_bonus": 185
+      },
+      "star_targets": {
+        "time": 110,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        },
+        {
+          "at": 50,
+          "enemies": [
+            "sniper",
+            "runner",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Collect 46 coins from the royal ransom fleet.",
+      "design_note": "High treasure density permits multiple routes around the whirlpool and mines.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 46,
+      "name": "Thunderstruck Fleet",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "kills",
+        "target": 32
+      },
+      "duration_limit": 155,
+      "spawn_interval": 2.7,
+      "max_enemies": 8,
+      "enemy_pool": [
+        "rammer",
+        "sniper",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.62,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "storm",
+          "count": 3,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        },
+        {
+          "type": "reef",
+          "count": 2,
+          "radius": 42,
+          "damage": 8,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Storm rocks"
+        }
+      ],
+      "treasure_count": 11,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 255,
+        "xp": 234,
+        "first_clear_bonus": 188
+      },
+      "star_targets": {
+        "time": 115,
+        "health": 0.6,
+        "score": 3200
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "rammer",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "sniper",
+            "rammer"
+          ]
+        }
+      ],
+      "briefing": "Sink 32 ships while thunder shakes the fleet.",
+      "design_note": "Three periodic danger zones challenge repositioning during a full fleet brawl.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 47,
+      "name": "The Sea Bites Back",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "survive",
+        "target": 120
+      },
+      "duration_limit": 150,
+      "spawn_interval": 2.9,
+      "max_enemies": 8,
+      "enemy_pool": [
+        "rammer",
+        "sniper",
+        "chaser",
+        "skirmisher"
+      ],
+      "enemy_strength": 1.632,
+      "spawn_pattern": "surround",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 2,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "storm",
+          "count": 1,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        }
+      ],
+      "treasure_count": 11,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 260,
+        "xp": 238,
+        "first_clear_bonus": 191
+      },
+      "star_targets": {
+        "time": 130,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 35,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        },
+        {
+          "at": 80,
+          "enemies": [
+            "skirmisher",
+            "rammer",
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Stay afloat for 2 minutes against the storm crown's finest.",
+      "design_note": "Survival capstone introduces the full enemy roster in paced waves.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 48,
+      "name": "Last Broadside Standing",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "kills",
+        "target": 36
+      },
+      "duration_limit": 165,
+      "spawn_interval": 2.5,
+      "max_enemies": 8,
+      "enemy_pool": [
+        "rammer",
+        "sniper",
+        "skirmisher",
+        "chaser"
+      ],
+      "enemy_strength": 1.644,
+      "spawn_pattern": "staggered",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 1,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "storm",
+          "count": 2,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        },
+        {
+          "type": "mine",
+          "count": 2,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 12,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 265,
+        "xp": 242,
+        "first_clear_bonus": 194
+      },
+      "star_targets": {
+        "time": 125,
+        "health": 0.6,
+        "score": 3600
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "chaser",
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "rammer",
+            "sniper"
+          ]
+        },
+        {
+          "at": 95,
+          "enemies": [
+            "rammer",
+            "skirmisher"
+          ]
+        }
+      ],
+      "briefing": "Sink 36 ships and clear the monarch's last escort.",
+      "design_note": "Largest regular combat target, tempered by a 165-second deadline.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 49,
+      "name": "Crown Jewel Caper",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "coins",
+        "target": 50
+      },
+      "duration_limit": 165,
+      "spawn_interval": 2.7,
+      "max_enemies": 8,
+      "enemy_pool": [
+        "runner",
+        "runner",
+        "sniper",
+        "rammer"
+      ],
+      "enemy_strength": 1.656,
+      "spawn_pattern": "pursuit",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 2,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "mine",
+          "count": 3,
+          "radius": 25,
+          "damage": 20,
+          "force": 0,
+          "period": 0,
+          "duration": 0,
+          "label": "Powder keg"
+        }
+      ],
+      "treasure_count": 50,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 270,
+        "xp": 246,
+        "first_clear_bonus": 197
+      },
+      "star_targets": {
+        "time": 120,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": null,
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "runner",
+            "runner"
+          ]
+        },
+        {
+          "at": 45,
+          "enemies": [
+            "runner",
+            "sniper"
+          ]
+        },
+        {
+          "at": 90,
+          "enemies": [
+            "rammer",
+            "runner"
+          ]
+        }
+      ],
+      "briefing": "Collect 50 coins to draw the pirate monarch from the storm.",
+      "design_note": "Largest treasure target and two route-blocking whirlpools set up the finale.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    },
+    {
+      "id": 50,
+      "name": "The Pirate Monarch",
+      "biome": "tempest_crown",
+      "objective": {
+        "type": "boss",
+        "target": 1
+      },
+      "duration_limit": 180,
+      "spawn_interval": 9,
+      "max_enemies": 6,
+      "enemy_pool": [
+        "skirmisher",
+        "sniper",
+        "runner"
+      ],
+      "enemy_strength": 1.668,
+      "spawn_pattern": "flanks",
+      "spawn_safe_radius": 210,
+      "hazards": [
+        {
+          "type": "maelstrom",
+          "count": 1,
+          "radius": 86,
+          "damage": 8,
+          "force": 38,
+          "period": 0,
+          "duration": 0,
+          "label": "Whirlpool"
+        },
+        {
+          "type": "storm",
+          "count": 2,
+          "radius": 70,
+          "damage": 12,
+          "force": 0,
+          "period": 9,
+          "duration": 2,
+          "label": "Storm front"
+        }
+      ],
+      "treasure_count": 12,
+      "treasure_value": 1,
+      "reward": {
+        "coins": 350,
+        "xp": 330,
+        "first_clear_bonus": 200
+      },
+      "star_targets": {
+        "time": 135,
+        "health": 0.6,
+        "score": 0
+      },
+      "boss": {
+        "name": "The Pirate Monarch",
+        "hp": 600,
+        "damage": 26,
+        "speed": 75,
+        "pattern": "spiral",
+        "at": 8,
+        "cooldown": 2.1,
+        "cannon_count": 4,
+        "color": "#FFD77D",
+        "asset": "res://Assets/PirateStuff/PNG/Retina/Ships/ship (15).png",
+        "score": 3500
+      },
+      "waves": [
+        {
+          "at": 0,
+          "enemies": [
+            "skirmisher"
+          ]
+        },
+        {
+          "at": 55,
+          "enemies": [
+            "runner"
+          ]
+        },
+        {
+          "at": 110,
+          "enemies": [
+            "sniper"
+          ]
+        }
+      ],
+      "briefing": "Sink the Pirate Monarch. The ocean crown is yours.",
+      "design_note": "Final four-cannon boss, a whirlpool, and timed storm zones; slow reinforcement cadence leaves firing windows.",
+      "powerups": [
+        "repair",
+        "rapid_fire",
+        "shield",
+        "magnet"
+      ],
+      "powerup_interval": 19,
+      "tutorial": false
+    }
+  ],
+  "endless": {
+    "id": "endless",
+    "name": "Endless Ocean",
+    "starting_biome": "sunlit_shoals",
+    "biome_change_seconds": 90,
+    "spawn_interval_start": 5,
+    "spawn_interval_min": 1.35,
+    "spawn_ramp_seconds": 300,
+    "max_enemies_start": 4,
+    "max_enemies_cap": 14,
+    "boss_every_seconds": 90,
+    "enemy_strength_gain_per_minute": 0.12,
+    "hazard_count_start": 2,
+    "hazard_count_cap": 8,
+    "enemy_pool": [
+      "chaser",
+      "skirmisher",
+      "runner",
+      "sniper",
+      "rammer"
+    ],
+    "powerup_interval": 23,
+    "chunk_size": 512,
+    "seed_policy": "Random seed each voyage. Decorate ocean chunks deterministically from the voyage seed.",
+    "xp_per_minute": 20
+  }
+}

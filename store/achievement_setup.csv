@@ -1,0 +1,29 @@
+local_id,google_play_id,name,description,type,steps,points,initial_state,icon_file
+sea_legs,,Sea Legs,Launch your first voyage.,standard,,5,revealed,store/achievements/sea_legs.png
+first_broadside,,First Broadside,Fire a cannon broadside.,standard,,5,revealed,store/achievements/first_broadside.png
+first_plunder,,Pocket Change,Collect 25 coins across your voyages.,incremental,25,5,revealed,store/achievements/first_plunder.png
+deck_clear,,Deck Clear,Sink 25 enemy ships.,incremental,25,10,revealed,store/achievements/deck_clear.png
+fleet_breaker,,Fleet Breaker,Sink 100 enemy ships.,incremental,100,20,revealed,store/achievements/fleet_breaker.png
+sea_scourge,,Scourge of the Sea,Sink 500 enemy ships.,incremental,500,40,revealed,store/achievements/sea_scourge.png
+powder_monkey,,Powder Monkey,Fire 250 cannonballs.,incremental,250,25,revealed,store/achievements/powder_monkey.png
+flawless_voyage,,Flawless Voyage,Win a campaign level without taking damage.,standard,,30,revealed,store/achievements/flawless_voyage.png
+shoal_sheriff,,Sheriff of the Shoals,Complete 10 campaign levels.,incremental,10,20,revealed,store/achievements/shoal_sheriff.png
+swamp_escape,,Mangrove Marauder,Complete 20 campaign levels.,incremental,20,25,revealed,store/achievements/swamp_escape.png
+hot_streak,,Too Hot to Handle,Complete 30 campaign levels.,incremental,30,30,revealed,store/achievements/hot_streak.png
+ice_breaker,,Ice Breaker,Complete 40 campaign levels.,incremental,40,35,revealed,store/achievements/ice_breaker.png
+pirate_king,,Pirate Monarch,Complete all 50 campaign levels.,incremental,50,75,revealed,store/achievements/pirate_king.png
+boss_buster,,Boss Buster,Sink your first campaign boss.,standard,,10,revealed,store/achievements/boss_buster.png
+tyrant_tamer,,Tyrant Tamer,Sink 5 bosses across your voyages.,incremental,5,40,revealed,store/achievements/tyrant_tamer.png
+treasure_tide,,Treasure Tide,"Collect 1,000 coins across your voyages.",incremental,1000,35,revealed,store/achievements/treasure_tide.png
+power_pirate,,Power Pirate,Collect 25 powerups.,incremental,25,20,revealed,store/achievements/power_pirate.png
+four_of_a_kind,,Four of a Kind,Take all four ships on a voyage.,standard,,15,revealed,store/achievements/four_of_a_kind.png
+seasoned_captain,,Seasoned Captain,Raise any ship to rank 5.,standard,,25,revealed,store/achievements/seasoned_captain.png
+fleet_of_legends,,Fleet of Legends,Reach a combined ship rank of 20.,standard,,75,revealed,store/achievements/fleet_of_legends.png
+endless_appetite,,Endless Appetite,Survive 2 minutes in Endless Ocean.,standard,,15,revealed,store/achievements/endless_appetite.png
+marathon_marauder,,Marathon Marauder,Survive 5 minutes in Endless Ocean.,standard,,40,revealed,store/achievements/marathon_marauder.png
+high_tide,,High Tide,"Score 20,000 points in one Endless Ocean voyage.",standard,,35,revealed,store/achievements/high_tide.png
+star_chart,,Star Chart,Earn 75 stars across the campaign.,incremental,75,40,revealed,store/achievements/star_chart.png
+constellation_captain,,Constellation Captain,Earn all 150 campaign stars.,incremental,150,75,revealed,store/achievements/constellation_captain.png
+daily_deckhand,,Daily Deckhand,Complete 3 daily quests.,incremental,3,15,revealed,store/achievements/daily_deckhand.png
+welcome_aboard,,Crew Regular,Claim a daily reward on 3 different days.,incremental,3,5,revealed,store/achievements/welcome_aboard.png
+chain_reaction,,Chain Reaction,Build a 10-sink combo in one voyage.,standard,,25,revealed,store/achievements/chain_reaction.png

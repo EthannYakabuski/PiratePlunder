@@ -1,0 +1,278 @@
+{
+  "generated_by": "tools/build_art.py",
+  "license": "CC0 composition from supplied Kenney CC0 artwork",
+  "assets": [
+    {
+      "path": "store/achievements/boss_buster.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7739,
+      "sha256": "4e0e5655d02bc14c3fda49214fc42c2f9ab51439d946099ecb8e6fa155bec0ab"
+    },
+    {
+      "path": "store/achievements/chain_reaction.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7600,
+      "sha256": "f2254b9f11ca357a3311f38f4064b855e8cb1874088e2967335b7b93e01f7e5e"
+    },
+    {
+      "path": "store/achievements/constellation_captain.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8163,
+      "sha256": "3248e95a173efe2bf49b4849513d398247b5707e3ed807ad707d6d3a16972cd4"
+    },
+    {
+      "path": "store/achievements/daily_deckhand.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7615,
+      "sha256": "74106b53a6add39896946df6340f918987614e44c4897427f77a93646b590a2d"
+    },
+    {
+      "path": "store/achievements/deck_clear.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7732,
+      "sha256": "5420a86436cb4331082152b08b1581da34fab7241f9e2dfecd1ca9bb1dbfc564"
+    },
+    {
+      "path": "store/achievements/endless_appetite.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8257,
+      "sha256": "5917596a7a12031aff74365fd3ba908990c8e62831d5f6a4038fccdb39762e99"
+    },
+    {
+      "path": "store/achievements/first_broadside.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7796,
+      "sha256": "82e0b4c8e5f6ca2c6441287613f53bd3585c273091d5042f8771b694cdc85189"
+    },
+    {
+      "path": "store/achievements/first_plunder.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7418,
+      "sha256": "ffb0ac662ab1c2651089333ebdac7b2b3c6c370ad01c099d215c3f2f749e0039"
+    },
+    {
+      "path": "store/achievements/flawless_voyage.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7716,
+      "sha256": "8066e118d52fe87ef1f65b5356e6c4ff8ed11d05da72a63d64db7a3d5a2529f9"
+    },
+    {
+      "path": "store/achievements/fleet_breaker.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7833,
+      "sha256": "f0bb16098bb40a636b0296eeb70fb20cbbaddaf29cd79704c851aa8ef648a2a4"
+    },
+    {
+      "path": "store/achievements/fleet_of_legends.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7752,
+      "sha256": "fdd4d1c4306894df9203e0c9e2a2db2fdc5145d637ee0d453ec2d98c63155917"
+    },
+    {
+      "path": "store/achievements/four_of_a_kind.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7835,
+      "sha256": "35fc87e9e0fb163f02732fe16e69e7e1c8748e7bb0255d9f56f4d30fbef85612"
+    },
+    {
+      "path": "store/achievements/high_tide.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7833,
+      "sha256": "b31514631bc7684eac06b9fdaf2f8e98c1e0038fb93d384efcc1cf58bcd79356"
+    },
+    {
+      "path": "store/achievements/hot_streak.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7878,
+      "sha256": "9c9e3aed5f9ca25127d5484b29f0e511df0aebdd1d11a0f223a267b7c8e41812"
+    },
+    {
+      "path": "store/achievements/ice_breaker.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8287,
+      "sha256": "91b42403219e5cf6d66f8903db5698cdc1b077ef83bd9c4140527fcc7692dd2d"
+    },
+    {
+      "path": "store/achievements/marathon_marauder.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8130,
+      "sha256": "0a2793b4c4431a5b18ad016be586b84b8f32b12eb4cf5e4cf10e88a05550ebd2"
+    },
+    {
+      "path": "store/achievements/pirate_king.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7721,
+      "sha256": "627766cb1a7aca135ae762e89703fcb6dec4f1ab2a6319f3e99bbcf3c17d0ea2"
+    },
+    {
+      "path": "store/achievements/powder_monkey.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7503,
+      "sha256": "43e02c1a10ce44f4b3874512bebf335d093879d2724f384d3bd03ccc81d59393"
+    },
+    {
+      "path": "store/achievements/power_pirate.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7459,
+      "sha256": "9071f3d296c98c6e440cf346f8b9d3723ba7bdedd4a67f5a50b1487c37df67d0"
+    },
+    {
+      "path": "store/achievements/sea_legs.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8118,
+      "sha256": "91f370c68e5e065813e3be1ca87ed9de9fde14cc33b1774ced729223af112780"
+    },
+    {
+      "path": "store/achievements/sea_scourge.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7704,
+      "sha256": "ff546346042efb1aaddfa8587b01cc5ae65f0e1fd0e46a17d6408698288f1af0"
+    },
+    {
+      "path": "store/achievements/seasoned_captain.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8012,
+      "sha256": "076b6c649fab1e1ab5e71a5f4e48bd93e9f9623357d7e374968c2e3c1a09a76c"
+    },
+    {
+      "path": "store/achievements/shoal_sheriff.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7653,
+      "sha256": "7fe6db9ba5e6a9c366e569fcb17524a692c2ba4681a810bc07cb425dafb88682"
+    },
+    {
+      "path": "store/achievements/star_chart.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8106,
+      "sha256": "a2d610c56273310e4f5e3343e14d4850a85b6e690e5f5ea9b2390af75340586f"
+    },
+    {
+      "path": "store/achievements/swamp_escape.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7776,
+      "sha256": "68ab49b804db6cf018fb7852ebd460b4147188fa9b1d2f43b553a6f7ebd89850"
+    },
+    {
+      "path": "store/achievements/treasure_tide.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 8205,
+      "sha256": "dfb2b292ce357c28e175d2213571a76901a6eb37845d5b5cf5ccc5371d0765b4"
+    },
+    {
+      "path": "store/achievements/tyrant_tamer.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7901,
+      "sha256": "bb7d5734f1a71b8a831553b16a1041374b32a5a0ba5efda6c9482d6994e4a620"
+    },
+    {
+      "path": "store/achievements/welcome_aboard.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7625,
+      "sha256": "4dcf47a29972265b6c05f352002d92bed6b2dfa83da6434e08ba35d3752c1752"
+    },
+    {
+      "path": "store/app_icon_512.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 42633,
+      "sha256": "84b60916cf73e515663c24ba81dab48dc595c23b668de636458d31a7d5c16036"
+    },
+    {
+      "path": "store/feature_graphic_1024x500.png",
+      "width": 1024,
+      "height": 500,
+      "mode": "RGB",
+      "bytes": 147102,
+      "sha256": "2e9ef086c81561c63ec80a277d2e84a3cbcfe8114f56f17f91df92de66f5ad25"
+    },
+    {
+      "path": "store/leaderboards/campaign_stars.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7202,
+      "sha256": "2c811024346319ed349872d83afbe2a246ca6dc65ddb802f3f58b1ee9925b5e7"
+    },
+    {
+      "path": "store/leaderboards/endless_score.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7034,
+      "sha256": "bc30a309ffd9b3c1197078e9b65fc3fd7dd4bcb50b8950df612f016bfb442557"
+    },
+    {
+      "path": "store/leaderboards/endless_survival.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 7304,
+      "sha256": "537f87c871ae0cd3c62ba514789c0c38a9f0ab07ebd048e7b4ae684633acb30a"
+    },
+    {
+      "path": "store/leaderboards/total_plunder.png",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 6669,
+      "sha256": "016344612d2c76966a5b0e5d2d81dde33f3d0be37bdb74bab2408e8ede89c6f9"
+    }
+  ]
+}
