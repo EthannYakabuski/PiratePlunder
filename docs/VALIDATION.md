@@ -1,55 +1,69 @@
-# Validation record
+# Gameplay 0.2.0 validation — October 15, 2026
 
-Verified October 14, 2026 with Godot 4.5.1 on Windows. The project is playable offline. This document distinguishes tested behavior from publishing work that needs devices/accounts.
+Verified using Godot 4.5.1 on Windows. This record covers the chart-first launch, manual weapons and Shipyard progression, shared island collision/navigation, and replacement of the entire campaign with finite authored encounters. Google configuration and authenticated service testing are outside this revision.
 
-## Content and mechanics
+## Campaign data and geography
 
-`tools/validate_data.py` passed **1,124 checks**: exactly 50 uniquely authored levels, five groups of ten, valid objective/enemy/wave/hazard/ship references, four ships, 28 achievements, four boards, and artwork dimension checks. Every provided bitmap decoded successfully during the full asset audit.
+`tools/validate_data.py`: **9,585 checks, zero failures**. The campaign contains exactly **50 levels, 142 named encounter groups and 526 authored ships**. Each biome includes ten distinct obstacle graphs, with different approach directions and ship formations. The format identifier is `finite_authored_fleets_v2`, topology revision 3; the outer JSON schema remains version 1.
 
-`tests/test_game.gd` passed **81 gameplay checks** and completed **200/200 campaign combinations** (50 levels × four ships) using ordinary steering/fire input with damage disabled for objective feasibility. The suite also checks independent cannon reloads and side targeting, held touch/pointer behavior, automatic fire, projectile impacts, pickups, all objective types, authored boss stats/attacks, storm safe periods, supply behavior, and deterministic terrain.
+Checks include exact objective/fleet totals, globally unique ship/encounter IDs, explicit ship kinds and positions, bounds, island/entity/hazard clearance, supplies in reachable water, patrol positions, bosses appearing exactly once in their final encounter, and physical map uniqueness ignoring names/IDs. A 32-unit flood-fill grid inflated by 48 units verifies routes. Negative fixtures deliberately create overlapping ships, wrong counts, duplicate geometry and a sealed basin to prove the validator rejects invalid layouts.
 
-Damage-enabled baseline bots won **45/52** sampled missions. Steering bots that avoid terrain/hazards subsequently won **8/8** difficult stage40/stage47 combinations without invulnerability. These are useful feasibility and regression checks; human playtesting is still required to judge one-thumb comfort and difficulty. [Detailed balance results](BALANCE.md).
+[Map diagrams](campaign_maps/) are generated directly from the data using `tools/preview_campaign.py`. They show the actual start, islands, supplies, hazards and staged formations.
 
-The **20-minute endless simulation** stayed within its configured entity limits: observed peaks were 14 enemies, 33 bullets, 156 particles, 70 pickups, and 42 cached terrain entries. The timed-boss path additionally replaces an existing rival when necessary, so even a non-firing run cannot accumulate enemies past the hard 14 cap. Projectiles cap at 220, particles at 320, pickups at 70; distant enemies/pickups are culled and terrain entries are pruned. The final desktop simulation completed in about 5.50 seconds of wall time, which measures accelerated simulation throughput, not an Android frame rate.
+## Runtime campaign and manual weapons
 
-## Persistence and screen flow
+`tests/test_game.gd`: **285 checks, zero failures**.
 
-`tests/test_progression.gd` passed **56 checks** covering save/reload, checksum and backup recovery, progression across all50 levels, separate ship XP, stars, deterministic daily quests, duplicate reward/run protection, malformed cloud data, merge convergence/idempotence, and mocked online queues/acknowledgements. It also verifies empty Google IDs produce no submissions, incremental totals are absolute, survival scores use milliseconds, and daily wins do not unlock campaign levels.
+- **200/200** combinations of 50 missions × four base ships completed using a steering/manual-fire test driver. Damage immunity is enabled for this exhaustive objective/navigation feasibility sweep. Automation capabilities remain locked; no automatic primary firing is granted. Every result verifies authored total = deployed total = sunk total.
+- **12/12** opening missions (levels 1–3 × four ships) completed with normal hull damage and no immunity.
+- Director tests verify exact finite spawn types/positions, inter-encounter delays, no random campaign ships or procedural land, no distance-based deletion of campaign enemies, no timer-based campaign victory, and no premature victory with a surviving enemy or future encounter.
+- Weapon tests verify no unearned firing even with a legacy `auto_fire` setting or directly set assistance flag, independent primary reloads, asymmetric cannon counts, separate per-side grapeshot buttons/reloads, locked secondary controls, and purchased auxiliary/primary automation gates.
+- Actual input-release tests verify held cannon/secondary pointers clear when UI consumes a release and when pausing. Resuming cannot leave a phantom held-fire command.
+- Collision/navigation stress covers all six enemy kinds crossing a route blocked by an island: they progress around the land, never overlap solid land, and remain within the authored boundaries. Swept movement and projectiles cannot tunnel through an island.
 
-`tests/test_ui.gd` passed **21 checks**: initial ship cards, shared chart, locked progression, run ship selection, additive rank bonuses, pause, results, recording once, hiding previous arenas, campaign/endless/daily launch, logbook/settings, restored automatic-fire preference, and an adversarial 40-boss spawn verifying the endless cap. Test profiles use repository-local temporary saves and are cleaned up.
+## Damage-enabled mid/late-game observations
 
-Godot import and script parsing completed. The sandbox prevents writing desktop editor settings/shader caches outside the workspace and cannot read the Windows certificate store; those environment messages were distinguished from script/resource errors. Offline scenes and captures render successfully.
+`tests/test_balance.gd`: **16/16 wins**, with **140 setup/isolation assertions** passing. Each of four ships plays levels 20, 30, 40 and 50 at ranks 7, 9, 11 and 13 respectively, buying only rank-eligible upgrades through the actual purchase API. No immunity, automation or forced mission completion is used. Clear times were 12.85–20.7 seconds with 54.2–100% hull remaining. These are skilled bot observations, not a prediction of human comfort or difficulty. [Detailed hull/time/loadout table](BALANCE.md).
 
-## Actual desktop rendering
+## Persistence, migration and upgrades
 
-`tests/test_render.gd` runs a damage-disabled late-endless stress scene with14 rivals and active effects through the real OpenGL Compatibility renderer at540×960. It measures600 frames after warmup, with a60FPS cap, on an NVIDIA GeForce GT1030.
+`tests/test_progression.gd`: **165 checks, zero failures**. Existing checksum/backup recovery, shared campaign stars, separate XP, daily rewards and service-queue tests remain passing. New tests cover every upgrade rank threshold/prerequisite, single-cannon increments on only one side, per-ship purchases, separate secondary/automation gates, rank-20 Master Gunner, insufficient funds, duplicate purchases, immediate persistence, failed-save rollback and version-2 migration preserving earned progress.
 
-| Measurement | Before optimization | Final measurement |
-| --- | ---: | ---: |
-| Average frame | 24.10ms (~41.5FPS) | 16.67ms (~60FPS) |
-| 95th-percentile frame | 28.97ms | 16.74ms |
-| Peak draw calls | 1,128 | 456 |
-| Peak static engine memory | 51.41MiB | 51.62MiB |
+Cloud-data merge tests exercise receipts, repeated and stale merges, duplicate purchases on different devices and concurrent spending settlement. These verify local merge logic without authenticating against Google. No backend settings were changed.
 
-The ocean now uses a single tiled texture; effects share a particle texture and skip hidden/out-of-view particles. The final stress run peaked at 232 active simulation entities. Worst measured frame was 17.53ms. The engine process monitor's 95th-percentile sample was 17.43ms and is reported separately from measured frame intervals because that monitor uses a different sampling window. Android hardware has not been benchmarked.
+## Screens and rendering
 
-## Android artifacts
+`tests/test_ui.gd`: **28 headless checks / 29 checks with the real renderer**, zero failures. It verifies chart-first launch, a single ship choice after selecting a voyage, loadout stats, locked automation in pause/settings, Shipyard purchases, individual-side increments, gold updates, daily/endless compatibility, logbook/settings, and screenshot playback never recording progress. Native rendering additionally verifies long upgrade descriptions wrap inside their cards.
 
-The Gradle debug APK and debug AAB packaging paths succeeded. Build verification checks package/version, API24 minimum/API36 target, portrait orientation, permissions, Play Games plugin classes and the supplied game ID, bundled campaign data, architecture, signature/zip alignment where applicable, and16KB native segment alignment. [Exact artifact details and signing limitations](ANDROID_BUILD.md).
+Reviewed phone/tablet captures of the chart, ship chooser, manual combat, boss, logbook and Shipyard. An isolated rank-11 test profile in `tests/render_arsenal.gd` verifies both grapeshot controls visually without modifying a real save.
 
-No Android device was connected. Only an old x86 emulator system image was available while the APK targets ARM64; no matching emulator/physical run is represented as tested. Touch ergonomics, multi-touch, safe areas, audio focus, temperature, battery use, and sustained phone frame rates require hardware testing.
+The actual GL Compatibility stress benchmark (`tests/test_render.gd`) ran 600 measured frames after warmup at 540×960, capped at 60 FPS, on an NVIDIA GeForce GT 1030:
 
-## Store capture provenance
+| Measurement | Result |
+| --- | ---: |
+| Average frame interval | 16.668 ms (approximately 60 FPS) |
+| 95th percentile | 16.776 ms |
+| Worst measured frame | 19.411 ms |
+| Peak draw calls | 442 |
+| Peak static engine memory | 63.20 MiB |
+| Peak active simulation entities | 196 |
 
-`tools/capture_viewport.gd` renders the real main scene into an exact-size SubViewport. This avoids Windows shrinking portrait windows to fit the desktop. The capture script writes1080×1920 phone,1200×1920 7-inch tablet, and1600×2560 10-inch tablet images, showing ships, chart, combat, boss, and logbook. Screenshot dimensions label intended device classes, not a claim that those physical devices were used.
+The engine process monitor's separate 95th-percentile sample was 19.325 ms. This is a Windows rendering measurement, not an Android hardware benchmark.
 
-Combat captures use reproducible in-engine enemy placement and ordinary simulation before freezing a frame. They do not invent score/UI or resize a desktop screenshot. Opaque alpha is removed when converting to store-ready RGB without changing rendered pixels. `store/screenshots/manifest.json` records sizes, hashes, state, and provenance. Recapture the final signed Android build before release.
+## Endless and Daily Drift regression checks
 
-## Remaining release checks
+The full **20-minute endless simulation** remains active and bounded: observed peaks were 14 enemies, 26 bullets, 195 particles, 68 pickups, 61 island entries and 29 geometry-cache entries. Hard limits are 14 enemies, 220 bullets, 320 particles and 70 pickups. Terrain and navigation caches are pruned. The 90-second Daily Drift challenge also completes independently of finite campaign rules.
 
-- Configure actual Play Games achievement/board IDs, package/certificate credentials, test accounts, and owner permissions; test authenticated sign-in/submission and cross-device cloud round trips.
-- Address or verify the pinned plugin's residual-conflict resolver and optimistic native commit-acknowledgement limitations described in [PLAY_GAMES.md](PLAY_GAMES.md).
-- Sign a release AAB privately, increment version code, run Play pre-launch/native compatibility checks, and validate Android16/large-screen behavior.
-- Complete human/device QA, support/privacy/Console declarations, final Android screenshots, and required testing tracks.
+## Android artifacts and capture provenance
 
-These are publishing dependencies, not completed cloud/device tests.
+Export presets use version **0.2.0 / code 2**, preserving package and debug signing identity so an existing installation can be updated. [ANDROID_BUILD.md](ANDROID_BUILD.md) records the final APK/AAB, hashes and packaging checks. The APK is the installable debug build; the unsigned debug AAB is a packaging preview.
+
+There are **18 actual Godot screenshots**, six states for each of phone 1080×1920, 7-inch tablet 1200×1920 and 10-inch tablet 1600×2560. A SubViewport renders at the exact size, avoiding desktop window clamping. Combat/boss images play the authored encounter with a manual-input test driver before freezing a genuine frame; they insert no ships, land or supplies. Screenshot playback bypasses progression writes. The real profile save timestamp was checked during capture and remained unchanged.
+
+`store/screenshots/manifest.json` records dimensions, SHA-256 hashes and provenance. The only conversion removes an opaque alpha channel for store-ready RGB; no resizing, invented UI, score replacement or device-frame composition is performed. These are desktop game renders and do not claim physical phone/tablet testing.
+
+## Remaining practical checks
+
+Install the updated APK on an ARM64 Android device, confirm existing progress and manual control feel, and test simultaneous touches, safe areas, background/resume, sound focus, temperature/battery behavior and sustained frame rate. Human feedback should guide future difficulty and Shipyard-price tuning. The sandbox's Windows certificate-store warning did not prevent offline logic or rendering; no game script/resource errors remain in the passing suites.
+
+Google credentials/IDs, authenticated cloud round trips, private release signing, final Android screenshots and Play Console submission remain the separate owner publishing work described in the setup documents.

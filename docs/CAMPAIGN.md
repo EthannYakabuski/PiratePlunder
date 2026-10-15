@@ -1,148 +1,198 @@
-# PiratePlunder campaign and progression design
+# PiratePlunder finite campaign contract
 
-This is the authored content contract for the portrait arcade MVP. The campaign has 50 levels across five biomes. Every biome contains combat, treasure, and survival challenges, followed by a flagship boss. The four player ships share campaign unlocks and stars; each ship earns its own experience.
+The campaign contains 50 finite authored battles across five biomes, with 526 enemy ships organized into 142 named encounters. Every mission requires clearing its entire listed fleet. The four player ships share campaign unlocks and stars and earn experience separately.
 
-## Content files
+This document describes `data/campaign.json` with `schema_version: 1`, `campaign_format: "finite_authored_fleets_v2"`, and `topology_revision: 3`. The format tag distinguishes this campaign from the earlier random-spawn prototype. Old coin-count and survive-a-timer missions have been replaced by authored fleet encounters while preserving level IDs, names, biomes, rewards, and star thresholds.
 
-- `data/campaign.json`: five palettes, six enemy archetypes, 50 complete level configurations, and Endless Ocean tuning.
-- `data/ships.json`: four base stat cards, reused asset paths, perks, and per-ship rank increments.
-- `data/achievements.json`: 28 names, descriptions, conditions, icon keys, and blank Play Games IDs.
-- `data/leaderboards.json`: four boards, metric bindings, score formats, and blank Play Games IDs.
+## Campaign completion and fleet sequencing
 
-All files use `schema_version: 1`. Load them with Godot's JSON parser as dictionaries. JSON numbers arrive as numeric variants; convert IDs/counts to integers where necessary.
+Level 1 starts unlocked. Winning level N unlocks N+1 for every ship. An unlocked mission can always be replayed.
 
-## Asset review and ship choices
+The first named encounter deploys immediately at its authored coordinates. Later encounters deploy two seconds after the current fleet has been completely sunk. There is no elapsed-time victory, deadline defeat, recurring enemy population, or distance-based despawn in campaign mode. Every listed enemy remains accounted for until sunk. A voyage ends in victory only after the last group has deployed and every authored ship is sunk. Hull reaching zero ends in defeat.
 
-The supplied Kenney Pirate Pack preview and ship PNGs were inspected visually. Its flat, warm, playful style is the visual foundation: wooden brown hulls, thick simple outlines, bright sails, turquoise water, sand islands, and small cartoon explosions. No new player or enemy ship art is required for this MVP. Supplied ship PNGs point upward; rotation should use upward as the ship's forward direction.
+`objective` is always `{"type": "fleet", "target": N}`, where N exactly equals the sum of all encounter ship counts. Collecting treasure, waiting, or sinking a flagship while its escorts remain cannot finish the level. Boss levels list their flagship exactly once in their final encounter; the boss configuration is combat data, not a separate spawn trigger.
 
-| Ship ID | Ship | Reused default-size PNG | Hull | Speed | Damage per ball | Balls per broadside | Side cooldown |
-|---|---|---|---:|---:|---:|---:|---:|
-| `swiftfin` | Swiftfin | `ship (4).png`, green | 85 | 170 | 20 | 2 | 0.8s |
-| `ironclad` | Ironclad | `ship (2).png`, intact skull | 150 | 110 | 26 | 3 | 1.4s |
-| `redwake` | Redwake | `ship (3).png`, intact red | 110 | 140 | 28 | 2 | 1.1s |
-| `golden_gull` | Golden Gull | `ship (6).png`, gold | 100 | 150 | 22 | 2 | 1.0s |
+Levels 1–3 contain 3, 4, and 6 ships in groups of no more than three. Later missions contain 8–14 ships in two or three groups, with at most five ships simultaneously active. Encounter sizes deliberately stay small enough for readable portrait combat and repeated short sessions.
 
-All ship paths are rooted at `res://Assets/PirateStuff/PNG/Retina/Ships/`. Swiftfin trades hull for maneuvering and reload speed. Ironclad rewards planned turns and close heavy volleys. Redwake has the strongest individual shots and balanced handling. Golden Gull attracts pickups over 130 world units and earns 20% more collected coins. The other ships' pickup radii are 76–88 units.
+## Source schema
 
-Speeds are world units per second; `turn_speed` is radians per second. `damage` applies to each cannonball. `cooldown` is independent for the left and right side. These statistics assume a portrait 540×960 reference viewport and a ship displayed at approximately 60–80px high.
+A level supplies `id`, `name`, `biome`, `enemy_strength`, `layout`, `encounters`, `objective`, `reward`, `star_targets`, `boss`, `briefing`, `design_note`, and `tutorial`.
 
-## Campaign rules and data contract
+```json
+{
+  "id": 2,
+  "name": "Coral Courtesy",
+  "biome": "sunlit_shoals",
+  "objective": {"type": "fleet", "target": 4},
+  "layout": {
+    "id": "coral_gate",
+    "name": "Coral Gate",
+    "archetype": "fork",
+    "challenge": "Twin-island fork",
+    "bounds": [-950, -800, 1900, 1600],
+    "player_spawn": [-850, 0],
+    "player_heading": 0,
+    "islands": [
+      {"id": "example_island", "pos": [0, -240], "radius": 160, "trees": 3}
+    ],
+    "hazards": [],
+    "pickups": [
+      {"id": "example_supply", "type": "repair", "pos": [-730, 0]}
+    ]
+  },
+  "encounters": [
+    {
+      "id": "l02_fleet_1",
+      "name": "Gate Watch",
+      "delay": 0,
+      "formation": "line",
+      "ships": [
+        {"id": "l02_f1_ship_1", "kind": "chaser", "pos": [-500, -60], "heading": 3.141593},
+        {"id": "l02_f1_ship_2", "kind": "chaser", "pos": [-500, 60], "heading": 3.141593}
+      ]
+    },
+    {
+      "id": "l02_fleet_2",
+      "name": "Outer Patrol",
+      "delay": 2,
+      "formation": "line",
+      "ships": [
+        {"id": "l02_f2_ship_1", "kind": "chaser", "pos": [270, -60], "heading": 3.141593},
+        {"id": "l02_f2_ship_2", "kind": "chaser", "pos": [270, 60], "heading": 3.141593}
+      ]
+    }
+  ]
+}
+```
 
-Unlock level 1 initially. A victory in level N unlocks N+1 for all ships; replaying an unlocked level is always allowed. Every voyage earns its collected treasure and battle XP. `reward.coins` and `reward.xp` are additional first-clear rewards, paid once per level regardless of ship, and stored under a shared `campaign:<level_id>` reward event. Replays still improve stars, scores, treasure, and ship XP. The older authoring field `reward.first_clear_bonus` remains in the catalog as reference tuning and is not paid separately. The progression implementation is authoritative for reward accounting.
+The example illustrates field types; `data/campaign.json` contains the complete, validated map.
 
-Every level explicitly supplies:
+Coordinates are world units with +X east/right and +Y south/down. `bounds` is `[minimum_x, minimum_y, width, height]`. Headings are radians from +X. Arrays of two numbers are converted to Godot vectors. An island is a circular solid obstacle with decorative trees. Every pickup and hazard has an exact authored position.
 
-- `id`, `name`, `biome`, and a one-sentence `briefing`.
-- `objective: {type, target}`, using `kills`, `coins`, `survive`, or `boss`.
-- `duration_limit`, `spawn_interval`, `max_enemies`, weighted `enemy_pool`, and `enemy_strength`.
-- `waves: [{at, enemies: [enemy_key, ...]}]` for scheduled additions. Times are elapsed voyage seconds. These additions respect the enemy cap.
-- `hazards`, `treasure_count`, `treasure_value`, and `powerup_interval`.
-- `boss` as null or a named flagship configuration, plus `star_targets`.
+Hazards carry `pos`, `type`, `radius`, `damage`, `force`, `period`, `duration`, and `phase`. A current has no direct damage. Mines and whirlpools create danger circles. Storms have two active seconds in a nine-second cycle, with an intervening safe phase. Contact damage uses a grace period rather than applying once per frame.
 
-A repeated key in `enemy_pool` increases that archetype's selection probability. The six enemy keys are `chaser`, `skirmisher`, `sniper`, `rammer`, `runner`, and `boss`. Their stats and asset paths are stored under `campaign.enemies`. The runner flees the player and drops more loot. Bosses are larger versions of the supplied pirate ships.
+The six enemy keys are `chaser`, `skirmisher`, `sniper`, `rammer`, `runner`, and `boss`; their base combat statistics and asset references remain in the global `enemies` dictionary. Ships have globally unique IDs so encounter accounting never depends on names or current screen visibility. `formation` explains the authored arrangement; runtime movement starts from the explicit ship coordinates.
 
-For a coin objective, count actual coins collected during the current voyage, including enemy drops and stationary treasure. Golden Gull's wider pickup radius helps collection; its 20% multiplier applies to account rewards after the voyage, while the objective counter counts actual pickups. `treasure_count` is never lower than a treasure objective's target, so a movement-first solution remains possible.
+Campaign levels intentionally omit the legacy `spawn_interval`, `max_enemies`, `enemy_pool`, `waves`, `spawn_pattern`, `spawn_safe_radius`, `treasure_count`, `treasure_value`, `powerups`, `powerup_interval`, `hazards`, and `duration_limit` fields at the level root. Geography, supplies, and enemies come from `layout` and `encounters`. The global `endless` tuning is retained for Endless Ocean.
 
-For survival, win once elapsed seconds meet `objective.target`. For kills, win at the required enemy sink count. For bosses, win when the named flagship sinks. Winning ends the voyage immediately. If health reaches zero or a non-survival deadline expires first, the voyage ends in defeat.
+## Geography and attack routes
 
-Every victory earns one star. Earn a second star by finishing within `star_targets.time` seconds, and a third for remaining hull ratio ≥ `star_targets.health` (0.6). Persist each level's maximum star count, capped at three. Survival time stars are intentionally forgiving because the objective already fixes the finish time. `star_targets.score` is optional reference tuning and does not add a fourth star.
+Each biome contains all ten obstacle graphs below, with different orientations, enemy compositions, hazard placements, supplies, and encounter sizes. Maps include eastbound, westbound, southbound, and diagonal approaches as well as loops around islands and branching routes. The variation changes how players approach a fight, rather than only changing the number of enemies.
 
-`spawn_pattern` and `design_note` are descriptive authoring fields. Core gameplay can consume the numerical spawn and wave fields without specialized formation logic. `spawn_safe_radius` prevents hazards or enemies appearing immediately on the player.
+| Archetype | Spatial challenge |
+|---|---|
+| `open_cove` | A substantial headland divides open water into a direct approach and a protected outer bypass. |
+| `fork` | Two 160-radius islands leave a 160-unit center gate; broad outside routes lead around either shore. |
+| `citadel` | A 210-radius central island forces travel around the coast. Fleets occupy southern, western, and northern arcs. |
+| `z_convoy` | Two large offset islands bend the attack route into a Z between southeast, western, and northeast fighting basins. |
+| `atoll` | Six separate islets enclose a harbor with wide entrance and exit gates. Fleets guard the outside approach, inside water, and exit. |
+| `crossroads` | Three large headlands define south, west, and east arms. Fleet groups occupy different branches. |
+| `s_channel` | Four large alternating islands protect eastern, western, and eastern fleet pockets along an S-shaped crossing. |
+| `archipelago` | Seven islands form several connected cross-channels between southeast, central, and northwest battle pockets. |
+| `reef_perimeter` | Eight reef islands surround an open inner sea. Encounters follow its west, north, and east edges. |
+| `boss_court` | Outer escort groups occupy opposing bays; the named flagship and its escorts fight in the open central court. |
 
-## Biomes and challenges
+The largest island radius is 210 units; a whole citadel coast is visible on a map thumbnail. The largest rotated map spans 2,829 world units on either axis. Every map remains rectangular, with all physical content contained inside it. Terrain appears at authored positions and cannot regenerate into a different shape during a campaign voyage.
 
-| Range | Biome | Main challenge | Visual theme |
+The source intentionally leaves multiple safe attack and retreat routes. Narrow-looking island gates are checked for a real navigable route at the runtime's 48-unit navigation inflation. For example, twin-island forks have a 160-unit center gate in addition to their outer flanks.
+
+## Biomes
+
+| Levels | Biome | Main enemies and hazards | Visual theme |
 |---|---|---|---|
-| 1–10 | Sunlit Shoals | Learn broadsides, easy chasers, treasure runners | Turquoise sea, coral, sandy palm islands |
-| 11–20 | Mangrove Maze | Currents, orbiters, charging ships | Green water, mangrove channels, driftwood |
-| 21–30 | Ember Archipelago | Kiting snipers and explosive powder kegs | Volcanic rocks, black sand, warm ember lights |
-| 31–40 | Frostwake Reach | Iceberg navigation and fast rammers | Arctic blue water, ice floes, bright snow |
-| 41–50 | Tempest Crown | Mixed formations, whirlpools, timed storms | Purple sea, stormlight, a golden final flagship |
+| 1–10 | Sunlit Shoals | Readable deckhands, orbiters, treasure escorts; a gentle current late in the set | Turquoise water, coral, sandy palm islands |
+| 11–20 | Mangrove Maze | Orbiting skirmishers, rammers, and currents around large roots and branches | Emerald water, mangroves, driftwood |
+| 21–30 | Ember Archipelago | Sniper crossfire, ramming escorts, and placed powder kegs | Volcanic rock, black sand, warm embers |
+| 31–40 | Frostwake Reach | Large iceberg channels, fast rammers, distant batteries, and storm cells | Arctic blue water, snow and ice |
+| 41–50 | Tempest Crown | Mixed formations, whirlpools, mines, and timed storm lanes | Purple storm water and a golden final flagship |
 
-Hazard tuning:
+## All 50 encounters
 
-| Type | Radius | Damage | Other effect |
-|---|---:|---:|---|
-| `reef` | 42 | 8 | Solid island/rock/iceberg; use biome label and palette |
-| `current` | 88 | 0 | 28-unit directional drift |
-| `mine` | 25 | 20 | Explosive collision hazard |
-| `maelstrom` | 86 | 8 | Pull strength 38 toward the center |
-| `storm` | 70 | 12 | Active for 2 seconds every 9 seconds; telegraph before activation |
+The route column gives compass directions between the player start and successive fleet centers. It describes the approach sequence, while islands and hazard circles determine the available water routes. Fleet sizes list each group in deployment order.
 
-Damage values are suggested collision or timed-hit amounts, not per-frame amounts. Use contact grace periods. Currents are readable and non-damaging; mines need room between them; storms require visual warnings. Every chunk should reserve a safe area around the player.
+| # | Level | Obstacle graph | Route | Fleet sizes |
+|---:|---|---|---|---|
+| 1 | First Broadside | open cove | NE | 3 |
+| 2 | Coral Courtesy | fork | E → E | 2 + 2 |
+| 3 | Two-Sided Trouble | citadel | W → SW | 3 + 3 |
+| 4 | Gold Rush Bay | z convoy | NE → N | 3 + 3 |
+| 5 | Round the Palms | atoll | S → S | 3 + 4 |
+| 6 | Broadside Boulevard | crossroads | E → NE | 4 + 4 |
+| 7 | Treasure Tailwind | s channel | NW → W | 3 + 4 |
+| 8 | Sloop Soup | archipelago | W → SW → SW | 3 + 3 + 2 |
+| 9 | Sunset Skirmish | reef perimeter | SE → SW → NW | 3 + 4 + 2 |
+| 10 | Captain Coconut | boss court | NW → NE → SW | 2 + 2 + 3 |
+| 11 | Greenwater Greeting | fork | E → E → E | 3 + 4 + 1 |
+| 12 | Current Affairs | s channel | N → NW → E | 3 + 4 + 1 |
+| 13 | Mangrove Mouths | atoll | S → S → S | 3 + 3 + 3 |
+| 14 | Driftwood Derby | z convoy | NW → W → N | 3 + 3 + 3 |
+| 15 | Smuggler's Shortcut | archipelago | W → SW → SW | 3 + 4 + 3 |
+| 16 | Root and Cannon | citadel | NE → N → E | 3 + 4 + 3 |
+| 17 | Swamp Carousel | reef perimeter | NW → NE → SE | 3 + 4 + 3 |
+| 18 | Ram Jam | crossroads | S → SE → W | 3 + 4 + 3 |
+| 19 | Last Light Lagoon | open cove | SE → E → SE | 3 + 4 + 4 |
+| 20 | Admiral Alligator | boss court | SW → NW → SE | 3 + 2 + 4 |
+| 21 | Welcome to the Boom | open cove | NW → W → NW | 3 + 4 + 3 |
+| 22 | Powder Keg Picnic | archipelago | S → SE → SE | 3 + 4 + 3 |
+| 23 | Longshot Lookout | citadel | NE → N → E | 3 + 4 + 4 |
+| 24 | Black Sand Sprint | s channel | E → NE → S | 3 + 4 + 5 |
+| 25 | Cinder Smugglers | z convoy | N → NW → NE | 3 + 4 + 3 |
+| 26 | Ash and Splash | crossroads | NW → W → NE | 4 + 4 + 4 |
+| 27 | Ember Evasion | atoll | S → S → S | 3 + 4 + 4 |
+| 28 | Barrel Roll Bay | reef perimeter | SW → NW → NE | 4 + 4 + 4 |
+| 29 | The Last Hot Haul | fork | E → E → E | 3 + 4 + 5 |
+| 30 | Commodore Cinder | boss court | NW → NE → SW | 3 + 3 + 4 |
+| 31 | Cold Open | fork | S → S → S | 4 + 4 + 4 |
+| 32 | Iceberg Express | s channel | NW → W → NE | 4 + 4 + 4 |
+| 33 | Snowball Fight | archipelago | E → NE → NE | 4 + 4 + 4 |
+| 34 | Polar Pursuit | z convoy | N → NW → NE | 4 + 4 + 5 |
+| 35 | Frozen Fortune | atoll | W → W → W | 4 + 4 + 4 |
+| 36 | Hull on Ice | crossroads | S → SE → W | 4 + 4 + 5 |
+| 37 | Whiteout Watch | citadel | NE → N → E | 4 + 4 + 4 |
+| 38 | Berg Brawl | reef perimeter | NE → SE → SW | 4 + 5 + 5 |
+| 39 | Northern Lights Heist | open cove | N → NW → N | 4 + 5 + 5 |
+| 40 | Baron Blizzard | boss court | SE → SW → NE | 4 + 3 + 4 |
+| 41 | Eye of the Tide | citadel | NE → N → E | 4 + 4 + 4 |
+| 42 | Stormbound Spoils | archipelago | W → SW → SW | 4 + 4 + 4 |
+| 43 | Crown's Crossfire | fork | S → S → S | 4 + 4 + 5 |
+| 44 | Whirlpool Waltz | atoll | E → E → E | 4 + 4 + 5 |
+| 45 | Royal Ransom | z convoy | NW → W → N | 4 + 5 + 5 |
+| 46 | Thunderstruck Fleet | crossroads | N → NW → E | 4 + 5 + 5 |
+| 47 | The Sea Bites Back | s channel | E → NE → S | 4 + 5 + 5 |
+| 48 | Last Broadside Standing | reef perimeter | SE → SW → NW | 4 + 5 + 5 |
+| 49 | Crown Jewel Caper | open cove | NW → W → NW | 4 + 5 + 5 |
+| 50 | The Pirate Monarch | boss court | N → E → W | 4 + 4 + 4 |
 
-## All 50 authored levels
+The five flagships are Captain Coconut (220 hull), Admiral Alligator (300), Commodore Cinder (380), Baron Blizzard (460), and the Pirate Monarch (600). Their attack patterns are broadside, charge, fan, charge, and spiral. Their speed, damage, cooldown, and cannon count use their explicit boss dictionaries; fan attacks add two spread shots to their base count. All escorts must also be sunk.
 
-Each row is a distinct objective, enemy mix, timed wave set, and hazard combination. Complete wave lists and intent are in the JSON.
+Map previews are available for [Sunlit Shoals](campaign_maps/sunlit_shoals.png), [Mangrove Maze](campaign_maps/mangrove_maze.png), [Ember Archipelago](campaign_maps/ember_archipelago.png), [Frostwake Reach](campaign_maps/frostwake_reach.png), and [Tempest Crown](campaign_maps/tempest_crown.png).
 
-| # | Level | Objective | Deadline | Hazards |
-|---:|---|---|---:|---|
-| 1 | First Broadside | kills 4 | 90s | None |
-| 2 | Coral Courtesy | kills 6 | 95s | 1 coral reef |
-| 3 | Two-Sided Trouble | kills 8 | 105s | 2 coral reef |
-| 4 | Gold Rush Bay | coins 12 | 100s | 2 coral reef |
-| 5 | Round the Palms | survive 50s | 80s | 3 coral reef |
-| 6 | Broadside Boulevard | kills 12 | 110s | 2 coral reef |
-| 7 | Treasure Tailwind | coins 18 | 115s | 1 tidal current, 1 coral reef |
-| 8 | Sloop Soup | kills 15 | 120s | 3 coral reef |
-| 9 | Sunset Skirmish | survive 70s | 100s | 4 coral reef |
-| 10 | Captain Coconut | boss 1 | 150s | 2 coral reef |
-| 11 | Greenwater Greeting | kills 12 | 110s | 1 tidal current, 2 mangrove island |
-| 12 | Current Affairs | coins 20 | 110s | 2 tidal current, 1 mangrove island |
-| 13 | Mangrove Mouths | kills 14 | 120s | 4 mangrove island |
-| 14 | Driftwood Derby | survive 75s | 105s | 2 tidal current, 3 mangrove island |
-| 15 | Smuggler's Shortcut | coins 24 | 115s | 3 tidal current |
-| 16 | Root and Cannon | kills 18 | 125s | 4 mangrove island, 1 tidal current |
-| 17 | Swamp Carousel | survive 85s | 115s | 3 tidal current, 2 mangrove island |
-| 18 | Ram Jam | kills 16 | 125s | 2 mangrove island, 1 tidal current |
-| 19 | Last Light Lagoon | coins 28 | 130s | 3 tidal current, 3 mangrove island |
-| 20 | Admiral Alligator | boss 1 | 160s | 2 tidal current, 2 mangrove island |
-| 21 | Welcome to the Boom | kills 16 | 120s | 2 powder keg |
-| 22 | Powder Keg Picnic | coins 26 | 125s | 4 powder keg, 1 black-sand rocks |
-| 23 | Longshot Lookout | kills 18 | 130s | 2 powder keg, 2 black-sand rocks |
-| 24 | Black Sand Sprint | survive 85s | 115s | 3 powder keg, 1 tidal current |
-| 25 | Cinder Smugglers | coins 30 | 130s | 5 powder keg |
-| 26 | Ash and Splash | kills 22 | 135s | 3 powder keg, 3 black-sand rocks |
-| 27 | Ember Evasion | survive 95s | 125s | 4 powder keg, 1 storm front |
-| 28 | Barrel Roll Bay | kills 20 | 135s | 6 powder keg |
-| 29 | The Last Hot Haul | coins 36 | 140s | 4 powder keg, 2 tidal current |
-| 30 | Commodore Cinder | boss 1 | 170s | 3 powder keg |
-| 31 | Cold Open | kills 20 | 130s | 3 iceberg |
-| 32 | Iceberg Express | coins 32 | 135s | 5 iceberg, 1 tidal current |
-| 33 | Snowball Fight | kills 24 | 140s | 3 iceberg |
-| 34 | Polar Pursuit | survive 95s | 125s | 4 iceberg, 1 tidal current |
-| 35 | Frozen Fortune | coins 38 | 140s | 6 iceberg |
-| 36 | Hull on Ice | kills 26 | 145s | 4 iceberg, 2 tidal current |
-| 37 | Whiteout Watch | survive 105s | 135s | 3 iceberg, 2 storm front |
-| 38 | Berg Brawl | kills 28 | 150s | 5 iceberg |
-| 39 | Northern Lights Heist | coins 42 | 150s | 4 iceberg, 2 tidal current |
-| 40 | Baron Blizzard | boss 1 | 180s | 3 iceberg, 1 tidal current |
-| 41 | Eye of the Tide | kills 26 | 145s | 1 whirlpool |
-| 42 | Stormbound Spoils | coins 40 | 145s | 2 storm front, 1 whirlpool |
-| 43 | Crown's Crossfire | kills 30 | 150s | 1 whirlpool, 2 storm rocks |
-| 44 | Whirlpool Waltz | survive 110s | 140s | 2 whirlpool, 1 tidal current |
-| 45 | Royal Ransom | coins 46 | 150s | 1 whirlpool, 3 powder keg |
-| 46 | Thunderstruck Fleet | kills 32 | 155s | 3 storm front, 2 storm rocks |
-| 47 | The Sea Bites Back | survive 120s | 150s | 2 whirlpool, 1 storm front |
-| 48 | Last Broadside Standing | kills 36 | 165s | 1 whirlpool, 2 storm front, 2 powder keg |
-| 49 | Crown Jewel Caper | coins 50 | 165s | 2 whirlpool, 3 powder keg |
-| 50 | The Pirate Monarch | boss 1 | 180s | 1 whirlpool, 2 storm front |
+## Stars, rewards, and per-ship progression
 
-The five bosses are Captain Coconut (220 hull), Admiral Alligator (300), Commodore Cinder (380), Baron Blizzard (460), and the Pirate Monarch (600). Their attack patterns are broadside, charge, fan, charge, and spiral respectively. Each appears after eight seconds. Regular reinforcement cadence is deliberately slower on boss stages, preserving time to line up attacks.
+A victory earns one star. Finishing within `star_targets.time` earns another, and remaining hull ratio at or above `star_targets.health` earns the third. The current threshold is 0.6. `star_targets.score` is reference tuning and does not create an extra star. Persist each level's best result, capped at three; replaying a level cannot inflate the total above 150.
 
-## Experience and session rewards
+`reward.coins` and `reward.xp` are additional first-clear rewards, paid once per shared level under `campaign:<level_id>`. Collected treasure and battle XP remain available on every voyage, including replays. The retained `reward.first_clear_bonus` field is reference tuning and is not paid separately. The progression implementation is authoritative for accounting.
 
-Each ship starts at rank 1 and uses the same rank threshold curve. The cumulative XP threshold for reaching rank N+1 is `120 × N × (N + 1) / 2`, with rank capped at 20. Each earned rank adds hull and damage and reduces the side-cooldown multiplier by 0.01, with a 0.65 multiplier floor. The ship JSON carries the exact increments, including Ironclad's extra hull and Redwake's larger damage bonus.
+Battle XP is `15 + 5 × ships sunk + floor(seconds sailed / 5)`. Each ship starts at rank 1. Reaching rank N+1 requires cumulative XP `120 × N × (N + 1) / 2`, up to rank 20. Each earned rank adds the ship's authored hull and damage increments and reduces its side-cooldown multiplier by 0.01, with a 0.65 floor.
 
-Every voyage earns `15 + 5 × ships sunk + floor(seconds sailed / 5)` battle XP. The first clear also pays the authored `reward.xp`. A ship's base perk works immediately. No content or ship needs a purchase. Coins are a reward score and can support future cosmetic progression; the MVP avoids mandatory grinding.
+The supplied Kenney ships, terrain, UI, foliage, and audio remain the visual foundation. Full ship PNGs have their bows toward the image bottom; the renderer applies its rotation offset to match world heading. Intact player variants are green `ship (4).png` for Swiftfin, skull `ship (2).png` for Ironclad, red `ship (3).png` for Redwake, and gold `ship (6).png` for Golden Gull, under `res://Assets/PirateStuff/PNG/Retina/Ships/`.
 
-Daily quest and login reward generation belongs to the progression service. Goals cover sinks, treasure, powerups, successful voyages, firing, and sailing, and should fit one to three runs. The current daily calendar uses UTC date keys consistently across devices. Cloud merge preserves claimed dates and quest progress to prevent accidental double claims.
+| Ship | Hull | Speed | Damage per cannonball | Cannonballs per side | Side cooldown |
+|---|---:|---:|---:|---:|---:|
+| Swiftfin | 85 | 170 | 20 | 2 | 0.8s |
+| Ironclad | 150 | 110 | 26 | 3 | 1.4s |
+| Redwake | 110 | 140 | 28 | 2 | 1.1s |
+| Golden Gull | 100 | 150 | 22 | 2 | 1.0s |
+
+Speed is world units per second and turning speed is radians per second. Left and right side cooldowns are independent. Swiftfin rewards sharp turns and fast reloads; Ironclad trades speed for hull and a third cannon; Redwake deals the highest individual-shot damage. Golden Gull attracts pickups over 130 units and applies a 20% multiplier to account coin rewards after the voyage. Objective progress and in-voyage treasure displays count actual pickups.
+
+Daily quests and login rewards use the progression service's UTC date keys and merge claimed events across saves. No campaign battle requires a purchase or a ship rank to unlock.
 
 ## Endless Ocean
 
-Endless Ocean uses a fresh voyage seed with deterministic world chunks. Start in Sunlit Shoals and change the visual biome every 90 seconds. Enemy pressure grows from a 5-second spawn interval toward a 1.35-second floor over five minutes. Raise the concurrent enemy cap from 4 to at most 14. Add a named or reskinned boss every 90 seconds and increase enemy strength by 12% per minute.
+Endless Ocean retains a separate generative ruleset. Its voyage seed controls regenerating world chunks, visual biomes change every 90 seconds, recurring enemy pressure increases over time, and a new boss can arrive every 90 seconds. Enemy, cannonball, particle, pickup, and terrain caches remain bounded.
 
-The ocean continues indefinitely. Island/hazard chunks and offscreen enemies are recycled to keep memory bounded; enemy cap and particle limits take priority over decorative density. Endless runs use the same battle XP formula as campaign runs, including approximately 12 survival XP per minute. The catalog's `xp_per_minute: 20` is reference tuning, not an additional payment. Preserve best score and longest survival independently, because they may come from different voyages.
+Campaign never consumes these random population rules. Endless best score and longest survival are persisted independently because they can come from different voyages. It uses the same battle XP formula; the global `xp_per_minute` value remains reference tuning rather than a second XP payment.
 
 ## Achievements
 
@@ -196,16 +246,19 @@ The public Android game identifier `837392218124` and OAuth client identifier su
 
 For incremental achievements, synchronize absolute local totals to Play Games where the plugin offers an absolute step method; otherwise track submitted totals and send only positive deltas. Do not submit the full lifetime value as a fresh increment on every launch.
 
-## Assumptions and validation boundaries
 
-- The latest user flow is mode/level selection, then ship selection for that voyage; an initial ship showcase may introduce the four choices on first launch.
-- Campaign targets assume forward sailing plus wheel steering, independent left/right cannon buttons, and a one-hand assistance option.
-- Level 1 is the optional guided introduction. Levels 1–3 remain forgiving, with at most three simultaneous enemies and 4/6/8 sink targets.
-- Typical completion targets are 60–120 seconds; later bosses and demanding levels permit up to three minutes.
-- Ship and enemy PNG files were visually checked. JSON structure, IDs, objective consistency, and asset existence are validated independently of gameplay.
-- Numerical tuning is an authored starting point. Touch-device playtesting should check every ship, especially broadside hit rates, iceberg congestion, boss attack telegraphs, and late-stage survivability.
-- `design_note`, `spawn_pattern`, and music moods are descriptive authoring fields. Boss pattern labels select implemented broadside, charge, fan, or spiral attacks.
-- The runtime consumes authored enemy hull, speed, damage, reload, cannon count, coin drops, and score. Per-enemy `xp`, exact authoring `radius`, biome prose, and the `powerups` selection list are reference fields; XP and collision sizes use runtime policies, and supplies draw from the four implemented powerups.
-- Cannonball damage scales with the level, but hull uses a softened `0.8 + 0.2 × enemy_strength` scale. Boss speed, damage, reload, cannon count, and attack pattern use their explicit definitions. Fan-pattern bosses add two spread shots to their base cannon count.
-- Read [BALANCE.md](BALANCE.md) for automated gameplay results, navigation checks, and limits of headless performance evidence.
+## Validation and limits
+
+Run `python tools/validate_data.py` from the project directory. The current authored catalog passes 9,585 checks covering:
+
+- Exact total fleet targets, finite encounter ordering, unique ship and encounter IDs, one final flagship per boss map, and removal of random campaign fields.
+- World bounds, initial player clearance, hull clearance around islands and damaging hazards, separation between ships in the same fleet, and collectible placement.
+- A flood-fill of navigable water using 32-unit grid cells, the runtime's cell-center lattice, 48-unit island inflation, and four-neighbor movement. Every enemy and supply must connect to the player's component. The validator additionally avoids damaging hazard circles with a 40-unit margin.
+- Ten different obstacle graphs in every biome and unique physical map geometry after removing all names, IDs, and prose from the comparison.
+- Regression fixtures that intentionally introduce an incorrect objective total, an enemy on the player spawn, a player inside an island, a legacy random spawn field, and a sealed inner basin made from non-overlapping islands.
+- Ship resource paths, achievement and leaderboard definitions, service icons, and store image dimensions.
+
+A source clearance check proves routes exist; it does not prove that a human can steer them comfortably or that an enemy's movement AI will choose the best one. Engine integration tests and physical Android testing remain separate. Old random-spawn campaign performance numbers should not be used to claim this finite revision has been verified. See [BALANCE.md](BALANCE.md) and the latest test logs for runtime results.
+
+The desired ordinary session is approximately one to three minutes, with a forgiving introduction. Short, well-executed broadside runs may finish faster. Timers award stars rather than replacing the central requirement: sink the complete finite fleet.
 

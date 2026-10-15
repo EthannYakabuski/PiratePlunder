@@ -7,11 +7,12 @@ signal achievement_unlocked(achievement_id: String)
 signal daily_completed(quest_id: String)
 signal run_recorded(summary: Dictionary)
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
+const PREVIOUS_SAVE_VERSION := 2
 const SHIP_IDS := ["swiftfin", "ironclad", "redwake", "golden_gull"]
 const SUM_METRICS := ["runs_started", "enemies_sunk", "cannon_shots", "coins_collected", "powerups_collected", "bosses_sunk", "perfect_victories", "both_sides_kills", "seconds_played", "campaign_wins"]
 const MAX_METRICS := ["single_run_kills", "single_run_coins", "endless_best_seconds", "endless_best_score", "combo_max"]
-const DEFAULT_SETTINGS := {"music": true, "sfx": true, "haptics": true, "auto_fire": true, "reduced_motion": false, "tutorial_seen": false}
+const DEFAULT_SETTINGS := {"music": true, "sfx": true, "haptics": true, "auto_fire": false, "reduced_motion": false, "tutorial_seen": false}
 const QUEST_POOL := [
 	{"id": "sink", "name": "Sink 18 ships", "metric": "enemies_sunk", "target": 18, "coins": 90, "xp": 50},
 	{"id": "gold", "name": "Plunder 100 gold", "metric": "coins_collected", "target": 100, "coins": 100, "xp": 50},
@@ -28,6 +29,7 @@ var ships: Array = []
 var achievements: Array = []
 var leaderboards: Array = []
 var campaign: Array = []
+var upgrades: Array = []
 var settings: Dictionary = DEFAULT_SETTINGS.duplicate(true)
 var last_save_error := OK
 var last_load_recovered := false
@@ -45,6 +47,7 @@ func _load_definitions() -> void:
 	achievements = _read_definitions("res://data/achievements.json", "achievements")
 	leaderboards = _read_definitions("res://data/leaderboards.json", "leaderboards")
 	campaign = _read_definitions("res://data/campaign.json", "levels")
+	upgrades = _read_definitions("res://data/upgrades.json", "upgrades")
 
 func _read_definitions(path: String, key: String) -> Array:
 	if not FileAccess.file_exists(path):
@@ -57,7 +60,7 @@ func _read_definitions(path: String, key: String) -> Array:
 func reset_data(device_id: String = "") -> void:
 	if device_id.is_empty():
 		device_id = Crypto.new().generate_random_bytes(16).hex_encode()
-	data = {"version": SAVE_VERSION, "device_id": device_id, "devices": {}, "levels": {}, "maxima": {}, "ships_played": {}, "achievements": {}, "reward_events": {}, "daily": {}, "settings": DEFAULT_SETTINGS.duplicate(true), "settings_at": 0, "recent_runs": [], "last_run": {}, "services": {"achievement_queue": {}, "score_queue": {}}}
+	data = {"version": SAVE_VERSION, "device_id": device_id, "devices": {}, "levels": {}, "maxima": {}, "ships_played": {}, "achievements": {}, "reward_events": {}, "daily": {}, "purchases": {}, "settings": DEFAULT_SETTINGS.duplicate(true), "settings_at": 0, "recent_runs": [], "last_run": {}, "services": {"achievement_queue": {}, "score_queue": {}}}
 	settings = data.settings
 	_ensure_device()
 
@@ -131,12 +134,13 @@ func _safe_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
 
 func _sanitize(raw: Dictionary) -> Dictionary:
-	if int(_safe_number(raw.get("version", 0))) != SAVE_VERSION:
+	var source_version := int(_safe_number(raw.get("version", 0)))
+	if source_version not in [PREVIOUS_SAVE_VERSION, SAVE_VERSION]:
 		return {}
 	var identity := str(raw.get("device_id", ""))
 	if identity.is_empty() or identity.length() > 128:
 		return {}
-	var clean := {"version": SAVE_VERSION, "device_id": identity, "devices": {}, "levels": {}, "maxima": {}, "ships_played": {}, "achievements": {}, "reward_events": {}, "daily": {}, "settings": DEFAULT_SETTINGS.duplicate(true), "settings_at": _safe_number(raw.get("settings_at", 0)), "recent_runs": [], "last_run": _safe_dictionary(raw.get("last_run", {})).duplicate(true), "services": {"achievement_queue": {}, "score_queue": {}}}
+	var clean := {"version": SAVE_VERSION, "device_id": identity, "devices": {}, "levels": {}, "maxima": {}, "ships_played": {}, "achievements": {}, "reward_events": {}, "daily": {}, "purchases": {}, "settings": DEFAULT_SETTINGS.duplicate(true), "settings_at": _safe_number(raw.get("settings_at", 0)), "recent_runs": [], "last_run": _safe_dictionary(raw.get("last_run", {})).duplicate(true), "services": {"achievement_queue": {}, "score_queue": {}}}
 	for device in _safe_dictionary(raw.get("devices", {})):
 		if str(device).length() > 128:
 			continue
@@ -177,6 +181,20 @@ func _sanitize(raw: Dictionary) -> Dictionary:
 		var setting: Variant = _safe_dictionary(raw.get("settings", {})).get(key)
 		if setting is bool:
 			clean.settings[key] = setting
+	if source_version == PREVIOUS_SAVE_VERSION:
+		# Legacy assisted fire was free. It cannot become a paid capability.
+		clean.settings.auto_fire = false
+	else:
+		for ship_id in SHIP_IDS:
+			var receipts := _safe_dictionary(_safe_dictionary(raw.get("purchases", {})).get(ship_id, {}))
+			for upgrade_id in receipts:
+				var definition := _upgrade_definition(str(upgrade_id))
+				var receipt := _safe_dictionary(receipts[upgrade_id])
+				if definition.is_empty() or not _valid_purchase_receipt(receipt, definition):
+					continue
+				if not clean.purchases.has(ship_id):
+					clean.purchases[ship_id] = {}
+				clean.purchases[ship_id][str(upgrade_id)] = {"cost": int(definition.cost), "at": int(_safe_number(receipt.get("at", 0))), "device_id": str(receipt.device_id)}
 	for id in raw.get("recent_runs", []) if raw.get("recent_runs", []) is Array else []:
 		if str(id).length() <= 128 and clean.recent_runs.size() < 256:
 			clean.recent_runs.append(str(id))
@@ -232,6 +250,140 @@ func ship_bonus(ship_id: String) -> Dictionary:
 	var progression: Dictionary = ship_definition(ship_id).get("progression", {})
 	return {"hp": rank * float(progression.get("hp_per_rank", 3)), "damage": rank * float(progression.get("damage_per_rank", 0.7)), "cooldown_multiplier": maxf(0.65, 1.0 - rank * float(progression.get("cooldown_reduction_per_rank", 0.01))), "rank": rank + 1}
 
+func _upgrade_definition(upgrade_id: String) -> Dictionary:
+	for definition in upgrades:
+		if definition.id == upgrade_id:
+			return definition
+	return {}
+
+func _valid_purchase_receipt(receipt: Dictionary, definition: Dictionary) -> bool:
+	if receipt.is_empty() or definition.is_empty():
+		return false
+	return _receipt_matches(receipt, definition)
+
+func _receipt_matches(receipt: Dictionary, definition: Dictionary) -> bool:
+	var paid: Variant = receipt.get("cost", -1)
+	return (paid is int or paid is float) and is_finite(float(paid)) and float(paid) == float(definition.cost) and str(receipt.get("device_id", "")).length() > 0 and str(receipt.get("device_id", "")).length() <= 128
+
+func owns_upgrade(ship_id: String, upgrade_id: String) -> bool:
+	if ship_id not in SHIP_IDS:
+		return false
+	var definition := _upgrade_definition(upgrade_id)
+	if definition.is_empty():
+		return false
+	var receipt := _safe_dictionary(_safe_dictionary(_safe_dictionary(data.get("purchases", {})).get(ship_id, {})).get(upgrade_id, {}))
+	return _valid_purchase_receipt(receipt, definition)
+
+func _upgrade_active(ship_id: String, upgrade_id: String, visiting: Array = []) -> bool:
+	if upgrade_id in visiting or not owns_upgrade(ship_id, upgrade_id):
+		return false
+	var definition := _upgrade_definition(upgrade_id)
+	if ship_level(ship_id) < int(definition.required_rank):
+		return false
+	var next_visiting := visiting.duplicate()
+	next_visiting.append(upgrade_id)
+	for prerequisite in definition.get("requires", []):
+		if not _upgrade_active(ship_id, str(prerequisite), next_visiting):
+			return false
+	return true
+
+func get_ship_upgrades(ship_id: String) -> Array:
+	var result: Array = []
+	if ship_id not in SHIP_IDS:
+		return result
+	for definition in upgrades:
+		var option: Dictionary = definition.duplicate(true)
+		option.owned = owns_upgrade(ship_id, str(definition.id))
+		option.active = _upgrade_active(ship_id, str(definition.id))
+		option.eligible = false
+		option.reason = ""
+		if option.owned:
+			option.reason = "Owned"
+		elif ship_level(ship_id) < int(definition.required_rank):
+			option.reason = "Requires ship rank %d" % int(definition.required_rank)
+		else:
+			for prerequisite in definition.get("requires", []):
+				if not _upgrade_active(ship_id, str(prerequisite)):
+					option.reason = "Requires " + str(_upgrade_definition(str(prerequisite)).get("name", prerequisite))
+					break
+			if str(option.reason).is_empty():
+				if gold() < int(definition.cost):
+					option.reason = "Need %d more gold" % (int(definition.cost) - gold())
+				else:
+					option.eligible = true
+					option.reason = "Ready to buy"
+		result.append(option)
+	return result
+
+func purchase_upgrade(ship_id: String, upgrade_id: String) -> Dictionary:
+	var result := {"success": false, "message": "Unknown ship or upgrade", "ship_id": ship_id, "upgrade_id": upgrade_id, "cost": 0, "gold": gold()}
+	var choice: Dictionary = {}
+	for option in get_ship_upgrades(ship_id):
+		if option.id == upgrade_id:
+			choice = option
+			break
+	if choice.is_empty():
+		return result
+	result.message = choice.reason
+	if not choice.eligible:
+		return result
+	# One receipt per ship/upgrade is the spend ledger AND its ownership proof.
+	# Merging the same purchase on two devices can therefore never charge twice.
+	var previous_purchases := _safe_dictionary(data.get("purchases", {})).duplicate(true)
+	var previous_settings := settings.duplicate(true)
+	var previous_settings_at: Variant = data.get("settings_at", 0)
+	if not data.has("purchases"):
+		data.purchases = {}
+	if not data.purchases.has(ship_id):
+		data.purchases[ship_id] = {}
+	data.purchases[ship_id][upgrade_id] = {"cost": int(choice.cost), "at": int(Time.get_unix_time_from_system()), "device_id": str(data.device_id)}
+	if upgrade_id == "primary_auto":
+		settings.auto_fire = true
+		data.settings_at = int(Time.get_unix_time_from_system())
+	if save_data() != OK:
+		data.purchases = previous_purchases
+		settings = previous_settings
+		data.settings = settings.duplicate(true)
+		data.settings_at = previous_settings_at
+		result.message = "Could not save the upgrade. Your gold was kept."
+		return result
+	result.success = true
+	result.message = str(choice.name) + " fitted!"
+	result.cost = int(choice.cost)
+	result.gold = gold()
+	changed.emit()
+	return result
+
+func ship_loadout(ship_id: String) -> Dictionary:
+	var loadout := ship_definition(ship_id).duplicate(true)
+	if loadout.is_empty():
+		return {}
+	var bonus := ship_bonus(ship_id)
+	loadout.rank = int(bonus.rank)
+	loadout.hp = float(loadout.hp) + float(bonus.hp)
+	loadout.damage = float(loadout.damage) + float(bonus.damage)
+	loadout.cooldown = float(loadout.cooldown) * float(bonus.cooldown_multiplier)
+	loadout.cannons_port = int(loadout.get("cannon_count", 2))
+	loadout.cannons_starboard = int(loadout.get("cannon_count", 2))
+	for key in ["secondary_port", "secondary_starboard", "secondary_auto_port", "secondary_auto_starboard", "primary_auto"]:
+		loadout[key] = false
+	for definition in upgrades:
+		if not _upgrade_active(ship_id, str(definition.id)):
+			continue
+		var effects: Dictionary = definition.get("effects", {})
+		for key in ["cannons_port", "cannons_starboard"]:
+			loadout[key] += int(effects.get(key, 0))
+		for key in ["secondary_port", "secondary_starboard", "secondary_auto_port", "secondary_auto_starboard", "primary_auto"]:
+			loadout[key] = loadout[key] or effects.get(key, false) == true
+	loadout.secondary_damage = float(loadout.damage) * 1.6
+	loadout.secondary_cooldown = 3.8 * float(bonus.cooldown_multiplier)
+	loadout.secondary_speed = 245.0
+	loadout.secondary_spread = 0.24
+	loadout.secondary_count = 3
+	loadout.secondary_radius = 7.0
+	loadout.effective_primary_auto = loadout.primary_auto and settings.get("auto_fire", false) == true
+	return loadout
+
 func metric(id: String) -> float:
 	if id in MAX_METRICS:
 		return float(data.get("maxima", {}).get(id, 0))
@@ -274,7 +426,15 @@ func gold() -> int:
 	var value := int(metric("coins_collected"))
 	for event in data.get("reward_events", {}).values():
 		value += int(event.coins)
-	return value
+	return maxi(0, value - gold_spent())
+
+func gold_spent() -> int:
+	var spent := 0
+	for ship_id in SHIP_IDS:
+		for definition in upgrades:
+			if owns_upgrade(ship_id, str(definition.id)):
+				spent += int(definition.cost)
+	return spent
 
 func record_run(summary: Dictionary) -> Dictionary:
 	if data.is_empty():
@@ -459,6 +619,16 @@ func merge_cloud(remote: Dictionary) -> bool:
 		var incoming: Dictionary = clean.reward_events[key]
 		if not data.reward_events.has(key) or _event_precedes(incoming, data.reward_events[key]):
 			data.reward_events[key] = incoming.duplicate(true)
+	if not data.has("purchases"):
+		data.purchases = {}
+	for ship_id in clean.purchases:
+		if not data.purchases.has(ship_id):
+			data.purchases[ship_id] = {}
+		for upgrade_id in clean.purchases[ship_id]:
+			var incoming: Dictionary = clean.purchases[ship_id][upgrade_id]
+			var existing: Dictionary = data.purchases[ship_id].get(upgrade_id, {})
+			if existing.is_empty() or _purchase_precedes(incoming, existing):
+				data.purchases[ship_id][upgrade_id] = incoming.duplicate(true)
 	for date in clean.daily:
 		if not data.daily.has(date):
 			data.daily[date] = {}
@@ -488,3 +658,6 @@ func _event_precedes(first: Dictionary, second: Dictionary) -> bool:
 	if first.coins != second.coins:
 		return first.coins < second.coins
 	return first.xp < second.xp
+
+func _purchase_precedes(first: Dictionary, second: Dictionary) -> bool:
+	return int(first.at) < int(second.at) or (int(first.at) == int(second.at) and str(first.device_id) < str(second.device_id))

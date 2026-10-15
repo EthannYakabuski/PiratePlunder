@@ -2,7 +2,7 @@ param(
     [Parameter(Mandatory = $true)][string]$GodotExe,
     [string]$PythonExe = 'C:/Users/swimr/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe',
     [string[]]$Families = @('phone', 'tablet7', 'tablet10'),
-    [string[]]$Scenes = @('ships', 'chart', 'combat', 'boss', 'logbook')
+    [string[]]$Scenes = @('ships', 'chart', 'combat', 'boss', 'logbook', 'shipyard')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,7 +29,7 @@ foreach ($family in $Families) {
     if (-not $sizes.ContainsKey($family)) { throw "Unknown screenshot family: $family" }
     $width, $height = $sizes[$family]
     foreach ($scene in $Scenes) {
-        if ($scene -notin @('ships', 'chart', 'combat', 'boss', 'logbook')) { throw "Unknown capture scene: $scene" }
+        if ($scene -notin @('ships', 'chart', 'combat', 'boss', 'logbook', 'shipyard')) { throw "Unknown capture scene: $scene" }
         $relativeDirectory = "store/screenshots/$family/$scene"
         $destination = [IO.Path]::GetFullPath((Join-Path $projectRoot $relativeDirectory))
         if (-not $destination.StartsWith($captureRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
@@ -81,7 +81,7 @@ $manifest = [ordered]@{
     engine = $engineVersion
     capture_tool = 'tools/capture_screenshots.ps1 and tools/capture_viewport.gd'
     description = 'Actual application renders at phone and tablet portrait viewports. Desktop captures are not evidence of Android hardware or cloud integration testing.'
-    scene_note = 'Ships/chart/logbook use the current local profile. Combat/boss capture modes stage pickups and encountered enemies, automate 75 physics frames, then freeze genuine game output without claiming live hardware play or fabricated scores.'
+    scene_note = 'Chart/ships/logbook/shipyard show the current local profile. Combat/boss captures play the finite authored encounters with an automated steering/manual-fire test driver, then freeze genuine game output. No extra enemy ships, pickups or land are inserted.'
     files = $records
 }
 $manifest | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding utf8

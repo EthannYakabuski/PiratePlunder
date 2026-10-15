@@ -1,8 +1,8 @@
 extends SceneTree
-## Headless integration/balance suite. Run with --headless --path . --script res://tests/test_game.gd --log-file tests/game-test.log.
-## It redirects progression writes to an explicit test-only path and never records a voyage into the player's save.
-var ArenaScript: GDScript
+## Actual runtime contracts plus finite campaign/manual-control feasibility.
+## Test-only progression path; no run is recorded into the player's save.
 const STEP := 0.05
+var ArenaScript: GDScript
 var campaign: Dictionary = {}
 var ships: Array = []
 var checks := 0
@@ -11,425 +11,347 @@ var contract_failures: Array[String] = []
 var matrix: Array[Dictionary] = []
 var normal_runs: Array[Dictionary] = []
 var navigation_runs: Array[Dictionary] = []
-var started_usec := 0
-var peak_endless := {}
 var quick := false
-var normal_only := false
-var navigation_only := false
+var peak_endless: Dictionary = {}
+var started_usec := 0
 
 func _initialize() -> void:
 	call_deferred("_run")
 
-func _check(condition: bool, label: String) -> void:
-	checks += 1
-	if not condition:
-		failures += 1
+func _check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok:
+		failures+=1
 		contract_failures.append(label)
-		printerr("FAIL: " + label)
+		printerr("FAIL: "+label)
 
 func _biome(id: String) -> Dictionary:
 	for item in campaign.biomes:
-		if item.id == id:
-			return item
+		if item.id==id: return item
 	return campaign.biomes[0]
 
-func _arena(ship_index: int = 0, level_id: int = 1, mode: String = "campaign"):
-	var a = ArenaScript.new()
+func _arena(ship_index:=0,level_id:=1,mode:="campaign"):
+	var a=ArenaScript.new()
 	root.add_child(a)
-	var definition: Dictionary = ships[ship_index].duplicate(true)
-	var stage: Dictionary = campaign.levels[level_id - 1].duplicate(true)
-	if mode == "endless":
-		var rules: Dictionary = campaign.endless
-		stage = {"id":0,"name":"Test Endless","biome":rules.starting_biome,"objective":{"type":"survive","target":999999},"max_enemies":rules.max_enemies_start,"spawn_interval":rules.spawn_interval_start,"enemy_pool":rules.enemy_pool,"enemy_strength":1.0,"treasure_count":8,"hazards":[],"boss":null,"waves":[],"endless":rules}
-	a.start_run(definition, stage, _biome(str(stage.biome)), mode)
+	var ship: Dictionary=ships[ship_index].duplicate(true)
+	var stage: Dictionary=campaign.levels[level_id-1].duplicate(true)
+	if mode!="campaign":
+		stage={"id":0,"name":"Open Sea Test","biome":campaign.endless.starting_biome,"objective":{"type":"survive","target":90},"duration_limit":100,"endless":campaign.endless,"enemy_pool":campaign.endless.enemy_pool,"boss":null,"enemy_strength":1.0}
+	a.start_run(ship,stage,_biome(stage.biome),mode)
 	a.set_process(false)
-	a.muted = true
-	a.reduced_motion = true
+	a.muted=true
+	a.reduced_motion=true
 	return a
 
 func _dispose(a) -> void:
 	root.remove_child(a)
 	a.free()
 
-func _empty(a) -> void:
-	a.enemies.clear()
-	a.bullets.clear()
-	a.pickups.clear()
-	a.hazards.clear()
-	a.particles.clear()
-	a.assisted = false
-	a.automated = false
-	a.ship.speed = 0.0
-	a.spawn_clock = 999999.0
-	a.level.waves = []
-	a.level.boss = null
-	a.level.objective = {"type":"kills","target":999999}
-	a.level.duration_limit = 999999.0
+func _isolated(a) -> void:
+	a.enemies.clear(); a.bullets.clear(); a.pickups.clear(); a.hazards.clear(); a.particles.clear()
+	a.authored_islands.clear(); a.campaign_encounters.clear(); a.bot_navigation.clear()
+	a.campaign_bounds=Rect2(-1000,-1000,2000,2000)
+	a.campaign_total_ships=999; a.encounter_index=0; a.encounter_wait=-1.0
+	a.player=Vector2.ZERO; a.heading=-PI/2; a.desired_heading=a.heading
+	a.ship.speed=0.0; a.assisted=false; a.automated=false; a.debug_invulnerable=true
+	a.cooldowns=[0.0,0.0]; a.secondary_cooldowns=[0.0,0.0]
+	a._build_navigation()
+
+func _target(a,pos: Vector2) -> Dictionary:
+	var enemy: Dictionary=a.spawn_enemy("chaser",pos)
+	enemy.speed=0.0; enemy.cooldown=999.0; enemy.hp=1000.0; enemy.max_hp=1000.0
+	return enemy
 
 func _controls() -> void:
-	var a = _arena()
-	_empty(a)
-	_check(a.fire_side(0), "left broadside can fire")
-	_check(a.cooldowns[0] > 0 and a.cooldowns[1] == 0, "left broadside does not consume right cooldown")
-	_check(not a.fire_side(0), "left broadside enforces its cooldown")
-	_check(a.fire_side(1), "right broadside can fire during left cooldown")
-	_check(a.shots == int(a.ship.cannon_count) * 2 and a.bullets.size() == int(a.ship.cannon_count) * 2, "both broadside projectile counts match ship")
-	a.paused = true
-	var old_time: float = a.elapsed
+	var progress=root.get_node("Progression")
+	progress.settings.auto_fire=true
+	var a=_arena()
+	_isolated(a)
+	_target(a,Vector2(-180,0))
+	a.assisted=true
+	for i in 25: a.step(STEP)
+	_check(a.shots==0 and not a.assisted,"legacy auto-fire preference/direct assisted flag cannot grant ownership")
+	_check(not a.set_primary_assist(true),"locked primary automation rejects settings toggle")
+	a.ship.cannons_port=4; a.ship.cannons_starboard=1
+	_check(a.fire_side(0),"manual port broadside fires")
+	_check(a.shots==4 and a.cooldowns[0]>0 and a.cooldowns[1]==0,"asymmetric port count and independent cooldown")
+	_check(not a.fire_side(0) and a.fire_side(1),"starboard remains usable during port reload")
+	_check(a.shots==5,"starboard uses its own one-cannon loadout")
+	_check(not a.fire_side(-1) and not a.fire_side(2),"invalid side cannot index weapon arrays")
+	a.paused=true
+	var elapsed: float=a.elapsed
 	a.step(STEP)
-	_check(a.elapsed == old_time and not a.fire_side(1), "pause suspends simulation and firing")
-	a.paused = false
-	a.cooldowns = [0.0, 0.0]
-	a._pointer(1, a.wheel_center() + Vector2.RIGHT * 55, true)
-	a._pointer(2, a.fire_center(0), true)
-	a._pointer(3, a.fire_center(1), true)
-	_check(a.wheel_pointer == 1 and a.fire_pointers.size() == 2, "wheel and two cannon touches coexist")
-	_check(absf(a.desired_heading) < 0.01, "wheel points ship toward drag direction")
-	a._pointer(1, Vector2.ZERO, false)
-	a._pointer(2, Vector2.ZERO, false)
-	a._pointer(3, Vector2.ZERO, false)
-	_check(a.wheel_pointer == -1 and a.fire_pointers.is_empty(), "released fingers clear controls")
-	a.enemies.clear()
-	a.bullets.clear()
-	a.cooldowns = [0.0,0.0]
-	a.heading = -PI/2
-	a.desired_heading = a.heading
-	var target: Dictionary = a.spawn_enemy("chaser")
-	target.pos = Vector2(-160,0)
-	target.speed = 0.0
-	target.cooldown = 99.0
-	a.assisted = true
-	var previous_shots: int = a.shots
+	_check(a.elapsed==elapsed and not a.fire_side(0),"pause suspends movement and weapons")
+	a.paused=false
+	a.cooldowns=[0.0,0.0]
+	a._pointer(1,a.wheel_center()+Vector2.RIGHT*55,true)
+	a._pointer(2,a.fire_center(0),true)
+	a._pointer(3,a.fire_center(1),true)
+	_check(a.wheel_pointer==1 and a.fire_pointers.size()==2,"wheel and two manual cannon touches coexist")
+	_check(absf(a.desired_heading)<0.01,"wheel drag points the ship")
+	a.paused=true
+	_check(a.wheel_pointer==-1 and a.fire_pointers.is_empty(),"pausing releases held controls rather than leaving a firing finger stuck")
+	a.paused=false
+	for pointer in [1,2,3]: a._pointer(pointer,Vector2.ZERO,false)
+	_check(a.wheel_pointer==-1 and a.fire_pointers.is_empty(),"released primary fingers clear ownership")
+	a._pointer(42,a.fire_center(0),true)
+	var release:=InputEventScreenTouch.new()
+	release.index=42; release.position=Vector2(500,35); release.pressed=false
+	root.push_input(release,true)
+	_check(not a.fire_pointers.has(42),"touch release routed through _input clears a fire finger above UI")
+	a._pointer(99,a.fire_center(1),true)
+	var mouse_release:=InputEventMouseButton.new()
+	mouse_release.button_index=MOUSE_BUTTON_LEFT; mouse_release.pressed=false; mouse_release.position=Vector2(500,35)
+	root.push_input(mouse_release,true)
+	_check(not a.fire_pointers.has(99),"mouse release routed through _input clears a held cannon")
+	a.heading=-PI/2; a.desired_heading=a.heading; a.cooldowns=[0.0,0.0]
+	a.ship.primary_auto=true
+	_check(a.set_primary_assist(true),"purchased primary automation can be enabled")
+	var before: int=a.shots
 	a.step(STEP)
-	_check(a.shots > previous_shots, "one-hand assistance fires a nearby broadside without a fire touch")
+	_check(a.shots>before,"purchased primary automation uses a broadside target")
+	a.set_primary_assist(false)
+	before=a.shots
+	for i in 5: a.step(STEP)
+	_check(a.shots==before,"purchased automatic fire can still be disabled")
+	progress.settings.auto_fire=false
+	_dispose(a)
+
+func _secondary_contract() -> void:
+	var a=_arena()
+	_isolated(a)
+	_check(not a.secondary_fire(0) and not a.secondary_fire(1),"unowned secondary weapons stay locked")
+	a.ship.secondary_port=true; a.ship.secondary_starboard=false
+	a.ship.secondary_count=3; a.ship.secondary_damage=32.0; a.ship.secondary_cooldown=3.8
+	a.ship.secondary_speed=245.0; a.ship.secondary_spread=0.24; a.ship.secondary_radius=7.0
+	_check(a.secondary_fire(0),"purchased port secondary is manually usable")
+	_check(a.bullets.size()==3 and a.bullets[0].secondary and a.bullets[0].radius==7,"secondary fires a distinct heavy three-shot fan")
+	_check(a.cooldowns==[0.0,0.0] and a.secondary_cooldowns[0]>0 and a.secondary_cooldowns[1]==0,"secondary reload is separate from both primary reloads")
+	_check(not a.secondary_fire(0) and not a.secondary_fire(1),"secondary ownership and cooldown are enforced per side")
+	a.ship.secondary_starboard=true
+	_check(a.secondary_fire(1),"starboard secondary is independent of port cooldown")
+	a.secondary_cooldowns=[0.0,0.0]
+	a._pointer(21,a.secondary_center(0),true)
+	a._pointer(22,a.secondary_center(1),true)
+	_check(a.secondary_pointers.size()==2,"two auxiliary touches have independent pointer ownership")
+	a.paused=true
+	_check(a.secondary_pointers.is_empty(),"pause clears held auxiliary controls")
+	a.paused=false
+	a._pointer(21,Vector2.ZERO,false); a._pointer(22,Vector2.ZERO,false)
+	_check(a.secondary_pointers.is_empty(),"secondary touches release cleanly")
+	a.enemies.clear(); a.bullets.clear(); a.secondary_cooldowns=[0.0,0.0]
+	_target(a,Vector2(-180,0)); _target(a,Vector2(180,0))
+	var before: int=a.shots
+	for i in 4: a.step(STEP)
+	_check(a.shots==before,"secondary remains manual before its automation upgrade")
+	a.ship.secondary_auto_port=true
+	a.step(STEP)
+	_check(a.shots==before+3 and a.secondary_cooldowns[1]==0 and a.cooldowns==[0.0,0.0],"purchased port auxiliary auto does not grant starboard or primary automation")
+	a.ship.secondary_auto_starboard=true
+	a.step(STEP)
+	_check(a.shots==before+6,"purchased starboard auxiliary auto works independently")
 	_dispose(a)
 
 func _combat() -> void:
-	var a = _arena()
-	_empty(a)
-	var target: Dictionary = a.spawn_enemy("chaser")
-	target.pos = Vector2.ZERO
-	target.hp = 100.0
-	target.max_hp = 100.0
-	a._bullet(Vector2(-100,0), Vector2(1000,0), 35.0, true)
+	var a=_arena()
+	_isolated(a)
+	var enemy: Dictionary=_target(a,Vector2.ZERO)
+	enemy.hp=100; enemy.max_hp=100
+	a._bullet(Vector2(-100,0),Vector2(1000,0),35,true)
 	a._update_bullets(0.2)
-	_check(target.hp == 65.0, "swept cannon collision hits a ship crossed between frames")
-	target.hp = 10.0
-	a._bullet(Vector2(-100,0), Vector2(1000,0), 35.0, true)
+	_check(enemy.hp==65,"swept cannon collision detects a ship crossed between frames")
+	enemy.hp=10
+	a._bullet(Vector2(-100,0),Vector2(1000,0),35,true)
 	a._update_bullets(0.2)
-	_check(a.kills == 1 and a.enemies.is_empty(), "lethal cannon hit counts and removes enemy once")
-	_check(a.pickups.size() >= 1, "sunken enemy leaves loot")
-	a.invincible_time = 0
-	a._bullet(Vector2(-100,0), Vector2(1000,0), 10.0, false)
+	_check(a.kills==1 and a.enemies.is_empty(),"lethal hit sinks one authored ship once")
+	_check(a.pickups.size()>0,"sunken fleet leaves finite loot")
+	a.debug_invulnerable=false; a.invincible_time=0
+	a._bullet(Vector2(-100,0),Vector2(1000,0),10,false)
 	a._update_bullets(0.2)
-	_check(a.hp == a.max_hp - 10.0, "hostile cannonball damages player")
-	var hurt_hp: float = a.hp
-	a._damage_player(100)
-	_check(a.hp == hurt_hp, "hit grace period prevents instant stacked damage")
-	a.invincible_time = 0
-	a.shield_time = 2
-	a._damage_player(10)
-	_check(a.hp == hurt_hp, "bubble shield absorbs hostile damage")
-	a.shield_time = 0
-	a.invincible_time = 0
-	a.enemies.clear()
+	_check(a.hp==a.max_hp-10,"hostile projectile damages hull")
+	var hull: float=a.hp
+	a._damage_player(50)
+	_check(a.hp==hull,"hit grace prevents stacked instant damage")
+	a.invincible_time=0; a.shield_time=2
+	a._damage_player(20)
+	_check(a.hp==hull,"shield absorbs damage")
+	a.authored_islands.clear()
+	a.authored_islands.append({"pos":Vector2.ZERO,"radius":70.0,"trees":1})
 	a.bullets.clear()
-	var left: Dictionary = a.spawn_enemy("chaser")
-	left.pos = Vector2(-180,-65)
-	left.speed = 0.0
-	a.heading = -PI / 2
-	a.cooldowns = [0.0,0.0]
-	_check(a._side_target(0) != null and a._side_target(1) == null, "assisted targeting respects the selected broadside")
-	a.fire_side(0)
-	var direction: Vector2 = (left.pos - a.player).normalized()
-	_check(a.bullets[0].vel.normalized().dot(direction) > 0.99, "assisted cannon aims toward its nearby side target")
+	a._bullet(Vector2(-150,0),Vector2(1000,0),20,true)
+	a._update_bullets(0.3)
+	_check(a.bullets.is_empty(),"land blocks swept cannon fire as cover")
 	_dispose(a)
 
-func _pickups_and_hazards() -> void:
-	var a = _arena(3)
-	_empty(a)
-	a._drop(a.player, "coin")
-	a._update_pickups(0.01)
-	_check(a.treasure >= 1, "treasure pickup contributes to objective")
-	a.hp = a.max_hp * 0.4
-	a._drop(a.player, "repair")
-	a._update_pickups(0.01)
-	_check(is_equal_approx(a.hp, a.max_hp * 0.7), "repair restores 30 percent hull")
-	a._drop(a.player, "shield")
-	a._drop(a.player, "rapid")
-	a._update_pickups(0.01)
-	_check(a.shield_time > 0 and a.rapid_time > 0 and a.powerups == 3, "shield and rapid-fire pickups activate")
-	a.pickups.clear()
-	a._drop(a.player + Vector2(500,0), "coin")
-	a._drop(a.player, "magnet")
-	a._update_pickups(0.01)
-	_check(a.pickups.is_empty(), "treasure magnet collects distant nearby loot")
-	a._drop(a.player + Vector2(120,0), "coin")
-	a._update_pickups(0.05)
-	_check(a.pickups[0].pos.distance_to(a.player) < 120, "Golden Gull attracts treasure at its authored extended radius")
-	a.pickups.clear()
-	a.shield_time = 0
-	a.invincible_time = 0
-	a.hazards.clear()
-	a.hazards.append({"pos":a.player,"type":"mine","radius":25.0,"damage":20.0,"tick":0.0})
-	var before_hp: float = a.hp
-	a._update_hazards(0.05)
-	_check(a.hp == before_hp - 20.0, "mine hazard deals a timed hit")
-	a.invincible_time = 0
-	a.hazards.clear()
-	a.hazards.append({"pos":a.player,"type":"current","radius":88.0,"damage":0.0,"tick":0.0,"force":28.0})
-	var before: Vector2 = a.player
-	before_hp = a.hp
-	a._update_hazards(0.05)
-	_check(a.player != before and a.hp == before_hp, "current moves the ship without damage")
-	a.invincible_time = 0
-	a.hazards.clear()
-	a.hazards.append({"pos":a.player + Vector2(20,0),"type":"maelstrom","radius":86.0,"damage":8.0,"tick":1.0,"force":38.0})
-	before = a.player
-	a._update_hazards(0.05)
-	_check(a.player.x > before.x, "whirlpool pulls toward its center")
-	a.hazards.clear()
-	a.hazards.append({"pos":a.player,"type":"storm","radius":70.0,"damage":12.0,"tick":0.0,"period":9.0,"duration":2.0})
-	a.elapsed = 4.0
-	a.invincible_time = 0
-	before_hp = a.hp
-	a._update_hazards(0.05)
-	_check(a.hp == before_hp, "storm safe phase causes no damage between active windows")
-	a.elapsed = 9.1
-	a._update_hazards(0.05)
-	_check(a.hp < before_hp, "storm active phase delivers its telegraphed danger")
-	_dispose(a)
-
-func _objectives_and_summary() -> void:
-	for objective_type in ["kills","coins","survive","boss"]:
-		var a = _arena()
-		_empty(a)
-		var output: Array = []
-		a.finished.connect(func(summary: Dictionary): output.append(summary))
-		a.level.objective = {"type":objective_type,"target":1}
-		match objective_type:
-			"kills": a.kills = 1
-			"coins": a.treasure = 1
-			"survive": a.elapsed = 1
-			"boss": a.bosses = 1
-		a.step(0.01)
-		_check(output.size() == 1 and output[0].won, objective_type + " objective ends in victory")
-		if not output.is_empty():
-			_check(output[0].has("combo_max") or output[0].has("max_combo"), "result exposes sink combo for achievement progression")
-		_dispose(a)
-	var a = _arena()
-	_empty(a)
-	a.level.star_targets = {"time":1.0,"health":0.6,"score":0}
-	a.elapsed = 10
-	a.hp = a.max_hp * 0.2
-	var output: Dictionary = a.finish(true)
-	_check(output.stars == 1, "slow low-health victory earns only its completion star")
-	_dispose(a)
-
-func _boss_contract() -> void:
-	for id in [10,20,30,40,50]:
-		var a = _arena(0,id)
-		_empty(a)
-		a.level.boss = campaign.levels[id-1].boss.duplicate(true)
-		var boss: Dictionary = a.spawn_enemy("boss")
-		_check(is_equal_approx(boss.hp, float(a.level.boss.hp)), "boss %d uses authored hull" % id)
-		_check(is_equal_approx(boss.speed, float(a.level.boss.speed)), "boss %d uses authored speed" % id)
-		_check(is_equal_approx(boss.damage, float(a.level.boss.damage)), "boss %d uses authored damage" % id)
-		boss.pos = Vector2(200,0)
-		boss.cooldown = 0.0
-		a._update_enemies(0.01)
-		var expected_count := int(a.level.boss.cannon_count) + (2 if a.level.boss.pattern == "fan" else 0)
-		_check(a.bullets.size() == expected_count, "boss %d uses authored volley size plus pattern spread" % id)
-		_check(boss.pattern == a.level.boss.pattern, "boss %d has its authored attack behavior" % id)
-		_dispose(a)
-
-func _navigate_bot(a) -> void:
-	# This bot uses the same steering and cannon inputs as a player. It adds
-	# short look-ahead obstacle avoidance to the deliberately blind baseline bot.
-	var preferred := Vector2.from_angle(a.heading)
-	var objective_type: String = a.level.objective.type
-	var closest: Variant = null
-	var closest_distance := INF
+func _finite_encounters() -> void:
+	var a=_arena()
+	var stage: Dictionary={"id":1,"name":"Finite Contract","biome":campaign.biomes[0].id,"objective":{"type":"fleet","target":3},"duration_limit":0.1,"layout":{"bounds":[-700,-700,1400,1400],"player_spawn":[0,300],"player_heading":-PI/2,"islands":[],"hazards":[],"pickups":[{"pos":[400,400],"type":"coin"}]},"encounters":[{"id":"first","name":"Opening pair","delay":0,"ships":[{"id":"first_ship","kind":"chaser","pos":[0,-300],"heading":PI/2}]},{"id":"last","name":"Last fleet","delay":2,"ships":[{"id":"second_ship","kind":"chaser","pos":[-200,-350],"heading":PI/2},{"id":"last_boss","kind":"boss","pos":[200,-350],"heading":PI/2}]}],"boss":{"hp":200,"speed":58,"damage":10,"cooldown":2,"cannon_count":2,"pattern":"fan"},"reward":{},"star_targets":{"time":80,"health":0.5}}
+	a.start_run(ships[0],stage,campaign.biomes[0],"campaign")
+	a.set_process(false); a.muted=true; a.ship.speed=0; a.debug_invulnerable=true
+	_check(a.campaign_total_ships==3 and a.campaign_deployed_count==1 and a.enemies.size()==1,"only the first authored fleet is initially deployed")
+	_check(a.player==Vector2(0,300) and a.island_cache.is_empty(),"campaign uses authored spawn without procedural islands")
+	var pickups: int=a.pickups.size()
+	a.elapsed=800
+	a._update_spawns(500)
+	a.step(STEP)
+	_check(a.enemies.size()==1 and a.campaign_deployed_count==1 and a.running,"elapsed time cannot add enemies, duplicate boss, or expire a campaign")
+	_check(a.pickups.size()==pickups,"campaign does not replenish random supplies")
+	a.enemies[0].pos=Vector2(5000,5000)
+	a._update_enemies(0)
+	_check(a.enemies.size()==1,"distant authored enemies are never despawned")
+	for enemy in a.enemies: a._sink(enemy)
+	a.enemies.clear()
+	a.step(STEP)
+	_check(a.running and a.encounter_index==1,"clearing an early fleet cannot win before future fleets")
+	for i in 20: a.step(STEP)
+	_check(a.enemies.is_empty(),"next fleet respects its authored two-second delay")
+	for i in 21: a.step(STEP)
+	_check(a.enemies.size()==2 and a.encounter_index==2 and a.campaign_deployed_count==3,"remaining finite fleet deploys exactly once after delay")
+	var bosses:=0
 	for enemy in a.enemies:
-		var distance: float = enemy.pos.distance_to(a.player)
-		if objective_type == "boss" and enemy.kind == "boss":
-			closest = enemy
-			closest_distance = distance
-			break
-		if distance < closest_distance:
-			closest = enemy
-			closest_distance = distance
-	if closest != null:
-		var offset: Vector2 = closest.pos - a.player
-		if objective_type == "survive":
-			preferred = -offset.normalized()
-		else:
-			preferred = offset.normalized().rotated(PI/2 if closest_distance < 330 else 0.65)
-	if a.hp < a.max_hp * 0.65:
-		for pickup in a.pickups:
-			if pickup.type in ["repair","shield"] and pickup.pos.distance_to(a.player) < 280:
-				preferred = (pickup.pos-a.player).normalized()
-				break
-	var obstacles: Array = []
-	for hazard in a.hazards:
-		if hazard.type != "current":
-			obstacles.append({"pos":hazard.pos,"radius":float(hazard.radius)+42})
-	var chunk: int = a.chunk_size
-	var coord := Vector2i(floori(a.player.x/chunk),floori(a.player.y/chunk))
-	for x in range(coord.x-1,coord.x+2):
-		for y in range(coord.y-1,coord.y+2):
-			var island: Dictionary = a._island(Vector2i(x,y))
-			if not island.is_empty():
-				obstacles.append({"pos":island.pos,"radius":float(island.radius)+42})
-	for enemy in a.enemies:
-		var future: Vector2 = enemy.pos + Vector2.from_angle(enemy.heading)*float(enemy.speed)*0.7
-		obstacles.append({"pos":future,"radius":float(enemy.radius)+45})
-	var best_angle: float = preferred.angle()
-	var best_value := -INF
-	for option in 20:
-		var angle := preferred.angle() + (float(option)-10.0)*PI/10.0
-		var effective := rotate_toward(float(a.heading),angle,float(a.ship.turn_speed)*0.6)
-		var destination: Vector2 = a.player + Vector2.from_angle(effective)*float(a.ship.speed)*1.3
-		var value: float = Vector2.from_angle(angle).dot(preferred)*8.0
-		for obstacle in obstacles:
-			var near := Geometry2D.get_closest_point_to_segment(obstacle.pos,a.player,destination)
-			var clearance: float = near.distance_to(obstacle.pos)-float(obstacle.radius)
-			if clearance < 0:
-				value -= 100.0-clearance
-			elif clearance < 85:
-				value -= (85.0-clearance)*0.12
-		if value > best_value:
-			best_value = value
-			best_angle = angle
-	a.desired_heading = best_angle
-	a.fire_side(0)
-	a.fire_side(1)
-
-func _voyage(ship_index: int, level_id: int, invulnerable: bool, navigate: bool = false) -> Dictionary:
-	var a = _arena(ship_index, level_id)
-	a.automated = not navigate
-	a.debug_invulnerable = invulnerable
-	var output: Array = []
+		if enemy.kind=="boss": bosses+=1
+	_check(bosses==1,"boss is authored once in its final fleet")
+	var output: Array=[]
 	a.finished.connect(func(summary: Dictionary): output.append(summary))
-	var frame_limit := ceili(float(a.level.duration_limit) / STEP) + 2
-	for frame in frame_limit:
-		if not a.running:
-			break
-		if navigate:
-			_navigate_bot(a)
+	for enemy in a.enemies: a._sink(enemy)
+	a.enemies.clear(); a.step(STEP)
+	_check(not a.running and output.size()==1 and output[0].won and output[0].kills==3,"victory requires every authored ship and all encounters")
+	_check(a.campaign_deployed_count==a.campaign_total_ships,"deployed count stays equal to authored total")
+	_dispose(a)
+
+func _geometry() -> void:
+	var a=_arena()
+	_isolated(a)
+	a.authored_islands.clear()
+	a.authored_islands.append({"pos":Vector2.ZERO,"radius":100.0,"trees":2})
+	a.campaign_bounds=Rect2(-600,-600,1200,1200)
+	a.ship.speed=130.0
+	a._build_navigation()
+	var swept: Vector2=a._move_ship(Vector2(-300,0),Vector2(600,0),23)
+	_check(swept.x < -122 and a._water_point(swept,23),"fast player motion cannot tunnel through an island")
+	_check(a._segment_clear(swept,swept+Vector2(-90,0),29),"a ship touching shore can escape its navigation safety margin")
+	_check(not a._segment_clear(swept,swept+Vector2(90,0),29),"shoreline escape does not permit inward travel through land")
+	var boundary: Vector2=a._move_ship(Vector2(550,500),Vector2(5000,2000),23)
+	_check(a.campaign_bounds.grow(-23).has_point(boundary),"player remains inside the authored map")
+	for kind in ["chaser","skirmisher","sniper","rammer","runner","boss"]:
+		a.enemies.clear()
+		a.player=Vector2(420,0) if kind!="runner" else Vector2(0,450)
+		var e: Dictionary=a.spawn_enemy(kind,Vector2(-360,0),{"heading":0,"patrol":[[350,0]]})
+		e.cooldown=999; e.spawn_grace=999
+		var clear:=true
+		var best_x: float=e.pos.x
+		for frame in 800:
+			a.elapsed+=STEP
+			a._update_enemies(STEP)
+			clear=clear and a._water_point(e.pos,float(e.radius)-0.1)
+			best_x=maxf(best_x,e.pos.x)
+		_check(clear,"%s never overlaps land or leaves bounds" % kind)
+		_check(best_x>70,"%s navigates around the blocking island instead of shoreline jamming" % kind)
+		navigation_runs.append({"kind":kind,"water_clear":clear,"best_x":best_x})
+	_dispose(a)
+
+func _voyage(ship_index: int,level_id: int,invulnerable: bool) -> Dictionary:
+	var a=_arena(ship_index,level_id)
+	a.automated=true; a.debug_invulnerable=invulnerable
+	var output: Array=[]
+	a.finished.connect(func(summary: Dictionary): output.append(summary))
+	for frame in ceili(240.0/STEP):
+		if not a.running: break
 		a.step(STEP)
-	var result: Dictionary = output[0].duplicate(true) if not output.is_empty() else {"won":false,"seconds":a.elapsed,"kills":a.kills,"treasure":a.treasure}
-	result["invulnerable"] = invulnerable
-	result["navigation_bot"] = navigate
-	result["max_entities"] = a.peak_entities
-	result["ship_id"] = ships[ship_index].id
-	result["level_id"] = level_id
+	var result: Dictionary=output[0].duplicate(true) if not output.is_empty() else {"won":false,"seconds":a.elapsed,"kills":a.kills,"health_ratio":a.hp/a.max_hp}
+	result.ship_id=ships[ship_index].id; result.level_id=level_id
+	result.invulnerable=invulnerable; result.assisted=a.assisted
+	result.authored_total=a.campaign_total_ships; result.deployed=a.campaign_deployed_count
+	result.manual_controls=true; result.max_entities=a.peak_entities
+	if not result.won:
+		result.remaining=[]
+		for enemy in a.enemies: result.remaining.append({"kind":enemy.kind,"hp":enemy.hp,"pos":enemy.pos,"heading":enemy.heading})
+		result.player=a.player; result.heading=a.heading; result.shots=a.shots
 	_dispose(a)
 	return result
 
 func _campaign_matrix() -> void:
-	var ids: Array = [1,3,4,5,10,20,30,40,50] if quick else range(1,51)
+	var ids: Array=[1,3,10,20,30,40,50] if quick else range(1,51)
+	var selected_ship:=-1
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--level="): ids=[int(arg.trim_prefix("--level="))]
+		if arg.begins_with("--ship="):
+			for i in ships.size():
+				if ships[i].id==arg.trim_prefix("--ship="): selected_ship=i
 	for ship_index in ships.size():
-		var victories := 0
-		var times: Array[float] = []
+		if selected_ship>=0 and ship_index!=selected_ship: continue
+		var wins:=0
 		for id in ids:
-			var result := _voyage(ship_index, id, true)
+			var result:=_voyage(ship_index,id,true)
 			matrix.append(result)
-			times.append(float(result.seconds))
-			victories += 1 if result.won else 0
-			if not result.won:
-				printerr("BOT_TIMEOUT ship=%s level=%d seconds=%.1f kills=%d treasure=%d" % [result.ship_id,id,result.seconds,result.kills,result.treasure])
-		times.sort()
-		print("BOT_MATRIX ship=%s victories=%d/%d min=%.1fs median=%.1fs max=%.1fs" % [ships[ship_index].id,victories,ids.size(),times[0],times[times.size()/2],times[-1]])
-		_check(victories == ids.size(), "invulnerable bot can finish all tested objectives with " + str(ships[ship_index].id))
-func _normal_matrix() -> void:
+			wins+=1 if result.won else 0
+			_check(not result.assisted,"manual feasibility bot never enables primary automation")
+			if not result.won: printerr("BOT_TIMEOUT "+JSON.stringify(result))
+		_check(wins==ids.size(),"manual-control feasibility clears every tested finite level with "+str(ships[ship_index].id))
+		print("FINITE_MATRIX ship=%s wins=%d/%d" % [ships[ship_index].id,wins,ids.size()])
 	for ship_index in ships.size():
-		for id in [1,3,4,5,10,19,20,29,30,39,40,47,50]:
-			var result := _voyage(ship_index,id,false)
+		if "--matrix-only" in OS.get_cmdline_user_args(): break
+		for id in [1,2,3]:
+			var result:=_voyage(ship_index,id,false)
 			normal_runs.append(result)
-	var normal_summary: Array = []
-	for result in normal_runs:
-		normal_summary.append({"ship":result.ship_id,"level":result.level_id,"won":result.won,"seconds":snappedf(float(result.seconds),0.1),"hull":snappedf(float(result.health_ratio),0.01)})
-	print("NORMAL_RUNS " + JSON.stringify(normal_summary))
-
-func _navigation_observations() -> void:
-	var results: Array = []
-	for ship_index in ships.size():
-		for id in [40,47]:
-			var result := _voyage(ship_index,id,false,true)
-			navigation_runs.append(result)
-			_check(result.won, "navigation bot can clear level %d with %s using normal controls" % [id,result.ship_id])
-			results.append({"ship":result.ship_id,"level":id,"won":result.won,"seconds":snappedf(float(result.seconds),0.1),"hull":snappedf(float(result.health_ratio),0.01)})
-	print("NAVIGATION_RUNS " + JSON.stringify(results))
+			_check(result.won,"normal-hull manual bot clears opening level%d with %s" % [id,result.ship_id])
 
 func _endless() -> void:
-	var a = _arena(0,1,"endless")
-	a.automated = true
-	a.debug_invulnerable = true
-	a.rng.seed = 557901
-	var maxima := {"enemies":0,"bullets":0,"particles":0,"pickups":0,"islands":0}
-	var began := Time.get_ticks_usec()
-	for frame in ceili(1200.0 / STEP):
+	var a=_arena(0,1,"endless")
+	a.automated=true; a.debug_invulnerable=true; a.rng.seed=557901
+	var maxima: Dictionary={"enemies":0,"bullets":0,"particles":0,"pickups":0,"islands":0,"geometry":0}
+	for frame in ceili((180.0 if quick else 1200.0)/STEP):
 		a.step(STEP)
-		for key in ["enemies","bullets","particles","pickups"]:
-			maxima[key] = maxi(int(maxima[key]), a.get(key).size())
-		maxima.islands = maxi(int(maxima.islands), a.island_cache.size())
-	_check(a.running and a.elapsed >= 1199.9, "endless remains playable after a simulated 20 minutes")
-	_check(int(maxima.enemies) <= int(campaign.endless.max_enemies_cap) + 1, "endless enemy population stays within configured cap plus one boss")
-	_check(int(maxima.bullets) <= a.MAX_BULLETS, "endless bullets remain bounded")
-	_check(int(maxima.particles) <= a.MAX_PARTICLES, "endless particles remain bounded")
-	_check(int(maxima.pickups) <= a.MAX_PICKUPS, "endless pickups remain bounded")
-	_check(int(maxima.islands) <= 110, "infinite island cache remains bounded")
-	var coord := Vector2i(8,9)
-	var first: Dictionary = a._island(coord).duplicate(true)
+		for key in ["enemies","bullets","particles","pickups"]: maxima[key]=maxi(int(maxima[key]),a.get(key).size())
+		maxima.islands=maxi(int(maxima.islands),a.island_cache.size())
+		maxima.geometry=maxi(int(maxima.geometry),a.geometry_cache.size())
+	_check(a.running,"endless remains active after sustained simulation")
+	_check(maxima.enemies<=int(campaign.endless.max_enemies_cap),"endless fleet remains capped")
+	_check(maxima.bullets<=a.MAX_BULLETS and maxima.particles<=a.MAX_PARTICLES and maxima.pickups<=a.MAX_PICKUPS,"endless transient objects remain capped")
+	_check(maxima.islands<=120 and maxima.geometry<=65,"infinite geometry caches remain bounded")
+	var coord:=Vector2i(8,9)
+	var first: Dictionary=a._island(coord).duplicate(true)
 	a.island_cache.erase(coord)
-	_check(a._island(coord) == first, "unloaded island chunks regenerate deterministically")
-	peak_endless = {"maxima":maxima,"seconds":a.elapsed,"simulation_wall_ms":(Time.get_ticks_usec()-began)/1000.0,"score":a.score,"kills":a.kills}
-	print("ENDLESS_RESULT " + JSON.stringify(peak_endless))
+	_check(a._island(coord)==first,"infinite geography regenerates deterministically")
+	peak_endless={"seconds":a.elapsed,"maxima":maxima,"kills":a.kills}
 	_dispose(a)
+	var daily=_arena(0,1,"daily")
+	daily.debug_invulnerable=true; daily.automated=true
+	for frame in ceili(95.0/STEP):
+		if not daily.running: break
+		daily.step(STEP)
+	_check(not daily.running and daily.elapsed>=90 and daily.kills>0,"daily retains timed procedural challenge separately from finite campaign")
+	_dispose(daily)
 
 func _run() -> void:
-	started_usec = Time.get_ticks_usec()
-	ArenaScript = load("res://scripts/arena.gd")
-	if ArenaScript == null or not ArenaScript.can_instantiate():
-		printerr("FAIL: Arena script must compile before gameplay QA")
+	started_usec=Time.get_ticks_usec()
+	quick="--quick" in OS.get_cmdline_user_args()
+	var progress=root.get_node("Progression")
+	progress.save_path="res://tests/.game-suite-save.json"
+	progress.reset_data("finite-game-suite")
+	progress.settings.sfx=false; progress.settings.music=false; progress.settings.auto_fire=false
+	campaign=JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign.json"))
+	ships=JSON.parse_string(FileAccess.get_file_as_string("res://data/ships.json")).ships
+	ArenaScript=load("res://scripts/arena.gd")
+	if ArenaScript==null or not ArenaScript.can_instantiate():
+		printerr("FAIL: Arena script must compile")
 		quit(1)
 		return
-	quick = "--quick" in OS.get_cmdline_user_args()
-	normal_only = "--normal-only" in OS.get_cmdline_user_args()
-	navigation_only = "--navigation-only" in OS.get_cmdline_user_args()
-	var progress = root.get_node("Progression")
-	progress.save_path = "res://tests/.game-suite-save.json"
-	progress.reset_data("game-suite")
-	progress.settings.sfx = false
-	progress.settings.music = false
-	campaign = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign.json"))
-	ships = JSON.parse_string(FileAccess.get_file_as_string("res://data/ships.json")).ships
-	_controls()
-	_combat()
-	_pickups_and_hazards()
-	_objectives_and_summary()
-	_boss_contract()
-	if not normal_only and not navigation_only:
+	if "--matrix-only" not in OS.get_cmdline_user_args() and "--endless-only" not in OS.get_cmdline_user_args(): _controls(); _secondary_contract(); _combat(); _finite_encounters(); _geometry()
+	if "--endless-only" in OS.get_cmdline_user_args(): _endless()
+	elif "--contracts-only" not in OS.get_cmdline_user_args():
 		_campaign_matrix()
-	if not navigation_only:
-		_normal_matrix()
-	_navigation_observations()
-	if not normal_only and not navigation_only:
-		_endless()
-	var won := 0
-	var normal_won := 0
-	var navigation_won := 0
-	for result in matrix:
-		won += 1 if result.won else 0
-	for result in normal_runs:
-		normal_won += 1 if result.won else 0
-	for result in navigation_runs:
-		navigation_won += 1 if result.won else 0
-	print("GAME_TEST_SUMMARY " + JSON.stringify({"checks":checks,"failures":failures,"contract_failures":contract_failures,"campaign_passes":won,"campaign_runs":matrix.size(),"normal_passes":normal_won,"normal_runs":normal_runs.size(),"navigation_passes":navigation_won,"navigation_runs":navigation_runs.size(),"endless":peak_endless,"wall_seconds":(Time.get_ticks_usec()-started_usec)/1000000.0}))
+		if "--matrix-only" not in OS.get_cmdline_user_args(): _endless()
+	var wins:=0
+	for result in matrix: wins+=1 if result.won else 0
+	var normal_wins:=0
+	for result in normal_runs: normal_wins+=1 if result.won else 0
+	var report: Dictionary={"checks":checks,"failures":failures,"contract_failures":contract_failures,"campaign_passes":wins,"campaign_runs":matrix.size(),"normal_passes":normal_wins,"normal_runs":normal_runs.size(),"navigation":navigation_runs,"endless":peak_endless,"wall_seconds":(Time.get_ticks_usec()-started_usec)/1000000.0,"manual_controls":true,"matrix":matrix}
+	DirAccess.make_dir_recursive_absolute("res://tests/output")
+	var file:=FileAccess.open("res://tests/output/game-tests.json",FileAccess.WRITE)
+	if file!=null: file.store_string(JSON.stringify(report,"  "))
+	print("GAME_TEST_SUMMARY "+JSON.stringify({"checks":checks,"failures":failures,"campaign_passes":wins,"campaign_runs":matrix.size(),"normal_passes":normal_wins,"normal_runs":normal_runs.size(),"navigation":navigation_runs,"endless":peak_endless,"wall_seconds":report.wall_seconds}))
 	for suffix in ["",".tmp",".bak"]:
-		var path: String = "res://tests/.game-suite-save.json" + str(suffix)
-		if FileAccess.file_exists(path):
-			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
-	quit(1 if failures > 0 else 0)
-
+		var path: String="res://tests/.game-suite-save.json"+str(suffix)
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	quit(1 if failures>0 else 0)

@@ -9,6 +9,8 @@ const TILE_DIR := "res://Assets/PirateStuff/PNG/Retina/Tiles/"
 const MAX_BULLETS := 220
 const MAX_PARTICLES := 320
 const MAX_PICKUPS := 70
+const PLAYER_RADIUS := 23.0
+const NAV_CELL := 32.0
 var rng := RandomNumberGenerator.new()
 var ship: Dictionary
 var level: Dictionary
@@ -31,6 +33,8 @@ var combo := 0
 var best_combo := 0
 var combo_time := 0.0
 var cooldowns := [0.0, 0.0]
+var secondary_cooldowns := [0.0, 0.0]
+var secondary_pointers: Dictionary = {}
 var spawn_clock := 1.0
 var boss_spawned := false
 var boss_clock := 60.0
@@ -43,7 +47,10 @@ var hazards: Array[Dictionary] = []
 var island_cache: Dictionary = {}
 var textures: Dictionary = {}
 var running := false
-var paused := false
+var paused := false:
+	set(value):
+		paused=value
+		if value: release_controls()
 var shield_time := 0.0
 var rapid_time := 0.0
 var invincible_time := 0.0
@@ -54,7 +61,7 @@ var tutorial_step := 0
 var wheel_pointer := -1
 var wheel_vector := Vector2.UP
 var fire_pointers: Dictionary = {}
-var assisted := true
+var assisted := false
 var reduced_motion := false
 var muted := false
 var audio_pool: Array[AudioStreamPlayer] = []
@@ -69,6 +76,18 @@ var supply_clock := 18.0
 var kills_by_side := [0,0]
 var biome_index := 0
 var chunk_size := 420
+var campaign_bounds := Rect2(-800,-900,1600,1800)
+var authored_islands: Array[Dictionary] = []
+var campaign_encounters: Array = []
+var campaign_total_ships := 0
+var campaign_deployed_count := 0
+## Number of encounters already deployed; index1 means the first fleet is live.
+var encounter_index := 0
+var current_encounter_name := ""
+var encounter_wait := -1.0
+var navigation := AStarGrid2D.new()
+var bot_navigation: Dictionary = {}
+var geometry_cache: Dictionary = {}
 
 func _ready() -> void:
 	definitions = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign.json"))
@@ -95,30 +114,66 @@ func start_run(ship_data: Dictionary, level_data: Dictionary, biome_data: Dictio
 	level = level_data.duplicate(true)
 	biome = biome_data.duplicate(true)
 	mode = run_mode
-	rng.seed = 83917 + int(level.get("id", 1)) * 731 + (int(Time.get_unix_time_from_system()) if mode == "endless" else 0)
+	rng.seed = absi(hash(Progression.today())) if mode == "daily" else 83917 + int(level.get("id", 1)) * 731 + (int(Time.get_unix_time_from_system()) if mode == "endless" else 0)
 	voyage_seed = rng.seed
-	if mode == "endless":
+	enemies.clear(); bullets.clear(); particles.clear(); pickups.clear(); hazards.clear(); island_cache.clear()
+	authored_islands.clear(); campaign_encounters.clear(); bot_navigation.clear(); geometry_cache.clear()
+	elapsed=0; score=0; kills=0; bosses=0; treasure=0; shots=0; powerups=0; damage_taken=0
+	combo=0; best_combo=0; combo_time=0; shield_time=0; rapid_time=0; invincible_time=0; flash=0; shake=0
+	cooldowns=[0.0,0.0]; secondary_cooldowns=[0.0,0.0]; kills_by_side=[0,0]
+	fire_pointers.clear(); secondary_pointers.clear(); wheel_pointer=-1
+	player=Vector2.ZERO; heading=-PI/2; desired_heading=heading; wave_index=0; spawn_clock=1.0
+	campaign_total_ships=0; campaign_deployed_count=0; encounter_index=0; encounter_wait=-1.0; current_encounter_name=""
+	boss_spawned=false; paused=false; tutorial_step=0; peak_entities=0
+	if mode != "campaign":
 		level.endless = level.get("endless",definitions.get("endless",{}))
 		boss_clock = float(level.endless.get("boss_every_seconds",90))
 		chunk_size = int(level.endless.get("chunk_size",512))
 	max_hp = float(ship.get("hp", 100))
 	hp = max_hp
-	assisted = bool(Progression.settings.get("auto_fire", true))
+	set_primary_assist(bool(Progression.settings.get("auto_fire", false)))
 	reduced_motion = bool(Progression.settings.get("reduced_motion", false))
 	muted = not bool(Progression.settings.get("sfx", true))
 	tutorial = is_tutorial
 	running = true
-	for h in level.get("hazards", []):
-		for n in int(h.get("count", 1)):
-			var pos := Vector2.from_angle(rng.randf_range(-PI, PI)) * rng.randf_range(240, 900)
-			hazards.append({"pos":pos,"type":h.type,"radius":float(h.get("radius", 42)),"damage":float(h.get("damage", 8)),"tick":0.0,"force":float(h.get("force",45)),"period":float(h.get("period",0)),"duration":float(h.get("duration",0)),"phase":rng.randf_range(0,5)})
-	for i in int(level.get("treasure_count", 5)):
-		pickups.append({"pos":Vector2.from_angle(rng.randf_range(-PI, PI)) * rng.randf_range(130, 600),"type":"coin","life":200.0})
-	_drop(Vector2(0,-150),"repair")
-	supply_clock = float(level.get("powerup_interval",23))
-	for i in 2: spawn_enemy("chaser")
+	if mode == "campaign":
+		var layout: Dictionary = level.get("layout",{})
+		var bounds: Array = layout.get("bounds",[-800,-900,1600,1800])
+		campaign_bounds = Rect2(float(bounds[0]),float(bounds[1]),float(bounds[2]),float(bounds[3]))
+		player = _vector(layout.get("player_spawn",[0,0]))
+		heading=float(layout.get("player_heading",-PI/2)); desired_heading=heading
+		for item in layout.get("islands",[]):
+			authored_islands.append({"pos":_vector(item.pos),"radius":float(item.radius),"trees":int(item.get("trees",3))})
+		for h in layout.get("hazards",[]): _authored_hazard(h)
+		for p in layout.get("pickups",[]):
+			pickups.append({"pos":_vector(p.pos),"type":str(p.type),"life":999999.0,"authored":true})
+		campaign_encounters=level.get("encounters",[]).duplicate(true)
+		for encounter in campaign_encounters: campaign_total_ships += encounter.get("ships",[]).size()
+		player=_resolve_position(player,PLAYER_RADIUS)
+		_build_navigation()
+		_deploy_encounter()
+	else:
+		for i in 8:
+			_drop(Vector2.from_angle(rng.randf_range(-PI,PI))*rng.randf_range(130,600),"coin")
+		_drop(Vector2(0,-150),"repair")
+		for i in 2: spawn_enemy("chaser")
+		supply_clock=float(level.get("powerup_interval",23))
 	set_process(true)
 	queue_redraw()
+
+func _vector(value: Variant) -> Vector2:
+	if value is Vector2: return value
+	return Vector2(float(value[0]),float(value[1]))
+
+func _authored_hazard(h: Dictionary) -> void:
+	hazards.append({"pos":_vector(h.pos),"type":str(h.type),"radius":float(h.get("radius",42)),"damage":float(h.get("damage",8)),"tick":0.0,"force":float(h.get("force",45)),"period":float(h.get("period",9)),"duration":float(h.get("duration",2)),"phase":float(h.get("phase",0))})
+
+func set_primary_assist(enabled: bool) -> bool:
+	assisted=enabled and bool(ship.get("primary_auto",false))
+	return assisted
+
+func secondary_available(side: int) -> bool:
+	return side in [0,1] and bool(ship.get("secondary_port" if side==0 else "secondary_starboard",false))
 
 func screen_size() -> Vector2:
 	return get_viewport_rect().size
@@ -135,8 +190,25 @@ func wheel_center() -> Vector2:
 func fire_center(side: int) -> Vector2:
 	return Vector2(72 if side == 0 else screen_size().x - 72, screen_size().y - 92)
 
+func secondary_center(side: int) -> Vector2:
+	return Vector2(72 if side == 0 else screen_size().x - 72, screen_size().y - 220)
+
+func release_controls() -> void:
+	wheel_pointer=-1
+	fire_pointers.clear()
+	secondary_pointers.clear()
+
+func _input(event: InputEvent) -> void:
+	# Releases must run before Control consumes them (for example when a fire
+	# finger is lifted above the pause button). Presses remain unhandled input.
+	if event is InputEventScreenTouch and not event.pressed: _pointer(event.index,event.position,false)
+	elif event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and not event.pressed: _pointer(99,event.position,false)
+
 func _unhandled_input(event: InputEvent) -> void:
-	if not running or paused: return
+	if not running or paused:
+		if event is InputEventScreenTouch and not event.pressed: _pointer(event.index,event.position,false)
+		elif event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and not event.pressed: _pointer(99,event.position,false)
+		return
 	if event is InputEventScreenTouch:
 		_pointer(event.index, event.position, event.pressed)
 	elif event is InputEventScreenDrag:
@@ -148,11 +220,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventKey and event.pressed:
 		if event.keycode == KEY_Q: fire_side(0)
 		if event.keycode == KEY_E or event.keycode == KEY_SPACE: fire_side(1)
+		if event.keycode == KEY_Z: secondary_fire(0)
+		if event.keycode == KEY_C: secondary_fire(1)
 
 func _pointer(id: int, pos: Vector2, pressed: bool) -> void:
 	if not pressed:
 		if wheel_pointer == id: wheel_pointer = -1
 		fire_pointers.erase(id)
+		secondary_pointers.erase(id)
 		return
 	if pos.distance_to(wheel_center()) < 110:
 		wheel_pointer = id
@@ -160,6 +235,10 @@ func _pointer(id: int, pos: Vector2, pressed: bool) -> void:
 		if tutorial_step == 0: tutorial_step = 1
 	else:
 		for side in 2:
+			if secondary_available(side) and pos.distance_to(secondary_center(side)) < 36:
+				secondary_pointers[id]=side
+				secondary_fire(side)
+				return
 			if pos.distance_to(fire_center(side)) < 64:
 				fire_pointers[id] = side
 				fire_side(side)
@@ -185,7 +264,7 @@ func step(dt: float) -> void:
 	if keyboard.length() > 0: desired_heading = keyboard.angle()
 	heading = rotate_toward(heading, desired_heading, float(ship.get("turn_speed", 3.0)) * dt)
 	var velocity := Vector2.from_angle(heading) * float(ship.get("speed", 130))
-	player += velocity * dt
+	player = _move_ship(player,velocity*dt,PLAYER_RADIUS)
 	shield_time = maxf(0, shield_time - dt)
 	rapid_time = maxf(0, rapid_time - dt)
 	invincible_time = maxf(0, invincible_time - dt)
@@ -193,13 +272,22 @@ func step(dt: float) -> void:
 	shake = maxf(0, shake - dt * 18)
 	combo_time -= dt
 	if combo_time <= 0: combo = 0
-	for side in 2: cooldowns[side] = maxf(0, cooldowns[side] - dt)
+	for side in 2:
+		cooldowns[side] = maxf(0, cooldowns[side] - dt)
+		secondary_cooldowns[side] = maxf(0,secondary_cooldowns[side]-dt)
 	for side in fire_pointers.values(): fire_side(side)
+	for side in secondary_pointers.values(): secondary_fire(side)
 	if Input.is_physical_key_pressed(KEY_Q): fire_side(0)
 	if Input.is_physical_key_pressed(KEY_E) or Input.is_physical_key_pressed(KEY_SPACE): fire_side(1)
+	if Input.is_physical_key_pressed(KEY_Z): secondary_fire(0)
+	if Input.is_physical_key_pressed(KEY_C): secondary_fire(1)
+	assisted = assisted and bool(ship.get("primary_auto",false))
 	if assisted:
 		for side in 2:
 			if _side_target(side) != null: fire_side(side)
+	for side in 2:
+		if secondary_available(side) and bool(ship.get("secondary_auto_port" if side==0 else "secondary_auto_starboard",false)) and _side_target(side)!=null:
+			secondary_fire(side)
 	_update_spawns(dt)
 	_update_enemies(dt)
 	_update_bullets(dt)
@@ -207,14 +295,17 @@ func step(dt: float) -> void:
 	_update_hazards(dt)
 	_update_particles(dt)
 	supply_clock -= dt
-	if supply_clock <= 0:
+	if mode != "campaign" and supply_clock <= 0:
 		supply_clock = float(level.get("powerup_interval",23))
 		var supply_pool := ["repair","shield","rapid","magnet"]
 		_drop(player+Vector2.from_angle(heading)*160,supply_pool[rng.randi_range(0,3)])
 	if rng.randf() < dt * 16: _particle(player - Vector2.from_angle(heading) * 32, Color(0.65, 0.95, 0.94, 0.6), -velocity * 0.15, 1.4, 5)
 	peak_entities = maxi(peak_entities, enemies.size() + bullets.size() + particles.size() + pickups.size())
 	if hp <= 0: finish(false)
-	if mode != "endless":
+	if mode == "campaign":
+		if campaign_total_ships>0 and encounter_index>=campaign_encounters.size() and enemies.is_empty() and kills>=campaign_total_ships:
+			finish(true)
+	elif mode == "daily":
 		var obj: Dictionary = level.get("objective", {"type":"kills","target":5})
 		var complete := false
 		match obj.type:
@@ -227,19 +318,163 @@ func step(dt: float) -> void:
 	hud_changed.emit()
 
 func _bot() -> void:
-	var obj: Dictionary = level.get("objective", {})
-	if obj.get("type", "kills") == "coins" and not pickups.is_empty():
-		desired_heading = (pickups[0].pos - player).angle()
-	elif not enemies.is_empty():
+	var destination := player+Vector2.from_angle(heading)*180
+	if not enemies.is_empty():
 		var nearest: Dictionary = enemies[0]
 		for e in enemies:
 			if e.pos.distance_squared_to(player) < nearest.pos.distance_squared_to(player): nearest = e
 		var d: Vector2 = nearest.pos - player
-		desired_heading = d.angle() + (PI / 2.0 if d.length() < 310 else 0.7)
-	else: desired_heading = elapsed * 0.25
-	for side in 2: fire_side(side)
+		if d.length()>300 or not _segment_clear(player,nearest.pos,PLAYER_RADIUS+4): destination=nearest.pos
+		else:
+			var orbit_angle := d.angle()+PI/2-0.32 if d.length()>170 else d.angle()+PI/2+0.32
+			destination=player+Vector2.from_angle(orbit_angle)*190
+	elif mode=="campaign": destination=campaign_bounds.get_center()
+	if hp<max_hp*0.6:
+		for p in pickups:
+			if p.type in ["repair","shield"] and p.pos.distance_to(player)<300:
+				destination=p.pos
+				break
+	desired_heading=_navigation_heading(player,destination,PLAYER_RADIUS,bot_navigation,0.05)
+	desired_heading=_safe_heading(player,desired_heading,PLAYER_RADIUS,float(ship.get("speed",130))*0.8)
+	# The feasibility bot presses the same manual controls as a player; it never
+	# grants ownership, changes hit points, or enables automatic weapons.
+	for side in 2:
+		if _side_target(side)!=null:
+			fire_side(side)
+			secondary_fire(side)
+
+func _deploy_encounter() -> void:
+	if mode!="campaign" or encounter_index>=campaign_encounters.size(): return
+	var encounter: Dictionary=campaign_encounters[encounter_index]
+	current_encounter_name=str(encounter.get("name","Fleet %d" % (encounter_index+1)))
+	for vessel in encounter.get("ships",[]):
+		var enemy: Dictionary=spawn_enemy(str(vessel.kind),_vector(vessel.pos),vessel)
+		if not enemy.is_empty():
+			enemy.encounter_id=str(encounter.get("id",encounter_index))
+			campaign_deployed_count+=1
+	encounter_index+=1
+	encounter_wait=-1.0
+	toast.emit(current_encounter_name.to_upper())
+
+func _update_campaign_encounters(dt: float) -> void:
+	if not enemies.is_empty() or encounter_index>=campaign_encounters.size(): return
+	if encounter_wait<0:
+		encounter_wait=float(campaign_encounters[encounter_index].get("delay",2.0))
+		current_encounter_name="Next: "+str(campaign_encounters[encounter_index].get("name","Pirate fleet"))
+	encounter_wait=maxf(0,encounter_wait-dt)
+	if encounter_wait<=0: _deploy_encounter()
+
+func _near_islands(pos: Vector2) -> Array[Dictionary]:
+	if mode=="campaign": return authored_islands
+	var coord:=Vector2i(floori(pos.x/chunk_size),floori(pos.y/chunk_size))
+	if geometry_cache.has(coord): return geometry_cache[coord]
+	var result: Array[Dictionary]=[]
+	for x in range(coord.x-1,coord.x+2):
+		for y in range(coord.y-1,coord.y+2):
+			var island:=_island(Vector2i(x,y))
+			if not island.is_empty(): result.append(island)
+	geometry_cache[coord]=result
+	return result
+
+func _water_point(pos: Vector2,radius: float) -> bool:
+	if mode=="campaign" and not campaign_bounds.grow(-radius).has_point(pos): return false
+	for island in _near_islands(pos):
+		if pos.distance_squared_to(island.pos)<pow(float(island.radius)+radius,2): return false
+	return true
+
+func _segment_clear(from: Vector2,to: Vector2,radius: float) -> bool:
+	if mode=="campaign" and not campaign_bounds.grow(-radius).has_point(to): return false
+	for island in _near_islands((from+to)*0.5):
+		var nearest:=Geometry2D.get_closest_point_to_segment(island.pos,from,to)
+		if nearest.distance_squared_to(island.pos)<pow(float(island.radius)+radius,2):
+			# A body touching shore may already be inside a navigation safety
+			# margin. Permit strictly outward travel; otherwise every avoidance
+			# direction would reject its own starting point and trap the ship.
+			if nearest.distance_squared_to(from)<0.001 and to.distance_squared_to(island.pos)>from.distance_squared_to(island.pos)+0.01: continue
+			return false
+	return true
+
+func _resolve_position(pos: Vector2,radius: float) -> Vector2:
+	for pass_index in 4:
+		if mode=="campaign":
+			var inner:=campaign_bounds.grow(-radius-0.2)
+			pos=pos.clamp(inner.position,inner.end)
+		for island in _near_islands(pos):
+			var offset: Vector2=pos-island.pos
+			var extent: float=float(island.radius)+radius+0.2
+			if offset.length_squared()<extent*extent:
+				pos=island.pos+(offset.normalized() if offset.length_squared()>0.0001 else Vector2.RIGHT)*extent
+	return pos
+
+func _move_ship(from: Vector2,delta: Vector2,radius: float) -> Vector2:
+	# Small swept steps prevent fast rammers and currents tunnelling across land.
+	var pieces:=maxi(1,ceili(delta.length()/9.0))
+	var position:=from
+	for i in pieces: position=_resolve_position(position+delta/float(pieces),radius)
+	return position
+
+func _build_navigation() -> void:
+	navigation.clear()
+	navigation.region=Rect2i(0,0,ceili(campaign_bounds.size.x/NAV_CELL),ceili(campaign_bounds.size.y/NAV_CELL))
+	navigation.cell_size=Vector2.ONE*NAV_CELL
+	navigation.offset=campaign_bounds.position+Vector2.ONE*NAV_CELL/2
+	navigation.diagonal_mode=AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	navigation.default_compute_heuristic=AStarGrid2D.HEURISTIC_OCTILE
+	navigation.default_estimate_heuristic=AStarGrid2D.HEURISTIC_OCTILE
+	navigation.update()
+	for x in navigation.region.size.x:
+		for y in navigation.region.size.y:
+			var cell:=Vector2i(x,y)
+			navigation.set_point_solid(cell,not _water_point(navigation.get_point_position(cell),48.0))
+
+func _nav_cell(pos: Vector2) -> Vector2i:
+	var cell:=Vector2i(roundi((pos.x-navigation.offset.x)/NAV_CELL),roundi((pos.y-navigation.offset.y)/NAV_CELL))
+	cell=cell.clamp(Vector2i.ZERO,navigation.region.size-Vector2i.ONE)
+	if not navigation.is_point_solid(cell): return cell
+	for ring in range(1,13):
+		var best:=Vector2i(-1,-1)
+		var best_distance:=INF
+		for x in range(cell.x-ring,cell.x+ring+1):
+			for y in range(cell.y-ring,cell.y+ring+1):
+				var candidate:=Vector2i(x,y)
+				if not navigation.is_in_boundsv(candidate) or navigation.is_point_solid(candidate): continue
+				var distance:=navigation.get_point_position(candidate).distance_squared_to(pos)
+				if distance<best_distance: best_distance=distance; best=candidate
+		if best.x>=0: return best
+	return cell
+
+func _navigation_heading(from: Vector2,to: Vector2,radius: float,state: Dictionary,dt: float) -> float:
+	if mode!="campaign" or _segment_clear(from,to,radius+6): return (to-from).angle()
+	state.path_timer=float(state.get("path_timer",0))-dt
+	if float(state.path_timer)<=0 or not state.has("path"):
+		state.path_timer=0.55
+		var begin:=_nav_cell(from)
+		var end:=_nav_cell(to)
+		if navigation.is_point_solid(begin) or navigation.is_point_solid(end): return (to-from).angle()
+		state.path=navigation.get_point_path(begin,end,true)
+		state.path_index=0
+	var path: PackedVector2Array=state.get("path",PackedVector2Array())
+	if path.is_empty(): return (to-from).angle()
+	var index:=mini(int(state.get("path_index",0)),path.size()-1)
+	while index<path.size()-1 and from.distance_to(path[index])<28: index+=1
+	for i in range(index+1,path.size()):
+		if _segment_clear(from,path[i],radius+7): index=i
+		else: break
+	state.path_index=index
+	return (path[index]-from).angle()
+
+func _safe_heading(pos: Vector2,preferred: float,radius: float,lookahead: float) -> float:
+	lookahead=maxf(65,lookahead)
+	if _segment_clear(pos,pos+Vector2.from_angle(preferred)*lookahead,radius+5): return preferred
+	for offset in [0.25,-0.25,0.5,-0.5,0.8,-0.8,1.15,-1.15,1.6,-1.6,2.1,-2.1,PI]:
+		var angle: float=preferred+float(offset)
+		if _segment_clear(pos,pos+Vector2.from_angle(angle)*lookahead,radius+5): return angle
+	return preferred+PI
 
 func _update_spawns(dt: float) -> void:
+	if mode=="campaign":
+		_update_campaign_encounters(dt)
+		return
 	spawn_clock -= dt
 	var endless: Dictionary = level.get("endless",{})
 	var difficulty := (1.0 + elapsed / 60.0 * float(endless.get("enemy_strength_gain_per_minute",0.12))) if mode == "endless" else float(level.get("enemy_strength", 1.0))
@@ -249,7 +484,7 @@ func _update_spawns(dt: float) -> void:
 		spawn_clock = float(level.get("spawn_interval",4.0))
 		if mode == "endless": spawn_clock = lerpf(float(endless.get("spawn_interval_start",5)),float(endless.get("spawn_interval_min",1.35)),minf(1,elapsed/float(endless.get("spawn_ramp_seconds",300))))
 		if enemies.size() < cap:
-			var pool: Array = level.get("enemy_pool", ["chaser"])
+			var pool: Array = level.get("enemy_pool", endless.get("enemy_pool",["chaser","skirmisher"]))
 			spawn_enemy(str(pool[rng.randi_range(0, pool.size() - 1)]))
 	var waves: Array = level.get("waves", [])
 	while wave_index < waves.size() and elapsed >= float(waves[wave_index].at):
@@ -271,11 +506,12 @@ func _update_spawns(dt: float) -> void:
 			biome = definitions.biomes[biome_index]
 			toast.emit("NEW WATERS: " + str(biome.name))
 			island_cache.clear()
+			geometry_cache.clear()
 			hazards.clear()
 			for n in mini(int(endless.get("hazard_count_cap",8)),2+int(elapsed/90)):
 				hazards.append({"pos":player+Vector2.from_angle(rng.randf()*TAU)*rng.randf_range(240,750),"type":biome.get("hazard","reef"),"radius":52.0,"damage":9.0*difficulty,"tick":0.0,"force":40.0,"period":9.0,"duration":2.0,"phase":float(n)})
 
-func spawn_enemy(kind: String) -> Dictionary:
+func spawn_enemy(kind: String,spawn_position: Variant=null,authored_data: Dictionary={}) -> Dictionary:
 	if enemies.size() >= 36: return {}
 	if mode == "endless" and enemies.size() >= int(level.get("endless",{}).get("max_enemies_cap",14)):
 		if kind != "boss": return {}
@@ -290,10 +526,24 @@ func spawn_enemy(kind: String) -> Dictionary:
 	var stats: Array = specs.get(kind, specs.chaser)
 	var data: Dictionary = definitions.get("enemies",{}).get(kind,{})
 	stats = [data.get("hp",stats[0]),data.get("speed",stats[1]),data.get("damage",stats[2]),data.get("cooldown",stats[3]),[2,3,5,8,6,15][["chaser","skirmisher","sniper","rammer","runner","boss"].find(kind)] if kind in specs else 2]
-	var pos := player + Vector2.from_angle(rng.randf_range(-PI, PI)) * rng.randf_range(330, 440)
+	var pos: Vector2
+	if spawn_position!=null: pos=_vector(spawn_position)
+	elif mode=="campaign": pos=player+Vector2(0,-330)
+	else: pos=player+Vector2.from_angle(rng.randf_range(-PI,PI))*rng.randf_range(330,440)
 	var hp_value := float(stats[0]) * (0.8 + strength * 0.2)
 	if kind == "boss" and level.get("boss") != null: hp_value = float(level.boss.get("hp", hp_value))
 	var e := {"pos":pos,"heading":(player-pos).angle(),"hp":hp_value,"max_hp":hp_value,"kind":kind,"speed":float(stats[1]) * minf(1.6, 0.9 + strength*0.1),"damage":float(stats[2]) * sqrt(strength),"cooldown":rng.randf_range(1.8, 4.0),"rate":float(stats[3]),"sprite":int(stats[4]),"radius":42.0 if kind == "boss" else 24.0,"flash":0.0,"phase":rng.randf_range(0, TAU)}
+	e.pos=_resolve_position(pos,float(e.radius))
+	e.heading=float(authored_data.get("heading",e.heading))
+	e.id=str(authored_data.get("id","rover_%d_%d" % [kills,enemies.size()]))
+	e.home=e.pos
+	e.patrol=[]
+	for point in authored_data.get("patrol",[]): e.patrol.append(_vector(point))
+	e.patrol_index=0
+	e.spawn_grace=1.5 if mode=="campaign" else 0.7
+	e.slow_time=0.0
+	e.stuck_time=0.0
+	if kind=="runner" and mode=="campaign": e.speed=minf(float(e.speed),float(ship.get("speed",130))*0.88)
 	e.cannon_count = int(data.get("cannon_count",1))
 	e.coin_drop = int(data.get("coin_drop",2))
 	e.score = int(data.get("score",100))
@@ -314,27 +564,43 @@ func _update_enemies(dt: float) -> void:
 		var e: Dictionary = enemies[i]
 		var offset: Vector2 = player - e.pos
 		var distance := offset.length()
-		if distance > 1050:
+		if mode!="campaign" and distance > 1050:
 			enemies.remove_at(i)
 			continue
-		var angle := offset.angle()
+		var destination: Vector2=player
 		match e.kind:
-			"skirmisher": angle += 0.9 * sin(elapsed * 1.4 + e.phase)
+			"skirmisher":
+				if distance<360: destination=e.pos+offset.normalized().rotated(0.8*sin(elapsed*1.4+float(e.phase)))*220
 			"sniper":
-				if distance < 280: angle += PI
-				elif distance < 340: angle += PI/2
+				if distance < 250: destination=e.pos-offset.normalized()*180
+				elif distance < 310: destination=e.pos+offset.normalized().rotated(PI/2)*130
 			"runner":
-				if distance < 220: angle += PI
-			"rammer": angle += 0.2 * sin(elapsed + e.phase)
+				if distance < 220:
+					destination=e.pos-offset.normalized()*220
+					if mode=="campaign":
+						destination=destination.clamp(campaign_bounds.position+Vector2.ONE*65,campaign_bounds.end-Vector2.ONE*65)
+						if destination.distance_to(e.pos)<65: destination=e.pos-offset.normalized().rotated(PI/2)*180
+				elif not e.patrol.is_empty():
+					destination=e.patrol[int(e.patrol_index)%e.patrol.size()]
+					if destination.distance_to(e.pos)<55: e.patrol_index+=1
+				else: destination=e.home
+			"rammer": destination=e.pos+offset.normalized().rotated(0.16*sin(elapsed+float(e.phase)))*250
 			"boss":
-				if e.pattern == "charge" and fmod(elapsed+e.phase,6.0) < 1.7:
-					e.pos += Vector2.from_angle(e.heading)*dt*75
-				elif distance < 230: angle += PI/2
-		e.heading = rotate_toward(float(e.heading), angle, dt * (1.7 if e.kind == "boss" else 2.6))
-		e.pos += Vector2.from_angle(e.heading) * float(e.speed) * dt
+				if distance<230 and e.pattern!="charge": destination=e.pos+offset.normalized().rotated(PI/2)*180
+		var angle:=_navigation_heading(e.pos,destination,float(e.radius),e,dt)
+		angle=_safe_heading(e.pos,angle,float(e.radius),float(e.speed)*0.9)
+		var old_position: Vector2=e.pos
+		e.heading=rotate_toward(float(e.heading),angle,dt*(4.5 if float(e.stuck_time)>0.4 else (2.6 if e.kind=="boss" else 3.4)))
+		e.slow_time=maxf(0,float(e.slow_time)-dt)
+		var speed: float=float(e.speed)*(0.65 if float(e.slow_time)>0 else 1.0)
+		if e.kind=="boss" and e.pattern=="charge" and fmod(elapsed+float(e.phase),6.0)<1.7: speed+=75
+		e.pos=_move_ship(e.pos,Vector2.from_angle(e.heading)*speed*dt,float(e.radius))
+		e.stuck_time=float(e.stuck_time)+dt if old_position.distance_to(e.pos)<speed*dt*0.25 else 0.0
+		if float(e.stuck_time)>1.0: e.path_timer=0.0
+		e.spawn_grace=maxf(0,float(e.spawn_grace)-dt)
 		e.flash = maxf(0, float(e.flash) - dt)
 		e.cooldown -= dt
-		if e.cooldown <= 0 and distance < 500 and e.kind != "runner":
+		if e.cooldown <= 0 and distance < 500 and e.kind != "runner" and e.spawn_grace<=0 and _segment_clear(e.pos,player,4):
 			e.cooldown = e.rate
 			var count := int(e.cannon_count)
 			if e.kind == "boss" and e.pattern == "fan": count += 2
@@ -344,9 +610,9 @@ func _update_enemies(dt: float) -> void:
 					if e.pattern == "spiral": fire_angle = elapsed*1.5+float(n)*TAU/count
 					elif e.pattern == "broadside": fire_angle = e.heading+(-PI/2 if n%2==0 else PI/2)
 				_bullet(e.pos, Vector2.from_angle(fire_angle) * (180 if e.kind == "sniper" else 145), e.damage, false)
-		if distance < e.radius + 23:
+		if distance < e.radius + PLAYER_RADIUS and e.spawn_grace<=0:
 			_damage_player(e.damage)
-			e.pos -= offset.normalized() * 28
+			e.pos=_move_ship(e.pos,-offset.normalized()*20,float(e.radius))
 			if e.kind == "rammer": _burst(e.pos, Color("ff975e"), 14)
 
 func _side_target(side: int) -> Variant:
@@ -355,20 +621,20 @@ func _side_target(side: int) -> Variant:
 	var best_distance := 350.0
 	for e in enemies:
 		var offset: Vector2 = e.pos - player
-		if offset.length() < best_distance and absf(angle_difference(angle, offset.angle())) < 0.9:
+		if e.hp>0 and offset.length() < best_distance and absf(angle_difference(angle, offset.angle())) < 0.68 and _segment_clear(player,e.pos,3):
 			best = e
 			best_distance = offset.length()
 	return best
 
 func fire_side(side: int) -> bool:
-	if not running or paused or cooldowns[side] > 0: return false
+	if side not in [0,1] or not running or paused or cooldowns[side] > 0: return false
 	cooldowns[side] = float(ship.get("cooldown", 1.1)) * (0.5 if rapid_time > 0 else 1.0)
 	var angle := heading + (-PI/2 if side == 0 else PI/2)
 	var target: Variant = _side_target(side)
 	if target != null:
 		var aim: Vector2 = target.pos - player
 		angle = aim.angle()
-	var count := int(ship.get("cannon_count", 3))
+	var count := int(ship.get("cannons_port" if side==0 else "cannons_starboard",ship.get("cannon_count",2)))
 	var damage := float(ship.get("damage", 22))
 	for n in count:
 		var along := (float(n) - float(count-1)/2.0) * 13
@@ -380,9 +646,30 @@ func fire_side(side: int) -> bool:
 	if not reduced_motion: shake = 2.2
 	return true
 
-func _bullet(pos: Vector2, vel: Vector2, damage: float, friendly: bool, side := -1) -> void:
-	if bullets.size() >= MAX_BULLETS: return
-	bullets.append({"pos":pos,"previous":pos,"vel":vel,"damage":damage,"friendly":friendly,"side":side,"life":1.5 if friendly else 3.4})
+func secondary_fire(side: int) -> bool:
+	if not running or paused or not secondary_available(side) or secondary_cooldowns[side]>0: return false
+	secondary_cooldowns[side]=float(ship.get("secondary_cooldown",3.8))
+	var angle:=heading+(-PI/2 if side==0 else PI/2)
+	var target: Variant=_side_target(side)
+	if target!=null: angle=(target.pos-player).angle()
+	var count:=int(ship.get("secondary_count",3))
+	for n in count:
+		var direction:=Vector2.from_angle(angle+(float(n)-float(count-1)/2)*float(ship.get("secondary_spread",0.24)))
+		var origin:=player+direction*31
+		if _bullet(origin,direction*float(ship.get("secondary_speed",245)),float(ship.get("secondary_damage",float(ship.get("damage",22))*1.6)),true,side):
+			bullets[-1].radius=float(ship.get("secondary_radius",7))
+			bullets[-1].secondary=true
+			bullets[-1].life=2.3
+		_burst(origin,Color("b3d8ff"),6)
+	shots+=count
+	_sound("cannon",0.7)
+	if not reduced_motion: shake=3.2
+	return true
+
+func _bullet(pos: Vector2, vel: Vector2, damage: float, friendly: bool, side := -1) -> bool:
+	if bullets.size() >= MAX_BULLETS: return false
+	bullets.append({"pos":pos,"previous":pos,"vel":vel,"damage":damage,"friendly":friendly,"side":side,"life":1.5 if friendly else 3.4,"radius":4.0,"secondary":false})
+	return true
 
 func _update_bullets(dt: float) -> void:
 	for i in range(bullets.size()-1,-1,-1):
@@ -390,12 +677,13 @@ func _update_bullets(dt: float) -> void:
 		b.previous = b.pos
 		b.pos += b.vel * dt
 		b.life -= dt
-		var hit := false
-		if b.friendly:
+		var hit := not _segment_clear(b.previous,b.pos,float(b.get("radius",4)))
+		if b.friendly and not hit:
 			for e in enemies:
 				var nearest := Geometry2D.get_closest_point_to_segment(e.pos, b.previous, b.pos)
-				if e.hp > 0 and nearest.distance_to(e.pos) < e.radius + 5:
+				if e.hp > 0 and nearest.distance_to(e.pos) < e.radius + float(b.get("radius",4)):
 					e.hp -= b.damage
+					if b.get("secondary",false): e.slow_time=0.8
 					e.flash = 0.15
 					_burst(b.pos, Color("ffd080"), 6)
 					hit = true
@@ -403,7 +691,7 @@ func _update_bullets(dt: float) -> void:
 						if b.get("side",-1) >= 0: kills_by_side[b.side] += 1
 						_sink(e)
 					break
-		else:
+		elif not b.friendly and not hit:
 			var nearest := Geometry2D.get_closest_point_to_segment(player, b.previous, b.pos)
 			if nearest.distance_to(player) < 24:
 				_damage_player(b.damage)
@@ -423,12 +711,14 @@ func _sink(e: Dictionary) -> void:
 	_sound("hit")
 	if not reduced_motion: shake = 6.0 if e.kind == "boss" else 3.5
 	for i in mini(12,int(e.get("coin_drop",2))): _drop(e.pos+Vector2.from_angle(i*2.4)*float(i)*4,"coin")
-	if rng.randf() < 0.35 or e.kind == "boss":
+	if mode=="campaign":
+		if e.kind=="boss": _drop(e.pos+Vector2(28,0),"repair")
+	elif rng.randf() < 0.35 or e.kind == "boss":
 		var pool := ["repair", "shield", "rapid", "magnet"]
 		_drop(e.pos + Vector2(28,0), pool[rng.randi_range(0,3)])
 
 func _drop(pos: Vector2, kind: String) -> void:
-	if pickups.size() < MAX_PICKUPS: pickups.append({"pos":pos,"type":kind,"life":30.0})
+	if pickups.size() < MAX_PICKUPS: pickups.append({"pos":_resolve_position(pos,8),"type":kind,"life":999999.0 if mode=="campaign" else 30.0})
 
 func _damage_player(amount: float) -> void:
 	if invincible_time > 0 or debug_invulnerable: return
@@ -471,9 +761,9 @@ func _update_pickups(dt: float) -> void:
 				toast.emit({"repair":"HULL PATCHED +30%","shield":"BUBBLE SHIELD!","rapid":"DOUBLE-TIME CANNONS!","magnet":"TREASURE MAGNET!"}.get(p.type,"POWER UP!"))
 				_sound("power")
 			pickups.remove_at(i)
-		elif p.life <= 0 or distance > 1200: pickups.remove_at(i)
+		elif p.life <= 0 or (mode!="campaign" and distance > 1200): pickups.remove_at(i)
 	# Salvage missions always have attainable treasure even if a chest was missed.
-	if level.get("objective", {}).get("type", "") == "coins" and pickups.size() < 6:
+	if mode!="campaign" and level.get("objective", {}).get("type", "") == "coins" and pickups.size() < 6:
 		_drop(player + Vector2.from_angle(rng.randf_range(-PI,PI))*rng.randf_range(150,280), "coin")
 	if mode == "endless" and pickups.size() < 8 and rng.randf() < dt * 0.6:
 		_drop(player + Vector2.from_angle(rng.randf_range(-PI,PI))*250, "coin")
@@ -483,30 +773,29 @@ func _update_hazards(dt: float) -> void:
 		h.tick = maxf(0, h.tick - dt)
 		var offset: Vector2 = h.pos - player
 		var active := true
-		if h.type == "storm": active = fmod(elapsed+float(h.get("phase",0)),float(h.get("period",9))) < float(h.get("duration",2))
+		if h.type == "storm": active = fmod(elapsed+float(h.get("phase",0)),maxf(1,float(h.get("period",9)))) < float(h.get("duration",2))
 		if offset.length() < h.radius + 20 and active:
 			match h.type:
-				"current": player += Vector2(float(h.get("force",45)), 10) * dt
-				"maelstrom": player += offset.normalized() * dt * float(h.get("force",60))
+				"current": player=_move_ship(player,Vector2(float(h.get("force",45)),10)*dt,PLAYER_RADIUS)
+				"maelstrom": player=_move_ship(player,offset.normalized()*dt*float(h.get("force",60)),PLAYER_RADIUS)
 				_: pass
 			if h.tick <= 0 and h.type != "current":
 				_damage_player(h.damage)
 				h.tick = 1.2
-	# Islands repel ships softly; cannon combat remains forgiving near beaches.
-	var coord := Vector2i(floori(player.x / chunk_size), floori(player.y / chunk_size))
-	for x in range(coord.x-1,coord.x+2):
-		for y in range(coord.y-1,coord.y+2):
-			var island := _island(Vector2i(x,y))
-			if island.is_empty(): continue
-			var offset: Vector2 = player - island.pos
-			if offset.length() < island.radius + 10:
-				player = island.pos + offset.normalized() * (island.radius + 11)
-				_damage_player(4)
-	if island_cache.size() > 100:
+	player=_resolve_position(player,PLAYER_RADIUS)
+	for island in _near_islands(player):
+		if player.distance_to(island.pos)<float(island.radius)+PLAYER_RADIUS+0.5: _damage_player(4)
+	if mode!="campaign" and island_cache.size() > 100:
+		var coord := Vector2i(floori(player.x / chunk_size), floori(player.y / chunk_size))
 		for key in island_cache.keys():
 			if (Vector2(key) - Vector2(coord)).length() > 5: island_cache.erase(key)
+	if mode!="campaign" and geometry_cache.size()>36:
+		var coord:=Vector2i(floori(player.x/chunk_size),floori(player.y/chunk_size))
+		for key in geometry_cache.keys():
+			if (Vector2(key)-Vector2(coord)).length()>3: geometry_cache.erase(key)
 
 func _island(coord: Vector2i) -> Dictionary:
+	if mode=="campaign": return {}
 	if island_cache.has(coord): return island_cache[coord]
 	var local := RandomNumberGenerator.new()
 	local.seed = hash(str(coord.x) + ":" + str(coord.y) + ":plunder:" + str(voyage_seed))
@@ -541,6 +830,7 @@ func _sound(key: String, pitch := 1.0) -> void:
 func finish(won: bool) -> Dictionary:
 	if not running: return {}
 	running = false
+	release_controls()
 	var stars := 0
 	if won:
 		stars = 1
@@ -560,10 +850,15 @@ func _draw() -> void:
 	var wave_offset := Vector2(-posmod(player.x*0.22,144),-posmod(player.y*0.22,140))
 	draw_texture_rect(textures.waves,Rect2(wave_offset,size+Vector2(144,140)),true)
 	var coord := Vector2i(floori(player.x/chunk_size),floori(player.y/chunk_size))
-	for x in range(coord.x-2,coord.x+3):
-		for y in range(coord.y-2,coord.y+3):
-			var island := _island(Vector2i(x,y))
-			if not island.is_empty(): _draw_island(island)
+	if mode=="campaign":
+		for island in authored_islands: _draw_island(island)
+		var bounds_screen:=Rect2(world_screen(campaign_bounds.position),campaign_bounds.size)
+		draw_rect(bounds_screen,Color("90cfcc"),false,4)
+	else:
+		for x in range(coord.x-2,coord.x+3):
+			for y in range(coord.y-2,coord.y+3):
+				var island := _island(Vector2i(x,y))
+				if not island.is_empty(): _draw_island(island)
 	for h in hazards:
 		var p := world_screen(h.pos)
 		var active: bool = h.type != "storm" or fmod(elapsed+float(h.get("phase",0)),maxf(1,float(h.get("period",9)))) < float(h.get("duration",2))
@@ -604,7 +899,7 @@ func _draw() -> void:
 	for b in bullets:
 		var p := world_screen(b.pos)
 		draw_line(p,p-b.vel.normalized()*12,Color("fff2b0") if b.friendly else Color("ff9e72"),3,true)
-		draw_circle(p,4 if b.friendly else 5,Color("fff7d5") if b.friendly else Color("ff6b5d"))
+		draw_circle(p,float(b.get("radius",4)) if b.friendly else 5,Color("b9d7ff") if b.get("secondary",false) else (Color("fff7d5") if b.friendly else Color("ff6b5d")))
 	var center := camera_center()
 	if not reduced_motion: center += Vector2(sin(elapsed*80),cos(elapsed*91))*shake
 	var player_sprite := int(ship.get("sprite",4))
@@ -615,6 +910,7 @@ func _draw() -> void:
 	if hp < max_hp*0.35 and int(elapsed*8)%2 == 0:
 		draw_circle(center+Vector2(12,12),9,Color("ffad58"))
 		draw_circle(center+Vector2(10,19),5,Color("ff5b50"))
+	if mode=="campaign": _draw_enemy_guidance()
 	_draw_controls()
 	if flash > 0: draw_rect(Rect2(Vector2.ZERO,size),Color(1,0.2,0.15,flash*0.4))
 
@@ -687,3 +983,32 @@ func _draw_controls() -> void:
 		draw_set_transform(p,PI-0.2 if side == 0 else 0.2)
 		draw_texture_rect(textures.cannon,Rect2(-27,-15,54,30),false,Color("ffedc4"))
 		draw_set_transform(Vector2.ZERO)
+		if secondary_available(side):
+			var auxiliary:=secondary_center(side)
+			var auxiliary_ready: bool=secondary_cooldowns[side]<=0
+			draw_circle(auxiliary+Vector2(0,4),37,Color("081b28"))
+			draw_circle(auxiliary,35,Color("5c83a9") if auxiliary_ready else Color("354e65"))
+			var ratio:=1.0-clampf(float(secondary_cooldowns[side])/float(ship.get("secondary_cooldown",3.8)),0,1)
+			draw_arc(auxiliary,33,-PI/2,-PI/2+TAU*ratio,28,Color("b5dcff"),3,true)
+			for i in 3:
+				var shot_pos:=auxiliary+Vector2((i-1)*12,-5 if i==1 else 7)
+				draw_circle(shot_pos,6,Color("d8edff"))
+
+func _draw_enemy_guidance() -> void:
+	var size:=screen_size()
+	var visible:=Rect2(26,230,size.x-52,maxf(100,size.y-510))
+	var used: Array[Vector2]=[]
+	for enemy in enemies:
+		var position:=world_screen(enemy.pos)
+		if visible.has_point(position): continue
+		position=position.clamp(visible.position,visible.end)
+		var crowded:=false
+		for previous in used:
+			if position.distance_to(previous)<22: crowded=true; break
+		if crowded: continue
+		used.append(position)
+		var direction: Vector2=(enemy.pos-player).normalized()
+		var across:=direction.orthogonal()
+		draw_circle(position,15,Color("123c4c"))
+		var triangle:=PackedVector2Array([position+direction*11,position-direction*8+across*7,position-direction*8-across*7])
+		draw_colored_polygon(triangle,Color("ffd271") if enemy.kind=="boss" else Color("ff9274"))

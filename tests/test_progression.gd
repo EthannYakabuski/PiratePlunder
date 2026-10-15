@@ -130,6 +130,9 @@ func _run() -> void:
 	_check(sanitized.devices.persistence.metrics.enemies_sunk == 0 and sanitized.devices.persistence.metrics.coins_collected == 0, "invalid counters sanitized")
 	_check(not sanitized.levels.has("51"), "cloud cannot add levels outside campaign")
 	_test_service_queues()
+	_test_upgrade_tree()
+	_test_upgrade_migration()
+	_test_upgrade_cloud_merge()
 
 	for progress in test_nodes:
 		for suffix in ["", ".bak", ".tmp"]:
@@ -189,3 +192,151 @@ func _test_service_queues() -> void:
 	achievements_client.free()
 	boards_client.free()
 	adapter.free()
+
+func _grant_rank(progress: Node, ship_id: String, rank: int, coins: int = -1) -> void:
+	var step: int = int(progress.ship_definition(ship_id).progression.xp_per_rank)
+	progress.data.devices[progress.data.device_id].ship_xp[ship_id] = step * (rank - 1) * rank / 2
+	if coins >= 0:
+		progress.data.devices[progress.data.device_id].metrics.coins_collected = coins
+
+func _upgrade_option(progress: Node, ship_id: String, upgrade_id: String) -> Dictionary:
+	for option in progress.get_ship_upgrades(ship_id):
+		if option.id == upgrade_id:
+			return option
+	return {}
+
+func _test_upgrade_tree() -> void:
+	var tree = _make_progression("upgrade-tree")
+	var base: Dictionary = tree.ship_definition("swiftfin")
+	var initial: Dictionary = tree.ship_loadout("swiftfin")
+	_check(not tree.settings.auto_fire and not initial.primary_auto and not initial.secondary_port and not initial.secondary_starboard, "fresh ships start with manual primary controls and locked secondary controls")
+	_check(initial.cannons_port == base.cannon_count and initial.cannons_starboard == base.cannon_count, "loadout starts with base cannon count on both sides")
+	tree.settings.auto_fire = true
+	_check(not tree.ship_loadout("swiftfin").effective_primary_auto, "manual auto-fire setting cannot grant locked primary automation")
+	_check(tree.get_ship_upgrades("swiftfin").size() == 9, "shipyard contains nine staged upgrades")
+	_check(tree.ship_loadout("unknown").is_empty() and tree.get_ship_upgrades("unknown").is_empty(), "unknown ships cannot obtain a loadout or upgrade tree")
+	_check(not tree.purchase_upgrade("swiftfin", "unknown").success and not tree.purchase_upgrade("unknown", "port_cannon_1").success, "unknown purchase IDs cannot spend gold")
+	_grant_rank(tree, "swiftfin", 20, 20000)
+	_check(not tree.purchase_upgrade("swiftfin", "primary_auto").success, "rank twenty alone cannot bypass capstone prerequisites")
+	_check(not tree.purchase_upgrade("swiftfin", "secondary_auto_port").success, "auxiliary automation requires the matching paid weapon and cannons")
+	var cumulative_cost := 0
+	var expected_port: int = base.cannon_count
+	var expected_starboard: int = base.cannon_count
+	for definition in tree.upgrades:
+		_grant_rank(tree, "swiftfin", int(definition.required_rank) - 1)
+		var gated: Dictionary = _upgrade_option(tree, "swiftfin", definition.id)
+		_check(not gated.eligible and not tree.purchase_upgrade("swiftfin", definition.id).success, "%s is denied below its exact ship rank" % definition.id)
+		_grant_rank(tree, "swiftfin", int(definition.required_rank))
+		_check(_upgrade_option(tree, "swiftfin", definition.id).eligible, "%s becomes eligible at its rank threshold" % definition.id)
+		var purchase: Dictionary = tree.purchase_upgrade("swiftfin", definition.id)
+		_check(purchase.success and purchase.cost == definition.cost, "%s purchases successfully for the catalog price" % definition.id)
+		cumulative_cost += int(definition.cost)
+		var loadout: Dictionary = tree.ship_loadout("swiftfin")
+		if definition.effects.has("cannons_port"):
+			expected_port += 1
+		if definition.effects.has("cannons_starboard"):
+			expected_starboard += 1
+		_check(loadout.cannons_port == expected_port and loadout.cannons_starboard == expected_starboard, "%s adds only its own single cannon, if any" % definition.id)
+		_check(tree.gold() == 20000 - cumulative_cost and tree.gold_spent() == cumulative_cost, "%s charges exactly once without changing gross earnings" % definition.id)
+		var before_repeat: int = tree.gold()
+		_check(not tree.purchase_upgrade("swiftfin", definition.id).success and tree.gold() == before_repeat, "%s repeat taps never pay twice" % definition.id)
+		_check(tree.load_data() and tree.owns_upgrade("swiftfin", definition.id), "%s ownership persists immediately across reload" % definition.id)
+		if int(definition.required_rank) < 17:
+			_check(not loadout.secondary_auto_port and not loadout.secondary_auto_starboard and not loadout.primary_auto, "early and middle purchases do not unlock automation")
+	var full: Dictionary = tree.ship_loadout("swiftfin")
+	_check(full.cannons_port == int(base.cannon_count) + 2 and full.cannons_starboard == int(base.cannon_count) + 2, "complete cannon branch adds two cannons per side incrementally")
+	_check(full.secondary_port and full.secondary_starboard and full.secondary_auto_port and full.secondary_auto_starboard, "both paid scattershot and late crew branches become active")
+	_check(full.primary_auto and full.effective_primary_auto and tree.settings.auto_fire, "paid final capstone immediately enables primary automation preference")
+	_check(full.secondary_count == 3 and full.secondary_speed == 245.0 and full.secondary_spread == 0.24 and full.secondary_cooldown > full.cooldown, "secondary loadout supplies a distinct slower fan volley")
+	_check(is_equal_approx(full.hp, base.hp + tree.ship_bonus("swiftfin").hp) and is_equal_approx(full.damage, base.damage + tree.ship_bonus("swiftfin").damage), "loadout preserves existing per-rank hull and damage bonuses exactly once")
+	_check(tree.metric("coins_collected") == 20000 and tree.gold() == 20000 - cumulative_cost, "spending changes wallet without rewriting lifetime gold earned")
+	_check(not tree.ship_loadout("ironclad").primary_auto and not tree.owns_upgrade("ironclad", "port_cannon_1"), "all weapon purchases and automation belong only to their ship")
+	tree.set_setting("auto_fire", false)
+	_check(tree.ship_loadout("swiftfin").primary_auto and not tree.ship_loadout("swiftfin").effective_primary_auto, "capstone owners can still disable automatic primary fire")
+	tree.set_setting("auto_fire", true)
+	_check(tree.ship_loadout("swiftfin").effective_primary_auto, "capstone owners can enable their purchased primary automation again")
+	var poor = _make_progression("poor")
+	_grant_rank(poor, "swiftfin", 4, 179)
+	_check(not poor.purchase_upgrade("swiftfin", "port_cannon_1").success and poor.gold() == 179 and poor.gold_spent() == 0, "insufficient funds never overspend or grant ownership")
+	_grant_rank(poor, "swiftfin", 4, 1000)
+	var good_path: String = poor.save_path
+	poor.save_path = "res://tests/.missing-upgrade-directory/save.json"
+	_check(not poor.purchase_upgrade("swiftfin", "port_cannon_1").success and poor.gold() == 1000 and not poor.owns_upgrade("swiftfin", "port_cannon_1"), "failed persistence rolls back the entire purchase and keeps gold")
+	poor.save_path = good_path
+	var forged = _make_progression("forged")
+	_grant_rank(forged, "swiftfin", 20, 20000)
+	forged.settings.auto_fire = true
+	forged.data.primary_auto = true
+	forged.data.purchases = {"swiftfin": {"primary_auto": true, "secondary_auto_port": true}}
+	_check(not forged.ship_loadout("swiftfin").primary_auto and not forged.ship_loadout("swiftfin").secondary_auto_port, "forged boolean ownership and manual automation flags are rejected")
+	forged.data.purchases.swiftfin.primary_auto = {"cost": 2800, "device_id": "forged", "at": 1}
+	_check(not forged.ship_loadout("swiftfin").primary_auto, "even a capstone receipt cannot activate without every prerequisite")
+
+func _test_upgrade_migration() -> void:
+	var migrated = _make_progression("migration")
+	_grant_rank(migrated, "redwake", 8, 1234)
+	migrated.data.levels["1"] = {"stars": 3, "score": 777, "completed": true}
+	migrated.data.achievements.sea_legs = true
+	var legacy: Dictionary = migrated.data.duplicate(true)
+	legacy.version = 2
+	legacy.settings.auto_fire = true
+	legacy.settings.music = false
+	legacy.services.score_queue.endless_score = 9876
+	legacy.erase("purchases")
+	var prior_xp: int = migrated.ship_xp("redwake")
+	var payload := JSON.stringify(legacy)
+	var file := FileAccess.open(migrated.save_path, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"version": 2, "payload": payload, "sha256": payload.sha256_text()}))
+	file.close()
+	_check(migrated.load_data() and migrated.data.version == 3, "existing checksum-wrapped version-two save migrates to version three")
+	_check(migrated.ship_xp("redwake") == prior_xp and migrated.gold() == 1234 and migrated.level_state(1).stars == 3 and migrated.is_level_unlocked(2), "migration preserves all existing XP, gold, stars, and shared level unlocks")
+	_check(not migrated.settings.music and migrated.data.achievements.sea_legs and migrated.data.services.score_queue.endless_score == 9876, "migration preserves preferences, achievements, and pending service deliveries")
+	_check(not migrated.settings.auto_fire and migrated.data.purchases.is_empty() and not migrated.ship_loadout("redwake").primary_auto, "legacy free assisted-fire preference is disabled without granting any upgrades")
+	_check(migrated.save_data() == OK and migrated.load_data() and migrated.ship_xp("redwake") == prior_xp, "migrated progress persists without resetting existing users")
+	legacy.device_id = "legacy-cloud"
+	_check(migrated.merge_cloud(legacy) and migrated.ship_xp("redwake") == prior_xp and not migrated.ship_loadout("redwake").primary_auto, "legacy cloud progress merges idempotently and cannot restore free automation")
+
+func _test_upgrade_cloud_merge() -> void:
+	var origin = _make_progression("upgrade-origin")
+	_grant_rank(origin, "swiftfin", 20, 1000)
+	_grant_rank(origin, "ironclad", 20)
+	var first = _make_progression("purchase-a")
+	var second = _make_progression("purchase-b")
+	first.merge_cloud(origin.export_cloud())
+	second.merge_cloud(origin.export_cloud())
+	_check(first.purchase_upgrade("swiftfin", "port_cannon_1").success and second.purchase_upgrade("swiftfin", "port_cannon_1").success, "two offline devices can each purchase an affordable upgrade locally")
+	var second_cloud: Dictionary = second.export_cloud()
+	first.merge_cloud(second_cloud)
+	first.merge_cloud(second_cloud)
+	second.merge_cloud(first.export_cloud())
+	_check(first.gold_spent() == 180 and first.gold() == 820 and second.gold() == 820, "same per-ship purchase on two devices converges with a single charge")
+	_check(first.owns_upgrade("swiftfin", "port_cannon_1") and second.owns_upgrade("swiftfin", "port_cannon_1"), "ownership merges by union without disappearing on either device")
+	_check(first.purchase_upgrade("swiftfin", "starboard_cannon_1").success and second.purchase_upgrade("ironclad", "port_cannon_1").success, "independent eligible ship purchases can be made after syncing")
+	first.merge_cloud(second.export_cloud())
+	second.merge_cloud(first.export_cloud())
+	_check(first.gold() == 380 and second.gold() == 380 and first.gold_spent() == 620, "different upgrade receipts union and charge each unique ship item once")
+	_check(first.ship_loadout("swiftfin").cannons_starboard == 3 and first.ship_loadout("ironclad").cannons_port == 4, "merged weapon purchases affect their correct ship and side")
+	var gross_xp: int = first.ship_xp("swiftfin")
+	first.merge_cloud(first.export_cloud())
+	_check(first.gold() == 380 and first.ship_xp("swiftfin") == gross_xp and first.metric("coins_collected") == 1000, "repeated purchase sync never duplicates spending or rewrites earned XP/gold")
+	var old: Dictionary = origin.export_cloud()
+	old.version = 2
+	old.erase("purchases")
+	first.merge_cloud(old)
+	_check(first.gold() == 380 and first.owns_upgrade("ironclad", "port_cannon_1"), "stale pre-upgrade cloud saves cannot erase purchases or refund spent gold")
+	var scarce_origin = _make_progression("scarce-origin")
+	_grant_rank(scarce_origin, "swiftfin", 4, 200)
+	_grant_rank(scarce_origin, "ironclad", 4)
+	var scarce_a = _make_progression("scarce-a")
+	var scarce_b = _make_progression("scarce-b")
+	scarce_a.merge_cloud(scarce_origin.export_cloud())
+	scarce_b.merge_cloud(scarce_origin.export_cloud())
+	_check(scarce_a.purchase_upgrade("swiftfin", "port_cannon_1").success and scarce_b.purchase_upgrade("ironclad", "port_cannon_1").success, "offline purchases each respect their own known balance")
+	scarce_a.merge_cloud(scarce_b.export_cloud())
+	scarce_b.merge_cloud(scarce_a.export_cloud())
+	_check(scarce_a.gold() == 0 and scarce_b.gold() == 0 and scarce_a.gold_spent() == 360, "concurrent different-device spending preserves both purchases with no negative displayed wallet")
+	_check(not scarce_a.purchase_upgrade("ironclad", "port_cannon_1").success, "concurrent ownership cannot be bought twice even while the wallet settles")
+	scarce_a.data.devices[scarce_a.data.device_id].metrics.coins_collected = 100
+	_check(scarce_a.gold() == 0, "future earnings repay outstanding concurrent spend before becoming available")
+	scarce_a.data.devices[scarce_a.data.device_id].metrics.coins_collected = 200
+	_check(scarce_a.gold() == 40, "settled concurrent spend leaves the exact remaining earned gold")

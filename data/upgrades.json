@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "ownership": "per_ship",
+  "currency": "gold",
+  "upgrades": [
+    {"id":"port_cannon_1","name":"Port Cannon I","description":"Add one cannon to your port broadside.","side":"port","kind":"cannon","required_rank":4,"cost":180,"requires":[],"effects":{"cannons_port":1}},
+    {"id":"starboard_cannon_1","name":"Starboard Cannon I","description":"Add one cannon to your starboard broadside.","side":"starboard","kind":"cannon","required_rank":6,"cost":260,"requires":[],"effects":{"cannons_starboard":1}},
+    {"id":"secondary_port","name":"Port Grapeshot","description":"Unlock a separate port control firing three slower, heavy shots in a wide fan. Reloads independently.","side":"port","kind":"secondary","required_rank":7,"cost":320,"requires":["port_cannon_1"],"effects":{"secondary_port":true}},
+    {"id":"port_cannon_2","name":"Port Cannon II","description":"Add one more port cannon. Requires Port Cannon I.","side":"port","kind":"cannon","required_rank":9,"cost":420,"requires":["port_cannon_1"],"effects":{"cannons_port":1}},
+    {"id":"secondary_starboard","name":"Starboard Grapeshot","description":"Unlock a separate starboard control firing three slower, heavy shots in a wide fan. Reloads independently.","side":"starboard","kind":"secondary","required_rank":10,"cost":450,"requires":["starboard_cannon_1"],"effects":{"secondary_starboard":true}},
+    {"id":"starboard_cannon_2","name":"Starboard Cannon II","description":"Add one more starboard cannon. Requires Starboard Cannon I.","side":"starboard","kind":"cannon","required_rank":11,"cost":520,"requires":["starboard_cannon_1"],"effects":{"cannons_starboard":1}},
+    {"id":"secondary_auto_port","name":"Port Powder Crew","description":"Your port grapeshot crew fires automatically when an enemy enters its broadside arc.","side":"port","kind":"automation","required_rank":17,"cost":1200,"requires":["secondary_port","port_cannon_2"],"effects":{"secondary_auto_port":true}},
+    {"id":"secondary_auto_starboard","name":"Starboard Powder Crew","description":"Your starboard grapeshot crew fires automatically when an enemy enters its broadside arc.","side":"starboard","kind":"automation","required_rank":18,"cost":1400,"requires":["secondary_starboard","starboard_cannon_2"],"effects":{"secondary_auto_starboard":true}},
+    {"id":"primary_auto","name":"Master Gunner","description":"The final ship upgrade. Unlock automatic primary broadsides after buying every cannon and grapeshot upgrade. Can be toggled in settings.","side":"both","kind":"automation","required_rank":20,"cost":2800,"requires":["port_cannon_1","starboard_cannon_1","secondary_port","port_cannon_2","secondary_starboard","starboard_cannon_2","secondary_auto_port","secondary_auto_starboard"],"effects":{"primary_auto":true}}
+  ]
+}

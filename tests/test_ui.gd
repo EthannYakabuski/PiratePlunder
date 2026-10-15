@@ -7,58 +7,95 @@ func check(condition: bool, message: String) -> void:
 	if not condition:
 		failed += 1
 		push_error(message)
+func button_texts(node: Node) -> Array[String]:
+	var result: Array[String]=[]
+	if node is Button: result.append(node.text)
+	for child in node.get_children(): result.append_array(button_texts(child))
+	return result
+func wrapping_fits(node: Node, max_width: float) -> bool:
+	if node is Label and node.text.begins_with("Unlock a separate"):
+		if node.size.x>max_width or node.get_line_count()<2: return false
+	for child in node.get_children():
+		if not wrapping_fits(child,max_width): return false
+	return true
 func run() -> void:
 	var progress: Node = root.get_node("Progression")
 	progress.save_path = "res://tests/.ui-save.json"
 	progress.reset_data("ui-test")
-	# Fast headless screen tests don't need an asynchronous audio-device playback.
 	progress.settings.music=false
 	var main: Node2D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	await process_frame
-	check(main.screen == "ships","Launch opens ship cards")
-	check(progress.ships.size()==4,"Four distinct ships")
-	main._choose_ship(0,true)
-	check(main.screen=="chart","Ship leads to shared chart")
-	check(progress.is_level_unlocked(1) and not progress.is_level_unlocked(2),"New profile locks later levels")
+	check(main.screen=="chart","Launch opens Your Next Adventure directly")
+	check(progress.ships.size()==4,"Four ships remain available")
+	check(progress.is_level_unlocked(1) and not progress.is_level_unlocked(2),"Shared campaign unlocks preserved")
 	main._select_level(1)
-	check(main.screen=="ships" and not main.launch_cards,"Level opens run ship cards")
-	main._choose_ship(2,false)
-	check(main.screen=="run" and main.arena.running,"Ship tap starts a run")
-	check(main.arena.max_hp==110,"Base HP survives additive rank bonuses")
-	check(main.arena.ship.damage==28,"Base damage survives rank bonuses")
-	check(main.arena.assisted,"One-thumb auto fire default on")
+	check(main.screen=="ships","Mission opens the only ship chooser")
+	main._choose_ship(2)
+	check(main.screen=="run" and main.arena.running,"One ship tap starts the voyage")
+	check(main.arena.max_hp==110 and main.arena.ship.damage==28,"Base ship stats survive loadout integration")
+	check(not main.arena.assisted,"New players have manual primary cannons")
+	check(not main.arena.secondary_available(0) and not main.arena.secondary_available(1),"New players have no unearned secondary guns")
 	main._pause()
 	check(main.arena.paused,"Pause freezes combat")
+	var locked_auto_button := false
+	for text in button_texts(main.ui):
+		if text.contains("auto fire"): locked_auto_button=true
+	check(not locked_auto_button,"Pause cannot enable locked automatic fire")
+	check(not main.arena.set_primary_assist(true),"Runtime rejects unpurchased automation")
 	main.arena.paused=false
 	main._run_ui()
 	main.arena.finish(false)
-	check(main.screen=="result","Defeat opens result")
-	check(progress.metric("runs_started")==1,"Result recorded exactly once")
+	check(main.screen=="result" and progress.metric("runs_started")==1,"Result recorded once")
+	main.capture_mode="qa"
+	main._run_finished(main.last_summary.duplicate(true))
+	check(progress.metric("runs_started")==1,"Automated screenshot runs never change player progression")
+	main.capture_mode=""
 	main.show_chart()
-	check(not main.arena.visible,"Chart hides previous arena")
+	check(not main.arena.visible,"Chart hides previous battlefield")
+	main.shipyard_return="chart"
+	main.show_shipyard()
+	check(main.screen=="shipyard","Shipyard opens without starting a run")
+	await process_frame
+	await process_frame
+	if DisplayServer.get_name()!="headless":
+		check(wrapping_fits(main.ui,main.size().x-64),"Long upgrade descriptions wrap inside their cards")
+	var device: Dictionary=progress.data.devices[progress.data.device_id]
+	device.ship_xp.swiftfin=100000
+	device.metrics.coins_collected=20000
+	main.selected_ship=0
+	main.show_shipyard()
+	var before: Dictionary=progress.ship_loadout("swiftfin")
+	var wallet: int=progress.gold()
+	main._buy_upgrade("swiftfin","port_cannon_1")
+	var after: Dictionary=progress.ship_loadout("swiftfin")
+	check(main.screen=="shipyard" and after.cannons_port==before.cannons_port+1,"Purchase refreshes the upgraded ship")
+	check(after.cannons_starboard==before.cannons_starboard,"Single-side upgrade leaves opposite count unchanged")
+	check(progress.gold()<wallet,"Shipyard spends earned gold")
+	check(not after.primary_auto,"Rank alone does not grant automation")
+	main.show_ships()
+	check(main.screen=="ships","Ship choice available after upgrading")
+	progress.set_setting("auto_fire",true)
 	main.selected_mode="endless"
 	main.start_run()
-	check(main.arena.mode=="endless" and main.arena.max_hp>0,"Endless playable")
-	check(main.arena.level.endless.max_enemies_cap==14,"Endless honors authored configuration")
+	check(main.arena.mode=="endless" and main.arena.max_hp>0,"Endless remains playable")
+	check(not main.arena.assisted,"Legacy preference cannot bypass purchased automation")
 	for i in 40: main.arena.spawn_enemy("boss")
-	check(main.arena.enemies.size()==14,"Repeated boss spawns cannot exceed endless hard cap")
+	check(main.arena.enemies.size()==14,"Endless boss population remains capped")
 	main.arena.finish(false)
 	main.selected_mode="daily"
 	main.start_run()
-	check(main.arena.mode=="daily","Daily mode starts")
+	check(main.arena.mode=="daily","Daily remains separate from finite campaign flow")
 	main.arena.finish(true)
-	check(not progress.is_level_unlocked(2),"Daily result does not unlock campaign")
+	check(not progress.is_level_unlocked(2),"Daily results cannot unlock campaign")
 	main.show_logbook()
 	check(main.screen=="logbook","Logbook renders")
 	main.show_settings()
 	check(main.screen=="settings","Settings render")
-	progress.set_setting("auto_fire",false)
-	main.selected_mode="campaign"
-	main.selected_level=1
-	main.start_run()
-	check(not main.arena.assisted,"Auto fire setting restored")
-	main.arena.finished.disconnect(main._run_finished)
+	var has_auto_setting := false
+	for text in button_texts(main.ui):
+		if text.contains("auto fire"): has_auto_setting=true
+	check(not has_auto_setting,"General settings cannot grant locked automation")
 	main.queue_free()
 	await process_frame
 	for suffix in ["",".bak",".tmp"]:

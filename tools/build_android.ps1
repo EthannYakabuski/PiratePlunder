@@ -9,6 +9,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $projectDirectory = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$projectSettingsPath = Join-Path $projectDirectory 'project.godot'
 $buildDirectory = [System.IO.Path]::GetFullPath((Join-Path $projectDirectory 'android/build'))
 if (-not $buildDirectory.StartsWith($projectDirectory + [System.IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'The Android build directory must remain inside the project.'
@@ -68,16 +69,28 @@ $logPath = Join-Path $artifactDirectory "android-$variant-$extension.log"
 $mode = if ($Release) { '--export-release' } else { '--export-debug' }
 $preset = "Android $Format"
 $buildStartedAt = Get-Date
+# The pinned editor plugin removes its autoload when the exporter closes.
+# Keep the declaration so a subsequent direct game run still parses correctly.
+$pluginAutoload = 'GodotPlayGameServices="*res://addons/GodotPlayGameServices/scripts/autoloads/godot_play_game_services.gd"'
+$existingPluginAutoload = [regex]::Match([IO.File]::ReadAllText($projectSettingsPath), '(?m)^GodotPlayGameServices=[^\r\n]+')
+if ($existingPluginAutoload.Success) { $pluginAutoload = $existingPluginAutoload.Value }
 
 Write-Host "Building PiratePlunder $variant $Format for Android API36."
 Write-Host 'Configure Java SDK and Android SDK paths in Godot Editor Settings if export validation requires them.'
 Push-Location $projectDirectory
 try {
-    & $Godot --headless --path $projectDirectory --log-file $logPath $mode $preset $artifactPath
+    & $Godot --headless --quit --path $projectDirectory --log-file $logPath $mode $preset $artifactPath
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $artifactPath) -or (Get-Item -LiteralPath $artifactPath).LastWriteTime -lt $buildStartedAt) {
         throw "Android export failed. Inspect $logPath."
     }
     Write-Host "Created $artifactPath"
 } finally {
+    $projectSettings = [IO.File]::ReadAllText($projectSettingsPath)
+    if ($projectSettings -notmatch '(?m)^GodotPlayGameServices=') {
+        $lineEnding = if ($projectSettings.Contains("`r`n")) { "`r`n" } else { "`n" }
+        $restoredSettings = [regex]::Replace($projectSettings, '(?m)^(PlayServices=)', ($pluginAutoload + $lineEnding + '${1}'))
+        if ($restoredSettings -eq $projectSettings) { throw 'Unable to restore the required Play Games autoload; restore it in project.godot before running the game.' }
+        [IO.File]::WriteAllText($projectSettingsPath, $restoredSettings, [Text.UTF8Encoding]::new($false))
+    }
     Pop-Location
 }

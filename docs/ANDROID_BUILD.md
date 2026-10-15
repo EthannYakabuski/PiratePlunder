@@ -1,6 +1,6 @@
 # Android builds
 
-The project includes two Gradle export presets: **Android APK** (ARM64 debug/device testing) and **Android AAB** (ARMv7 + ARM64 for eventual Play distribution). Both use `com.pirateplunder.game`, version `0.1.0` / code `1`, portrait orientation, optional Play Games services, and separate adaptive launcher icon layers. Confirm the package name before first publication.
+The project includes two Gradle export presets: **Android APK** (ARM64 debug/device testing) and **Android AAB** (ARMv7 + ARM64 for eventual Play distribution). Both use `com.pirateplunder.game`, version `0.2.0` / code `2`, portrait orientation, optional Play Games services, and separate adaptive launcher icon layers. Confirm the package name before first publication.
 
 The minimum API is 24. The target API is **36**: Google requires Android 16/API 36 for new phone applications and updates from August 31, 2026. This was verified on October 14, 2026 against the [official target API requirement](https://developer.android.com/google/play/requirements/target-sdk). Recheck the rule when publishing.
 
@@ -9,6 +9,8 @@ The minimum API is 24. The target API is **36**: Google requires Android 16/API 
 Install Godot **4.5.1** and its matching export templates, JDK 17, Android SDK Platform36, platform-tools, command-line tools, and build-tools36. Configure your JDK and SDK directories in **Godot → Editor Settings → Export → Android**. The existing `GodotPlayGameServices` addon must remain enabled. Follow the [Godot Android export instructions](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_android.html).
 
 The build helper extracts the stock `android_source.zip` to ignored `android/build` if necessary and changes that template's compile SDK from 35 to 36. The default Gradle build directory setting is intentionally blank: Godot resolves it to `res://android/build`. Setting the option to that exact path incorrectly appends another `build` directory.
+
+The upstream editor plugin removes its autoload declaration when an exporting editor exits. The build helper restores the existing declaration in its cleanup step so subsequent direct desktop runs still parse correctly. It also requests explicit editor shutdown after export.
 
 Keep `textures/vram_compression/import_etc2_astc=true` in the project's rendering settings. Godot's Android export validation requires mobile texture import support even for this Compatibility renderer project; otherwise 4.5.1 may report an empty configuration error. Generated Android resources, caches, and native build outputs remain ignored.
 
@@ -37,26 +39,28 @@ Provide the release keystore path, alias, and password through `GODOT_ANDROID_KE
 
 ## Validation still needed on hardware
 
-Test API 24 and a recent Android 16 phone; notch and gesture safe areas; portrait tablets; simultaneous steering and both fire buttons; one-thumb auto fire; haptics; audio focus/background interruptions; temperature and battery behavior during a 20-minute Endless run; sustained frame rate with the enemy/projectile cap; app restart persistence; and Play Games authentication/cloud round trips with test accounts. Also check Android 16's edge-to-edge and large-screen behavior on real devices.
+Test API 24 and a recent Android 16 phone; notch and gesture safe areas; portrait tablets; simultaneous steering and manual port/starboard cannon holds; separately unlocked grapeshot controls; purchased per-side crews and the rank-20 primary automation capstone; haptics; audio focus/background interruptions; temperature and battery behavior during a 20-minute Endless run; sustained frame rate with the enemy/projectile cap; app restart persistence; and Play Games authentication/cloud round trips with test accounts. Also check Android 16's edge-to-edge and large-screen behavior on real devices.
 
 The template shipped with Godot 4.5.1 uses Android Gradle Plugin 8.6.1. Compiling against API 36 can produce a tooling compatibility warning. Review and validate the template/toolchain against the current Play requirements before signing a production build. Android native 16KB page compatibility and Play's pre-launch report also require release-artifact validation; a successful desktop run cannot prove those properties.
 
 ## Build status
 
-Both debug exports completed successfully on October 14, 2026 with SDK 36 and JDK 17:
+Both version **0.2.0 / code 2** debug exports completed successfully on October 15, 2026 with SDK 36 and JDK 17:
 
 | Artifact | Size | Validation |
 | --- | ---: | --- |
-| `builds/PiratePlunder-debug.apk` | 85,273,550 bytes | APK signature v2; ARM64; manifest min24/target36/compile36; portrait; 16KB ZIP alignment; ELF LOAD alignment 16,384 bytes |
-| `builds/PiratePlunder-debug.aab` | 61,681,718 bytes | Google bundletool 1.18.3 validation; manifest min24/target36/compile36; ARMv7+ARM64 libraries and packaged campaign/configuration data |
+| `builds/PiratePlunder-debug.apk` | 85,331,873 bytes | APK signature v2; ARM64; manifest min24/target36/compile36; portrait; 16KB ZIP alignment; ELF LOAD alignment 16,384 bytes |
+| `builds/PiratePlunder-debug.aab` | 61,728,735 bytes | Google bundletool 1.18.3 validation; ARMv7+ARM64 libraries and identical packaged gameplay scripts/campaign/configuration data |
 
-These final artifacts include the last audio lifecycle cleanup and canonical Retina sprite catalog paths. The APK includes all 50 campaign definitions, ship/achievement/leaderboard catalogs, the public Play Games configuration, the plugin's native classes, Google Play Games/Snapshots SDK classes, and an APP_ID manifest reference resolving to `837392218124`. Packaged fonts, ocean waves, particle textures, adaptive icon layers, and all four ships' direct sprite references were checked. Unused original asset variants, store/docs/test assets, and generated build verification fixtures are excluded from game exports.
+These final artifacts include the revised finite campaign (50 levels, 142 authored encounters and 526 ships), nine purchasable upgrades per ship, manual primary cannon controls, rank-gated grapeshot and purchased automation, and backward-compatible save version 3. The campaign catalog uses `finite_authored_fleets_v2` and topology revision 3. Compiled APK scripts were exercised to confirm the finite encounter/grapeshot methods and the read-only screenshot reward guard; the matching AAB scripts and catalogs are byte-identical. Direct-run UI smoke testing after export passed 28 checks.
+
+The APK includes ship/achievement/leaderboard catalogs, the public Play Games configuration, the plugin's native classes and autoload, Google Play Games/Snapshots SDK classes, and an APP_ID manifest reference resolving to `837392218124`. Packaged fonts, ocean waves, particle textures, adaptive icon layers, and all four ships' direct sprite references were checked. Unused original asset variants, store/docs/test assets, and generated build verification fixtures are excluded from game exports. The store kit contains 18 refreshed actual gameplay/UI captures across phone, 7-inch tablet, and 10-inch tablet sizes.
 
 Final SHA-256 checksums:
 
 ```text
-PiratePlunder-debug.apk  B0B254D51968414E93DA28C6D82E589B92B7CD755E21BB9FF863918E7BE91670
-PiratePlunder-debug.aab  6DCE7A0770A837BB8F443E082622A931E21B3C4EDE64E877D453B3876EC003D8
+PiratePlunder-debug.apk  8010002D2D2D94FC034723469C06D062D0AD9F7F4794D29960540CDEA885A804
+PiratePlunder-debug.aab  6BF6A0903113A55765DEC59B9CEEEC1E2A86B7C7F4A80ABB27CC63CC5BDC9F7B
 ```
 
 The public SHA-1 fingerprint for the debug certificate used for these local artifacts is `EE:50:07:90:8C:4A:8C:D2:48:E5:42:CA:A8:8A:1B:00:7C:58:DD:DE`. It can be registered for the debug Android credential. A future release/Play signing certificate will have a different fingerprint. This fingerprint is public certificate metadata, not a signing secret.

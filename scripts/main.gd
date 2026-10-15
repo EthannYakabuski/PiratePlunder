@@ -1,5 +1,5 @@
 extends Node2D
-## Small-screen first presentation. Ship cards -> chart -> a single tap to sail.
+## Chart -> choose a voyage -> choose a ship. Upgrade individual ships in the yard.
 const ArenaScript := preload("res://scripts/arena.gd")
 const CREAM := Color("fff0cc")
 const GOLD := Color("ffd27b")
@@ -7,7 +7,7 @@ const INK := Color("0c3445")
 var ui: Control
 var backdrop: Node2D
 var arena: Node2D
-var screen := "ships"
+var screen := "chart"
 var selected_ship := 0
 var selected_level := 1
 var selected_mode := "campaign"
@@ -26,7 +26,7 @@ var toast_time := 0.0
 var music: AudioStreamPlayer
 var reward: Dictionary = {}
 var last_summary: Dictionary = {}
-var launch_cards := true
+var shipyard_return := "chart"
 var capture_mode := ""
 var capture_dir := "res://store/screenshots/phone"
 var capture_time := 0.0
@@ -56,7 +56,9 @@ func _ready() -> void:
 		music.stream = stream
 		music.volume_db = -21
 		if Progression.settings.get("music",true): music.play()
-	show_ships(true)
+	selected_level = Progression.next_level()
+	chart_biome = mini(4,(selected_level-1)/10)
+	show_chart()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--capture="): capture_mode = arg.trim_prefix("--capture=")
 		if arg.begins_with("--capture-dir="): capture_dir = arg.trim_prefix("--capture-dir=")
@@ -66,12 +68,13 @@ func size() -> Vector2: return get_viewport_rect().size
 
 func _resize() -> void:
 	match screen:
-		"ships": show_ships(launch_cards)
+		"ships": show_ships()
 		"chart": show_chart()
 		"run": _run_ui()
 		"result": _result_ui()
 		"logbook": show_logbook()
 		"settings": show_settings()
+		"shipyard": show_shipyard()
 	queue_redraw()
 
 func clear_ui() -> void:
@@ -101,7 +104,6 @@ func _label(text: String, rect: Rect2, font_size := 22, color := CREAM, centered
 	var label := Label.new()
 	label.text = text
 	label.position = rect.position
-	label.size = rect.size
 	label.add_theme_font_override("font",title_font if title else body_font)
 	label.add_theme_font_size_override("font_size",font_size)
 	label.add_theme_color_override("font_color",color)
@@ -109,7 +111,12 @@ func _label(text: String, rect: Rect2, font_size := 22, color := CREAM, centered
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if centered else HORIZONTAL_ALIGNMENT_LEFT
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Set the width after enabling wrapping; an unwrapped minimum width otherwise
+	# expands long upgrade descriptions beyond their card before layout settles.
+	label.size = rect.size
 	(parent if parent != null else ui).add_child(label)
+	# Text shaping may invalidate the original unwrapped minimum on tree entry.
+	label.set_deferred("size",rect.size)
 	return label
 
 func _button(text: String, rect: Rect2, action: Callable, color := Color("e2b76d"), parent: Control = null) -> Button:
@@ -134,22 +141,22 @@ func _button(text: String, rect: Rect2, action: Callable, color := Color("e2b76d
 	(parent if parent != null else ui).add_child(button)
 	return button
 
-func show_ships(initial := false) -> void:
+func show_ships() -> void:
 	_hide_arena()
 	screen = "ships"
-	launch_cards = initial
 	clear_ui()
 	var w := size().x
 	var h := size().y
 	var top := 54.0
-	_label("PIRATE\nPLUNDER" if initial else "CHOOSE YOUR SHIP",Rect2(20,top,w-40,116 if initial else 54),53 if initial else 38,GOLD,true,true)
-	_label("Tiny ship. Ridiculous adventure." if initial else _voyage_title(),Rect2(22,top+116 if initial else top+58,w-44,35),20,CREAM,true)
-	var card_top := 224.0 if initial else 171.0
-	var card_h := minf(139,(h-card_top-130)/4.0-10)
+	_label("CHOOSE YOUR SHIP",Rect2(20,top,w-40,54),38,GOLD,true,true)
+	_label(_voyage_title(),Rect2(22,top+58,w-44,35),20,CREAM,true)
+	var card_top := 171.0
+	var card_h := minf(145,(h-card_top-155)/4.0-10)
 	for i in Progression.ships.size():
 		var s: Dictionary = Progression.ships[i]
+		var loadout: Dictionary = Progression.ship_loadout(s.id)
 		var y := card_top + i*(card_h+12)
-		var card := _button("",Rect2(26,y,w-52,card_h),func(): _choose_ship(i,initial),Color("123d4c"))
+		var card := _button("",Rect2(26,y,w-52,card_h),func(): _choose_ship(i),Color("123d4c"))
 		var texture := TextureRect.new()
 		texture.texture = load(str(s.asset).replace("Default size","Retina"))
 		texture.position = Vector2(21,14)
@@ -163,22 +170,16 @@ func show_ships(initial := false) -> void:
 		_label(s.name,Rect2(104,10,w-180,35),31,Color(s.color),false,true,card)
 		_label(s.subtitle,Rect2(104,43,w-184,25),16,CREAM,false,false,card)
 		var rank: Dictionary = Progression.ship_rank_progress(s.id)
-		_label("HULL %d   SPEED %d   RELOAD %.1fs" % [s.hp,s.speed,s.cooldown],Rect2(104,70,w-184,23),16,Color("b3d9d6"),false,false,card)
-		_label("RANK %d  ·  %s" % [rank.rank,s.perk.name],Rect2(104,94,w-184,24),15,GOLD,false,false,card)
-	_label("Pick a ship to chart your voyage" if initial else "Tap a ship and set sail",Rect2(20,h-93,w-40,32),18,CREAM,true)
-	if initial:
-		_button("Logbook",Rect2(30,h-48,145,36),show_logbook,Color("9fcac4"))
-		_button("Sound & help",Rect2(w-196,h-48,166,36),show_settings,Color("9fcac4"))
-	else: _button("‹ Chart",Rect2(26,h-50,140,38),show_chart,Color("9fcac4"))
+		_label("HULL %d   SPEED %d   RELOAD %.1fs" % [loadout.hp,s.speed,loadout.cooldown],Rect2(104,70,w-184,23),16,Color("b3d9d6"),false,false,card)
+		_label("RANK %d  ·  PORT %d / STARBOARD %d" % [rank.rank,loadout.cannons_port,loadout.cannons_starboard],Rect2(104,97,w-184,24),15,GOLD,false,false,card)
+	_label("Tap a ship and set sail",Rect2(20,h-135,w-40,30),17,CREAM,true)
+	_button("Upgrade ships",Rect2(26,h-94,w-52,40),func(): shipyard_return="ships"; show_shipyard(),Color("e0be7e"))
+	_button("‹ Chart",Rect2(26,h-45,w-52,34),show_chart,Color("9fcac4"))
 	queue_redraw()
 
-func _choose_ship(index: int, initial: bool) -> void:
+func _choose_ship(index: int) -> void:
 	selected_ship = index
-	if initial:
-		selected_level = Progression.next_level()
-		chart_biome = mini(4,(selected_level-1)/10)
-		show_chart()
-	else: start_run()
+	start_run()
 
 func _voyage_title() -> String:
 	if selected_mode == "endless": return "Endless Seas · How long can you last?"
@@ -193,7 +194,7 @@ func show_chart() -> void:
 	var w := size().x
 	var h := size().y
 	_label("YOUR NEXT ADVENTURE",Rect2(20,35,w-40,49),34,GOLD,true,true)
-	_label("%d stars  ·  %d gold  ·  %s" % [Progression.metric("campaign_stars"),Progression.gold(),Progression.ships[selected_ship].name],Rect2(20,85,w-40,28),17,CREAM,true)
+	_label("%d stars  ·  %d gold  ·  %d / 50 voyages" % [Progression.metric("campaign_stars"),Progression.gold(),Progression.metric("campaign_levels_completed")],Rect2(20,85,w-40,28),17,CREAM,true)
 	var b: Dictionary = campaign.get("biomes",[{}])[chart_biome] if campaign.get("biomes",[]).size() > chart_biome else {}
 	_label(b.get("name","Sunlit Shoals"),Rect2(60,133,w-120,44),31,CREAM,true,true)
 	_button("‹",Rect2(22,137,42,42),func(): chart_biome = maxi(0,chart_biome-1); show_chart(),Color("8ec4bf"))
@@ -217,16 +218,17 @@ func show_chart() -> void:
 	_label("NEXT: " + str(next.get("name","First Splash")),Rect2(36,bottom+4,w-190,25),17,GOLD)
 	_label(str(next.get("briefing","Sink the rival ships!")),Rect2(36,bottom+28,w-186,28),13,CREAM)
 	_button("Sail!",Rect2(w-130,bottom+10,91,44),func(): _select_level(Progression.next_level()))
-	_button("∞ Endless Seas",Rect2(22,h-151,(w-54)/2,52),func(): selected_mode="endless"; show_ships(false),Color("94d7d0"))
-	_button("Daily Drift",Rect2(w/2+5,h-151,(w-54)/2,52),func(): selected_mode="daily"; show_ships(false),Color("ffbd89"))
-	_button("Logbook & rewards",Rect2(22,h-84,w-142,44),show_logbook,Color("a6c5bd"))
+	_button("∞ Endless Seas",Rect2(22,h-151,(w-54)/2,52),func(): selected_mode="endless"; show_ships(),Color("94d7d0"))
+	_button("Daily Drift",Rect2(w/2+5,h-151,(w-54)/2,52),func(): selected_mode="daily"; show_ships(),Color("ffbd89"))
+	_button("Shipyard",Rect2(22,h-84,(w-144)/2,44),func(): shipyard_return="chart"; show_shipyard(),Color("e0be7e"))
+	_button("Logbook",Rect2(32+(w-144)/2,h-84,(w-144)/2,44),show_logbook,Color("a6c5bd"))
 	_button("⚙",Rect2(w-106,h-84,84,44),show_settings,Color("a6c5bd"))
 	queue_redraw()
 
 func _select_level(id: int) -> void:
 	selected_level = id
 	selected_mode = "campaign"
-	show_ships(false)
+	show_ships()
 
 func start_run() -> void:
 	if arena != null:
@@ -246,15 +248,16 @@ func start_run() -> void:
 		level_data.duration_limit = 100
 		level_data.enemy_strength = 1.7
 		level_data.boss = null
+		level_data.enemy_pool = campaign.endless.enemy_pool.duplicate()
+		level_data.spawn_interval = 4.0
+		level_data.max_enemies = 7
+		level_data.treasure_count = 6
+		level_data.hazards = []
 	var biome_id: String = level_data.get("biome",campaign.biomes[0].id)
 	var biome_data: Dictionary = campaign.biomes[0]
 	for b in campaign.biomes:
 		if b.id == biome_id: biome_data = b
-	var chosen: Dictionary = Progression.ships[selected_ship].duplicate(true)
-	var bonus: Dictionary = Progression.ship_bonus(chosen.id)
-	for key in ["hp","damage"]:
-		if bonus.has(key): chosen[key] += bonus[key]
-	chosen.cooldown *= bonus.get("cooldown_multiplier",1.0)
+	var chosen: Dictionary = Progression.ship_loadout(Progression.ships[selected_ship].id)
 	chosen.sprite = [4,2,3,6][selected_ship]
 	arena.finished.connect(_run_finished)
 	arena.hud_changed.connect(_update_hud)
@@ -286,11 +289,14 @@ func _run_ui() -> void:
 	ui.add_child(hud_health)
 	hud_score = _label("",Rect2(28,89,w-56,36),21,CREAM)
 	hud_goal = _label("",Rect2(16,157,w-32,56),23,CREAM,true,true)
-	hud_buff = _label("",Rect2(20,h-282,w-40,40),18,GOLD,true)
+	hud_buff = _label("",Rect2(20,h-310,w-40,40),18,GOLD,true)
 	_label("PORT",Rect2(15,h-33,112,27),15,GOLD,true)
 	_label("DRAG TO STEER",Rect2(w/2-105,h-33,210,27),14,Color("b4d8d2"),true)
 	_label("STARBOARD",Rect2(w-139,h-33,130,27),15,GOLD,true)
-	_label("ONE THUMB · AUTO BROADSIDES" if arena.assisted else "MANUAL BROADSIDES · Q / E",Rect2(20,h-226,w-40,26),12,Color("8abbbc"),true)
+	_label("AUTO CAPSTONE ACTIVE" if arena.assisted else "HOLD CANNONS TO FIRE",Rect2(w/2-122,h-226,244,26),12,Color("8abbbc"),true)
+	for side in 2:
+		if arena.secondary_available(side):
+			_label("GRAPESHOT",Rect2(20 if side==0 else w-124,h-187,104,20),11,Color("aed9df"),true)
 	_update_hud()
 
 func _update_hud() -> void:
@@ -300,18 +306,21 @@ func _update_hud() -> void:
 	var obj: Dictionary = arena.level.objective
 	var progress := 0
 	match obj.type:
+		"fleet": progress=arena.kills
 		"kills": progress=arena.kills
 		"coins": progress=arena.treasure
 		"survive": progress=int(arena.elapsed)
 		"boss": progress=arena.bosses
-	var names := {"kills":"SINK RIVALS","coins":"SALVAGE TREASURE","survive":"STAY AFLOAT","boss":"SINK THE CAPTAIN"}
+	var names := {"fleet":"CLEAR THE FLEET","kills":"SINK RIVALS","coins":"SALVAGE TREASURE","survive":"STAY AFLOAT","boss":"SINK THE CAPTAIN"}
 	hud_goal.text = "%s  %d / %d" % [names.get(obj.type,"SAIL!"),progress,int(obj.target)] if selected_mode != "endless" else "ENDLESS SEAS  ·  DANGER %d" % (1+int(arena.elapsed/35))
+	if selected_mode == "campaign":
+		hud_goal.text += "\n" + str(arena.current_encounter_name)
 	var buffs := ""
 	if arena.combo > 1: buffs += "%dx COMBO!  " % mini(arena.combo,8)
 	if arena.shield_time > 0: buffs += "SHIELD %.0fs  " % arena.shield_time
 	if arena.rapid_time > 0: buffs += "RAPID %.0fs" % arena.rapid_time
 	if arena.tutorial and arena.elapsed < 23:
-		buffs = ["Drag the wheel toward your heading", "Cannons fire as rivals cross your sides", "Tap corner cannons for extra control"][mini(2,arena.tutorial_step)]
+		buffs = ["Drag the wheel toward your heading", "Hold a corner cannon to fire that side", "Bring rivals alongside for a broadside"][mini(2,arena.tutorial_step)]
 	hud_buff.text = buffs
 
 func _pause() -> void:
@@ -323,14 +332,22 @@ func _pause() -> void:
 	_panel(Rect2(24,h/2-210,w-48,420),Color("123543"))
 	_label("ANCHORS DOWN",Rect2(40,h/2-188,w-80,55),40,GOLD,true,true)
 	_button("Keep sailing",Rect2(50,h/2-106,w-100,60),func(): arena.paused=false; _run_ui())
-	_button("Auto fire: " + ("ON" if arena.assisted else "OFF"),Rect2(50,h/2-30,w-100,55),func(): arena.assisted=not arena.assisted; Progression.set_setting("auto_fire",arena.assisted); _pause(),Color("97cabe"))
+	if arena.ship.get("primary_auto",false):
+		_button("Capstone auto fire: " + ("ON" if arena.assisted else "OFF"),Rect2(50,h/2-30,w-100,55),func(): arena.set_primary_assist(not arena.assisted); Progression.set_setting("auto_fire",arena.assisted); _pause(),Color("97cabe"))
+	else:
+		_label("Manual cannons · hold either side to fire\nAutomation is a final Shipyard unlock",Rect2(48,h/2-34,w-96,62),18,Color("b8d6ce"),true)
 	_button("End voyage",Rect2(50,h/2+43,w-100,55),func(): arena.paused=false; arena.finish(false),Color("e7a184"))
-	_label("Steer: wheel / WASD  ·  Cannons: Q / E",Rect2(45,h/2+123,w-90,43),17,CREAM,true)
+	_label("Steer: wheel / WASD  ·  Cannons: Q / E\nUnlocked grapeshot: Z / C",Rect2(45,h/2+119,w-90,55),16,CREAM,true)
 
 func _run_finished(summary: Dictionary) -> void:
 	last_summary = summary
-	reward = Progression.record_run(summary)
-	if arena.tutorial: Progression.set_setting("tutorial_seen",true)
+	# Screenshot playback is a read-only preview of the profile. It must never
+	# grant XP/gold/unlocks or complete the player's tutorial.
+	if capture_mode.is_empty():
+		reward = Progression.record_run(summary)
+		if arena.tutorial: Progression.set_setting("tutorial_seen",true)
+	else:
+		reward={"xp":0,"coins":0,"rank_before":1,"rank_after":1}
 	screen = "result"
 	_result_ui()
 
@@ -377,7 +394,7 @@ func show_logbook() -> void:
 	for quest in Progression.get_daily_quests():
 		_panel(Rect2(0,y,cw,92),Color("143e4b"),Color("42777a"),content)
 		_label(quest.name,Rect2(14,y+7,cw-28,29),20,CREAM,false,false,content)
-		_label("%d / %d  ·  +%d gold" % [quest.get("progress",0),quest.target,quest.coins],Rect2(14,y+42,cw-144,29),17,GOLD,false,false,content)
+		_label("%d / %d  ·  +%d gold" % [quest.get("current",0),quest.target,quest.coins],Rect2(14,y+42,cw-144,29),17,GOLD,false,false,content)
 		var qid: String = quest.id
 		var claim := _button("Claim",Rect2(cw-108,y+39,94,40),func(): Progression.claim_daily(qid,Progression.ships[selected_ship].id); show_logbook(),Color("a4d5c5"),content)
 		claim.disabled = not quest.get("complete",false) or quest.get("claimed",false)
@@ -406,14 +423,70 @@ func show_settings() -> void:
 	var h := size().y
 	_label("SHIPSHAPE SETTINGS",Rect2(20,52,w-40,65),37,GOLD,true,true)
 	var y := 157.0
-	for item in [["music","Music"],["sfx","Sound effects"],["auto_fire","One-thumb auto fire"],["reduced_motion","Reduced motion"],["haptics","Haptics"]]:
+	var options := [["music","Music"],["sfx","Sound effects"],["reduced_motion","Reduced motion"],["haptics","Haptics"]]
+	for s in Progression.ships:
+		if Progression.ship_loadout(s.id).primary_auto:
+			options.append(["auto_fire","Capstone auto fire"])
+			break
+	for item in options:
 		var key: String=item[0]
 		_button(item[1] + ": " + ("ON" if Progression.settings.get(key,true) else "OFF"),Rect2(35,y,w-70,55),func(): Progression.set_setting(key,not Progression.settings.get(key,true)); _music_setting(); show_settings(),Color("a1cfc3"))
 		y += 72
-	_label("Drag the wheel toward where you want to sail.\nYour ship keeps moving.\n\nRivals crossing either side trigger automatic cannons. Tap the two corner cannons to fire yourself.\n\nCollect gold, green repairs, blue shields and orange rapid-fire boosts.",Rect2(38,y+12,w-76,218),19,CREAM,true)
-	_button("Replay the first voyage",Rect2(35,h-133,w-70,54),func(): Progression.set_setting("tutorial_seen",false); selected_level=1; selected_mode="campaign"; show_ships(false))
+	_label("Drag the wheel toward your heading. Your ship keeps moving.\n\nHold the left or right cannon to fire that side. Steer alongside rivals for a broadside.\n\nBuy extra cannons and separate grapeshot guns in the Shipyard as your ship ranks up.",Rect2(38,y+12,w-76,218),19,CREAM,true)
+	_button("Replay the first voyage",Rect2(35,h-133,w-70,54),func(): Progression.set_setting("tutorial_seen",false); selected_level=1; selected_mode="campaign"; show_ships())
 	_button("‹ Back to chart",Rect2(35,h-63,w-70,45),show_chart,Color("a1cfc3"))
 	queue_redraw()
+
+func show_shipyard() -> void:
+	_hide_arena()
+	screen = "shipyard"
+	clear_ui()
+	var w := size().x
+	var h := size().y
+	var ship_id: String = Progression.ships[selected_ship].id
+	var s: Dictionary = Progression.ship_loadout(ship_id)
+	var rank: Dictionary = Progression.ship_rank_progress(ship_id)
+	_label("THE SHIPYARD",Rect2(20,27,w-40,56),40,GOLD,true,true)
+	_label("%d GOLD  ·  upgrades stay with each ship" % Progression.gold(),Rect2(20,85,w-40,31),17,CREAM,true)
+	var tab_w := (w-52)/4
+	for i in Progression.ships.size():
+		var index := i
+		var name_text: String = Progression.ships[i].name.replace("Golden Gull","Gull")
+		var tab := _button(name_text,Rect2(20+i*(tab_w+4),133,tab_w,43),func(): selected_ship=index; show_shipyard(),Color(Progression.ships[i].color) if i==selected_ship else Color("8eb6b2"))
+		tab.add_theme_font_size_override("font_size",16)
+	_label("%s · RANK %d" % [s.name,rank.rank],Rect2(25,187,w-50,42),30,Color(s.color),true,true)
+	_label("%d / %d XP to next rank" % [rank.current,rank.needed] if rank.rank<20 else "MAX RANK · MASTER OF THE SEAS",Rect2(25,230,w-50,27),17,CREAM,true)
+	_panel(Rect2(38,269,w-76,9),Color("174752"),Color("174752"))
+	var fraction := clampf(float(rank.current)/maxf(1,float(rank.needed)),0,1) if rank.rank<20 else 1.0
+	if fraction>0: _panel(Rect2(38,269,(w-76)*fraction,9),Color("a8d985"),Color("a8d985"))
+	_label("PORT %d  /  STARBOARD %d   ·   %.1fs reload" % [s.cannons_port,s.cannons_starboard,s.cooldown],Rect2(24,290,w-48,30),18,GOLD,true)
+	var scroll := ScrollContainer.new()
+	scroll.position=Vector2(22,337)
+	scroll.size=Vector2(w-44,h-413)
+	ui.add_child(scroll)
+	var content := Control.new()
+	var upgrades: Array=Progression.get_ship_upgrades(ship_id)
+	var cw := w-64
+	content.custom_minimum_size=Vector2(cw,upgrades.size()*162)
+	scroll.add_child(content)
+	for i in upgrades.size():
+		var upgrade: Dictionary=upgrades[i]
+		var y := float(i)*162
+		_panel(Rect2(0,y,cw,150),Color("163e4b"),Color("769989") if upgrade.owned else Color("436e76"),content)
+		_label(upgrade.name,Rect2(14,y+7,cw-28,32),24,GOLD if upgrade.owned else CREAM,false,true,content)
+		_label(upgrade.description,Rect2(14,y+41,cw-28,59),16,Color("b4d1ce"),false,false,content)
+		_label("INSTALLED" if upgrade.owned else str(upgrade.reason),Rect2(14,y+109,cw-160,30),14,Color("91dfa8") if upgrade.owned else Color("b6c7c4"),false,false,content)
+		var uid: String=upgrade.id
+		var buy := _button("Owned" if upgrade.owned else "%d gold" % upgrade.cost,Rect2(cw-139,y+108,125,34),func(): _buy_upgrade(ship_id,uid),Color("b0cfb8") if upgrade.owned else GOLD,content)
+		buy.add_theme_font_size_override("font_size",16)
+		buy.disabled=not upgrade.eligible or upgrade.owned
+	_button("‹ Choose a ship" if shipyard_return=="ships" else "‹ Your next adventure",Rect2(25,h-57,w-50,42),func(): show_ships() if shipyard_return=="ships" else show_chart(),Color("a4cbc2"))
+	queue_redraw()
+
+func _buy_upgrade(ship_id: String, upgrade_id: String) -> void:
+	var result: Dictionary=Progression.purchase_upgrade(ship_id,upgrade_id)
+	show_shipyard()
+	_toast(result.get("message","Upgrade installed"))
 
 func _music_setting() -> void:
 	if Progression.settings.music:
@@ -438,6 +511,7 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED and arena != null and screen == "run": _pause()
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if screen == "run": _pause()
+		elif screen == "shipyard" and shipyard_return=="ships": show_ships()
 		else: show_chart()
 
 func _exit_tree() -> void:
@@ -467,28 +541,28 @@ func _process(dt: float) -> void:
 func _setup_capture() -> void:
 	match capture_mode:
 		"chart": show_chart()
+		"ships": show_ships()
+		"shipyard": show_shipyard()
 		"combat", "boss":
 			selected_level = 10 if capture_mode == "boss" else 6
 			selected_ship = 2
 			start_run()
 			arena.debug_invulnerable = true
 			arena.automated = true
-			arena.player = Vector2(650,500)
-			arena.pickups.clear()
-			for i in 6: arena._drop(arena.player+Vector2.from_angle(i*1.1)*140,"coin" if i%2==0 else "shield")
-			if capture_mode == "boss": arena.elapsed=10; arena._update_spawns(0)
-			else:
-				for i in 3: arena.spawn_enemy("skirmisher" if i%2==0 else "chaser")
-			for i in arena.enemies.size():
-				var enemy: Dictionary=arena.enemies[i]
-				enemy.pos = arena.player+Vector2(-150 if i%2==0 else 150,-185+float(i)*60)
-				enemy.heading=(arena.player-enemy.pos).angle()
-			for i in 75: arena.step(1.0/60.0)
+			# Capture the actual authored encounter, without adding ships or moving land.
+			for i in (9600 if capture_mode=="boss" else 600):
+				if not arena.running: break
+				arena.step(1.0/60.0)
+				if capture_mode=="boss":
+					var visible_boss := false
+					for enemy in arena.enemies:
+						if enemy.kind=="boss" and enemy.pos.distance_to(arena.player)<260: visible_boss=true
+					if visible_boss: break
 			arena.paused=true
 			arena.queue_redraw()
 			_update_hud()
 		"logbook": show_logbook()
-		_: show_ships(true)
+		_: show_chart()
 
 func _draw() -> void:
 	if screen == "run" or screen == "result": return

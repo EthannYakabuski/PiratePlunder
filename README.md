@@ -1,33 +1,39 @@
 # PiratePlunder
 
-A complete portrait pirate arcade game built with **Godot 4.5.1** for Android. Pick a ship, chart a voyage, and cause an unreasonable amount of trouble. The game works offline; Google Play Games integration is optional until its backend is configured.
+A portrait pirate arcade game built with **Godot 4.5.1** for Android. Chart a voyage, pick a ship, and cause an unreasonable amount of trouble. The game works offline; Google Play Games integration is optional until its backend is configured. The October 15 gameplay revision is version **0.2.0**.
+
+[What changed in gameplay update 0.2.0](docs/GAMEPLAY_UPDATE.md) covers the A–F feedback, upgrade ranks, finite missions, navigation and save compatibility.
 
 ## Play
 
-Open `project.godot` in Godot and press **F6** from `scenes/main.tscn`, or **F5** from anywhere. The opening screen immediately shows four ships. Tap one to open your shared campaign chart. Pick a level, Endless Seas, or Daily Drift, then tap the ship you want to sail.
+Open `project.godot` in Godot and press **F6** from `scenes/main.tscn`, or **F5** from anywhere. The app opens on **Your Next Adventure**. Pick a campaign level, Endless Seas, or Daily Drift, then choose your ship once to launch the voyage.
 
 - **Steer:** drag the large wheel toward your desired heading. Your ship sails continuously.
-- **One thumb:** automatic broadsides fire at rivals crossing either side. This is enabled by default.
-- **Two thumbs:** the bottom corner cannons fire their respective sides, each with an independent reload. Hold to keep firing; release the wheel to maintain your heading.
-- **Desktop:** WASD or arrow keys steer; Q fires port, E or Space fires starboard.
+- **Manual cannons:** hold a bottom corner cannon to fire that side, with independent reloads. Release the wheel to maintain your heading while firing.
+- **Upgraded secondary guns:** purchased port/starboard grapeshot gets a separate button above that side's main cannon and reloads independently.
+- **Desktop:** WASD or arrow keys steer; Q fires port, E or Space fires starboard; Z/C fire unlocked port/starboard grapeshot.
 - **Pause:** tap the top-right pause button. Android backgrounding pauses the voyage automatically.
 
 Sink rivals, dodge cannonballs and hazards, collect gold, and complete the mission shown above the battle. Green pickups repair your hull, blue pickups grant a shield, orange pickups speed up reloads, and purple pickups attract treasure. Consecutive sinks build a score multiplier. Watch your health and the cannon reload rings.
 
-Campaign wins unlock the next level for every ship. Earn one star for victory, another for keeping at least 60% hull, and another for beating the level's time goal. Each ship earns its own XP and automatic hull, damage, and reload perks. Replays improve your stars and earn run rewards; authored campaign rewards are paid once per level. The Logbook contains achievements, daily bounties, supply rewards, and personal records.
+Campaign missions have fixed maps, enemy types, starting positions and finite encounter groups. Clear the entire planned fleet to win; a mission never ends while its surviving rivals are still fighting. Enemies navigate around the same islands that block your ship. Edge markers help you find distant rivals. Endless and Daily Drift keep their separate ocean-spawning rules.
+
+Wins unlock the next level for every ship. Earn one star for victory, another for keeping at least 60% hull, and another for beating the time goal. Each ship earns its own XP, passive hull/damage/reload bonuses, and purchased **Shipyard** upgrades. Extra cannons are bought one at a time on alternating sides at ranks 4, 6, 9 and 11. Separate grapeshot controls unlock at ranks 7/10; their automated crews are rank 17/18 purchases. Automatic primary broadsides require the rank-20 **Master Gunner** purchase and every preceding upgrade. Settings cannot bypass those unlocks. [Upgrade costs and rules](docs/UPGRADES.md).
+
+Existing saves keep earned gold, XP, stars and unlocks; only the old free automatic-fire preference is removed. Replays improve your stars and earn run rewards; authored campaign rewards are paid once per level. The Logbook contains achievements, daily bounties, supply rewards, and personal records.
 
 ## Included content
 
 - Four distinct ships: Swiftfin, Ironclad, Redwake, and Golden Gull.
 - **50 authored campaign levels** across Sunlit Shoals, Mangrove Maze, Ember Archipelago, Frostwake Reach, and Tempest Crown.
-- Sink, salvage, survival, and boss missions; six enemy archetypes; five named bosses with broadside, charging, fan, or spiral attacks.
+- Finite tactical fleets, convoys, crossfires, ambushes, channels and boss arenas; six enemy archetypes; five named bosses with broadside, charging, fan, or spiral attacks.
 - Endless procedural ocean with deterministic islands, changing biomes, supplies, escalating danger, and recurring bosses. Entities and terrain caches have strict bounds.
 - Daily Drift, three daily bounties, supply streak rewards, per-ship ranks, persistent stars, and **28 achievements**.
 - Four leaderboard definitions: endless score, endless survival, campaign stars, and lifetime plunder.
 - Original looping shanty and cannon audio, supplied Kenney effects, particles, wakes, damaged ship sprites, shields, and reduced-motion/audio/haptic settings.
 - App/adaptive icons, feature graphic, all achievement/leaderboard icons, store copy, setup worksheets, and actual Godot-rendered phone/tablet screenshots.
 
-There are no ads, purchases, energy gates, or developer-operated analytics in this MVP.
+There are no ads, real-money purchases, energy gates, or developer-operated analytics. Shipyard upgrades spend gold earned through play.
 
 ## Android build
 
@@ -53,7 +59,7 @@ Game ID **837392218124** and the supplied public OAuth client identifier are in 
 
 `scripts/main.gd` builds the responsive screens and connects runs to progression. `scripts/arena.gd` owns combat, touch input, enemy behaviors, procedural terrain, hazards, pickups, drawing, and bounded effects. `scripts/progression.gd` owns versioned atomic saves with backup/checksum recovery, progression, daily rewards, and monotonic cloud merging. `scripts/play_services.gd` adapts the pinned plugin and persistent online queues.
 
-Author content in `data/campaign.json`, `ships.json`, `achievements.json`, and `leaderboards.json`. Level definitions specify numeric objectives, enemy pools and timed waves, hazards, boss attacks, rewards, and star goals. The [campaign document](docs/CAMPAIGN.md) lists every level and the precise schema/implementation limits. [Project memory](docs/PROJECT_MEMORY.md) preserves the product decisions and assumptions.
+Author content in `data/campaign.json`, `ships.json`, `upgrades.json`, `achievements.json`, and `leaderboards.json`. Campaign levels specify fixed bounds, island/hazard/supply positions, ordered finite encounters with exact ship types and coordinates, boss attacks, rewards, and star goals. Global Endless tuning is separate. The [campaign document](docs/CAMPAIGN.md) lists every level and its schema. [Project memory](docs/PROJECT_MEMORY.md) preserves the current product decisions and assumptions.
 
 The [asset audit](docs/ASSET_AUDIT.md) inventories and visually reviews all 11 supplied packs. Original assets are preserved; `.gdignore` files exclude unused source packs, duplicate resolutions, and authoring references from runtime imports. Curated pirate sprites/terrain and supplied audio are reused. Generated artwork/audio can be rebuilt with `tools/build_art.py`; the fonts retain their OFL licenses. Kenney assets are CC0; the Play Games addon is MIT.
 
