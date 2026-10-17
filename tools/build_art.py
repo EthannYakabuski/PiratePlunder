@@ -356,21 +356,48 @@ def make_static_font():
 
 def make_setup_worksheets():
     achievements=json.loads((ROOT/'data'/'achievements.json').read_text(encoding='utf-8'))['achievements']
-    # Suggested Console points leave ample room for future episodes.
-    points=[5,5,5,10,20,40,25,30,20,25,30,35,75,10,40,35,20,15,25,75,15,40,35,40,75,15,5,25]
+    config_path=ROOT/'config'/'play_games.json'
+    config=json.loads(config_path.read_text(encoding='utf-8')) if config_path.exists() else {}
+    # Console values belong to stable local IDs, never catalog positions.
+    # These owner-supplied defaults total 975; existing worksheet edits win.
+    default_points={
+        'sea_legs':5,'first_broadside':5,'first_plunder':5,'deck_clear':10,
+        'fleet_breaker':20,'sea_scourge':40,'powder_monkey':25,'flawless_voyage':30,
+        'shoal_sheriff':20,'swamp_escape':25,'hot_streak':30,'ice_breaker':35,
+        'pirate_king':75,'boss_buster':10,'tyrant_tamer':50,'treasure_tide':35,
+        'power_pirate':20,'four_of_a_kind':15,'seasoned_captain':25,'fleet_of_legends':100,
+        'endless_appetite':15,'marathon_marauder':40,'high_tide':50,'star_chart':50,
+        'constellation_captain':150,'daily_deckhand':15,'welcome_aboard':25,'chain_reaction':50,
+    }
+    existing_points={}
+    worksheet_path=STORE/'achievement_setup.csv'
+    if worksheet_path.exists():
+        with worksheet_path.open(newline='',encoding='utf-8-sig') as f:
+            for row in csv.DictReader(f):
+                if row.get('local_id') and row.get('points','').strip():
+                    existing_points[row['local_id']]=int(row['points'])
+    def backend_id(kind,definition):
+        return str(config.get(kind+'_ids',{}).get(definition['id']) or definition.get('google_play_id',''))
     rows=[]
-    for i,a in enumerate(achievements):
-        rows.append({'local_id':a['id'],'google_play_id':'','name':a['name'],'description':a['description'],'type':'incremental' if a['incremental'] else 'standard','steps':a['target'] if a['incremental'] else '', 'points':points[i],'initial_state':'hidden' if a.get('hidden') else 'revealed','icon_file':f"store/achievements/{a['id']}.png"})
+    for a in achievements:
+        points=existing_points.get(a['id'],default_points.get(a['id'],5))
+        rows.append({'local_id':a['id'],'google_play_id':backend_id('achievement',a),'name':a['name'],'description':a['description'],'type':'incremental' if a['incremental'] else 'standard','steps':a['target'] if a['incremental'] else '', 'points':points,'initial_state':'hidden' if a.get('hidden') else 'revealed','icon_file':f"store/achievements/{a['id']}.png"})
+    points_total=sum(row['points'] for row in rows)
     with (STORE/'achievement_setup.csv').open('w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
     boards=json.loads((ROOT/'data'/'leaderboards.json').read_text(encoding='utf-8'))['leaderboards']
-    rows=[{'local_id':b['id'],'google_play_id':'','name':b['name'],'description':b['description'],'score_order':'larger_is_better','format':b['format'],'value_multiplier':b['value_multiplier'],'icon_file':f"store/leaderboards/{b['id']}.png"} for b in boards]
+    rows=[{'local_id':b['id'],'google_play_id':backend_id('leaderboard',b),'name':b['name'],'description':b['description'],'score_order':'larger_is_better','format':b['format'],'value_multiplier':b['value_multiplier'],'icon_file':f"store/leaderboards/{b['id']}.png"} for b in boards]
     with (STORE/'leaderboard_setup.csv').open('w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
     fields={key:(STORE/f'{name}.txt').read_text(encoding='utf-8').strip() for key,name in [('title','app_name'),('short_description','short_description'),('full_description','full_description')]}
     limits={'title':30,'short_description':80,'full_description':4000}
     for key,value in fields.items():assert len(value)<=limits[key],f'{key} exceeds limit'
-    metadata={'locale':'en-US','status':'submission_draft','category_suggestion':'GAME_ARCADE',**fields,'character_counts':{key:len(value) for key,value in fields.items()},'limits':limits,'suggested_achievement_points_total':sum(points),'support_email':'','privacy_policy_url':'','alt_text':{'app_icon':'A coral skull-sail pirate ship fires side cannons over a teal ocean.','feature_graphic':'PiratePlunder: colorful pirate ships trade broadsides beside a tropical island.'},'cloud_services_claimed_in_copy':False,'worksheet_note':'Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility.'}
+    metadata={'locale':'en-US','status':'submission_draft','category_suggestion':'GAME_ARCADE',**fields,'character_counts':{key:len(value) for key,value in fields.items()},'limits':limits,'suggested_achievement_points_total':points_total,'support_email':'','privacy_policy_url':'','alt_text':{'app_icon':'A coral skull-sail pirate ship fires side cannons over a teal ocean.','feature_graphic':'PiratePlunder: colorful pirate ships trade broadsides beside a tropical island.'},'cloud_services_claimed_in_copy':False,'worksheet_note':'Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility.'}
+    metadata_path=STORE/'listing_metadata.json'
+    if metadata_path.exists():
+        previous_metadata=json.loads(metadata_path.read_text(encoding='utf-8'))
+        if 'achievement_points_source' in previous_metadata:
+            metadata['achievement_points_source']=previous_metadata['achievement_points_source']
     (STORE/'listing_metadata.json').write_text(json.dumps(metadata,indent=2),encoding='utf-8')
 
 if __name__=='__main__':

@@ -1,4 +1,18 @@
-# Gameplay 0.2.0 validation — October 15, 2026
+# Validation record
+
+## Play Games IDs — October 17, 2026, version 0.2.1
+
+All 28 achievement IDs and four leaderboard IDs supplied by the owner are mapped by local catalog key in `config/play_games.json`, mirrored in their catalog `google_play_id` fields and setup CSVs. All 32 IDs are unique. Seven point-value changes in the Console list bring the achievement worksheet total to **975**. The Android presets now use version **0.2.1 / code 3**. No gameplay, native plugin, authentication preference or save-schema change was required.
+
+`tests/test_progression.gd` passed **272 checks with zero failures**. An independent fixture contains the exact owner-provided IDs. Tests exercise every configuration/catalog mapping, map precedence, catalog fallback and a complete mock dispatch of 17 incremental achievements, 11 standard achievements and four leaderboards. Incremental requests use exact absolute targets; the survival score converts 300.25 seconds to 300250 milliseconds. Existing blank-ID, offline queue, retry/acknowledgement, save migration and Shipyard tests remain passing. Test profiles are isolated and restored; no real Google request is made.
+
+`tools/validate_data.py` also passed **9,585 checks with zero failures**. Existing campaign/runtime/rendering evidence below remains applicable because this update changes public IDs and packaging metadata only. Final APK/AAB sizes, hashes and packaged-ID checks are recorded in [ANDROID_BUILD.md](ANDROID_BUILD.md).
+
+The artwork worksheet generator now preserves configured IDs, per-local-ID Console point edits and their metadata source. A helper-only isolated fixture passed **22 checks**, including all 32 IDs, the 975-point allocation, reordered catalogs, edited points, configuration priority and catalog fallback. No artwork was regenerated and actual store files remained unchanged during this check.
+
+The owner's pasted Console list reports draft entries and does not include their incremental type/step or leaderboard format settings. Credentials, authorized account sign-in, Console settings/publication and live Android submissions have not been verified by these offline checks.
+
+## Gameplay 0.2.0 — October 15, 2026
 
 Verified using Godot 4.5.1 on Windows. This record covers the chart-first launch, manual weapons and Shipyard progression, shared island collision/navigation, and replacement of the entire campaign with finite authored encounters. Google configuration and authenticated service testing are outside this revision.
 

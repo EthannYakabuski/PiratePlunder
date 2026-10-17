@@ -15,7 +15,7 @@
     "short_description": 80,
     "full_description": 4000
   },
-  "suggested_achievement_points_total": 795,
+  "suggested_achievement_points_total": 975,
   "support_email": "",
   "privacy_policy_url": "",
   "alt_text": {
@@ -23,5 +23,6 @@
     "feature_graphic": "PiratePlunder: colorful pirate ships trade broadsides beside a tropical island."
   },
   "cloud_services_claimed_in_copy": false,
-  "worksheet_note": "Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility."
+  "worksheet_note": "Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility.",
+  "achievement_points_source": "Owner-supplied Play Console metadata, 2026-10-17"
 }

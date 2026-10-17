@@ -10,7 +10,7 @@
       "order": "descending",
       "format": "integer",
       "value_multiplier": 1,
-      "google_play_id": "",
+      "google_play_id": "CgkIjPDcw68YEAIQHQ",
       "icon": "res://store/leaderboards/endless_score.png"
     },
     {
@@ -22,7 +22,7 @@
       "order": "descending",
       "format": "time_milliseconds",
       "value_multiplier": 1000,
-      "google_play_id": "",
+      "google_play_id": "CgkIjPDcw68YEAIQHg",
       "icon": "res://store/leaderboards/endless_survival.png"
     },
     {
@@ -34,7 +34,7 @@
       "order": "descending",
       "format": "integer",
       "value_multiplier": 1,
-      "google_play_id": "",
+      "google_play_id": "CgkIjPDcw68YEAIQHw",
       "icon": "res://store/leaderboards/campaign_stars.png"
     },
     {
@@ -46,7 +46,7 @@
       "order": "descending",
       "format": "integer",
       "value_multiplier": 1,
-      "google_play_id": "",
+      "google_play_id": "CgkIjPDcw68YEAIQIA",
       "icon": "res://store/leaderboards/total_plunder.png"
     }
   ]

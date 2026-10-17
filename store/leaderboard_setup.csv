@@ -1,5 +1,5 @@
 local_id,google_play_id,name,description,score_order,format,value_multiplier,icon_file
-endless_score,,Endless Ocean: Score,Your highest score in a single Endless Ocean voyage.,larger_is_better,integer,1,store/leaderboards/endless_score.png
-endless_survival,,Endless Ocean: Survival,"Your longest Endless Ocean voyage, measured in milliseconds for Play Games.",larger_is_better,time_milliseconds,1000,store/leaderboards/endless_survival.png
-campaign_stars,,Campaign: Star Captains,"Your total campaign stars, up to 150. Best result per level counts.",larger_is_better,integer,1,store/leaderboards/campaign_stars.png
-total_plunder,,Lifetime: Total Plunder,"All coins collected across your voyages, including treasure bonuses.",larger_is_better,integer,1,store/leaderboards/total_plunder.png
+endless_score,CgkIjPDcw68YEAIQHQ,Endless Ocean: Score,Your highest score in a single Endless Ocean voyage.,larger_is_better,integer,1,store/leaderboards/endless_score.png
+endless_survival,CgkIjPDcw68YEAIQHg,Endless Ocean: Survival,"Your longest Endless Ocean voyage, measured in milliseconds for Play Games.",larger_is_better,time_milliseconds,1000,store/leaderboards/endless_survival.png
+campaign_stars,CgkIjPDcw68YEAIQHw,Campaign: Star Captains,"Your total campaign stars, up to 150. Best result per level counts.",larger_is_better,integer,1,store/leaderboards/campaign_stars.png
+total_plunder,CgkIjPDcw68YEAIQIA,Lifetime: Total Plunder,"All coins collected across your voyages, including treasure bonuses.",larger_is_better,integer,1,store/leaderboards/total_plunder.png

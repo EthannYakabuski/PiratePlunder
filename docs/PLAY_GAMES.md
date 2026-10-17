@@ -13,7 +13,9 @@ Public configuration lives in `config/play_games.json`:
 - Game ID: `837392218124`.
 - Supplied OAuth client ID: `837392218124-oibe2ur3hterj4miav8s99s1dimkg0ff.apps.googleusercontent.com`.
 - Snapshot: `pirateplunder_progress_v2`.
-- Achievement and leaderboard mappings: empty until Play Console generates them.
+- Achievement and leaderboard mappings: all 28 achievement IDs and four leaderboard IDs supplied by the owner on October 17, 2026 are populated. The data catalogs and CSV worksheets mirror the canonical configuration maps.
+
+Version **0.2.1 / code 3** includes these public IDs. The pasted Console entries were drafts; mapping them into the app does not publish them or prove account-authorized operation. The worksheet point values now match the Console's **975 total points**. Incremental targets, leaderboard score formats and gameplay triggers are unchanged.
 
 The client ID is recorded for your setup reference. Client-only Android sign-in is authorized through the package name, signing certificate, and game ID. A web/server client ID is only required for a server authorization flow, which this game does not use. [Google setup guide](https://developer.android.com/games/pgs/console/setup).
 
@@ -22,9 +24,9 @@ The client ID is recorded for your setup reference. Client-only Android sign-in 
 1. Link the Android application to the existing Play Games project. The provisional package is `com.pirateplunder.game`; confirm it before your first publication.
 2. Create/link Android OAuth credentials for the package and SHA-1 certificate of your debug build, your release upload build, and the certificate used by Play App Signing. Register the applicable testing accounts in Play Games and, if required, the OAuth consent screen.
 3. Keep Saved Games enabled. Confirm the consent configuration includes the scopes required by Google's setup guidance. Allow time for configuration changes to propagate.
-4. Create the achievements from `data/achievements.json` and `store/achievement_setup.csv`, using their names, descriptions, icons, hidden flags, and incremental targets. Incremental achievement step totals must exactly match each JSON `target`.
-5. Create the four leaderboards using `data/leaderboards.json` and `store/leaderboard_setup.csv`. All use descending order. The survival board uses **time in milliseconds**, and the adapter multiplies seconds by 1,000.
-6. Copy each Google-generated ID into the matching JSON definition's `google_play_id`, or into `achievement_ids` / `leaderboard_ids` in `config/play_games.json`. Local slugs such as `sea_legs` are not Google IDs.
+4. The 28 achievements have been created and mapped. Verify their Console type, visibility and incremental targets against `data/achievements.json` and `store/achievement_setup.csv`; the owner's pasted list contained IDs and points but not type/step settings. Incremental achievement step totals must exactly match each JSON `target`.
+5. The four leaderboards have been created and mapped in `data/leaderboards.json`, `store/leaderboard_setup.csv` and configuration. Verify all use descending order. The survival board uses **time in milliseconds**, and the adapter multiplies seconds by 1,000.
+6. Keep canonical `achievement_ids` / `leaderboard_ids` in `config/play_games.json` consistent with each catalog's `google_play_id` and its worksheet if recreating a Console entry. Local slugs such as `sea_legs` are not Google IDs. Configuration mappings take precedence over catalog fallbacks.
 7. Export an Android debug build using Gradle and game ID `837392218124`, then test with an authorized account before enabling automatic authentication.
 
 These are configuration instructions, not changes made to your Google account. The backend and account authorization cannot be verified until you configure them. [Google credentials and testers](https://developer.android.com/games/pgs/console/setup), [Saved Games overview](https://developer.android.com/games/pgs/savedgames), [upstream Android export configuration](https://github.com/godot-sdk-integrations/godot-play-game-services#configuring-the-plugin).
@@ -35,7 +37,7 @@ Every result updates local progression before any network request. Achievement q
 
 Every cloud upload first reads the current snapshot and merges it with the local state. Ship XP and lifetime run counters use per-installation counters merged by maximum, then summed. Stars, completed levels, best scores, and achievement unlocks never move backwards. Daily and first-clear rewards have globally unique event keys, so reconnecting or claiming on two devices cannot pay twice. Installation identity and delivery queues stay local. Newer setting preferences replace older preferences; on equal timestamps, the current device's preferences win.
 
-Login rewards and daily quest rotations use **UTC dates**. A day's three quests are deterministic across devices. Claims grant gold and XP to the selected ship. First-clear rewards belong to the shared campaign level, while replaying still earns ordinary run XP and collected treasure. There is no energy system or spending economy.
+Login rewards and daily quest rotations use **UTC dates**. A day's three quests are deterministic across devices. Claims grant gold and XP to the selected ship. First-clear rewards belong to the shared campaign level, while replaying still earns ordinary run XP and collected treasure. Shipyard upgrades spend earned gold; there is no energy system or real-money purchasing.
 
 Local saves use a SHA-256 checksum, a temporary file, and a verified backup. This detects accidental corruption; it is not an anti-cheat or encryption feature. A corrupted primary file recovers the backup. A future incompatible cloud version is left untouched rather than overwritten.
 
@@ -49,6 +51,6 @@ In this release, `SnapshotsProxy.saveGame` emits `gameSaved(true)` after startin
 
 ## Verification
 
-Run `godot --headless --path . --script res://tests/test_progression.gd` from the project root. The automated suite passes **56 checks**, covering persistence, corruption recovery, rank rewards, fifty campaign completions, merge idempotence/convergence, deduplicated first-clear/login rewards, quest determinism/claims, invalid cloud inputs, Golden Gull bonuses, and daily/campaign unlock isolation. Mock service checks verify durable offline queues, blank-ID no-ops, absolute incremental steps, survival milliseconds, acknowledgement handling, and preservation of newer scores during older requests. These checks do not substitute for Android sign-in, Play Console credentials, or real cloud round-trip tests.
+Run `godot --headless --path . --script res://tests/test_progression.gd` from the project root. The suite passed **272 checks with zero failures** on October 17, 2026. It covers persistence, corruption recovery, rank rewards, fifty campaign completions, merge idempotence/convergence, deduplicated first-clear/login rewards, quest determinism/claims, invalid cloud inputs, Golden Gull bonuses, daily/campaign unlock isolation, and Shipyard purchases/migration. Mock service checks verify all 32 supplied IDs against an independent fixture, canonical configuration precedence, catalog fallback, complete 28-achievement/four-board dispatch, absolute incremental steps, survival milliseconds, durable offline queues, blank-ID no-ops, acknowledgement handling, and preservation of newer scores during older requests. Current results are recorded in [VALIDATION.md](VALIDATION.md). These checks do not substitute for Android sign-in, Play Console credentials, or real cloud round-trip tests.
 
 Before release, test offline play followed by reconnect, two devices completing different levels and using different ships, achievement retry after disconnection, survival board formatting, a fresh device restoring a snapshot, cloud commit failures, and any native snapshot conflicts. Keep keystores, passwords, access tokens, and service account files outside this public repository.

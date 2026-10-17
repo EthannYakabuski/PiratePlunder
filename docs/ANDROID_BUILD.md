@@ -1,16 +1,16 @@
 # Android builds
 
-The project includes two Gradle export presets: **Android APK** (ARM64 debug/device testing) and **Android AAB** (ARMv7 + ARM64 for eventual Play distribution). Both use `com.pirateplunder.game`, version `0.2.0` / code `2`, portrait orientation, optional Play Games services, and separate adaptive launcher icon layers. Confirm the package name before first publication.
+The project includes two Gradle export presets: **Android APK** (ARM64 debug/device testing) and **Android AAB** (ARMv7 + ARM64 for eventual Play distribution). Both use `com.pirateplunder.game`, version `0.2.1` / code `3`, portrait orientation, optional Play Games services, and separate adaptive launcher icon layers. Confirm the package name before first publication.
 
 The minimum API is 24. The target API is **36**: Google requires Android 16/API 36 for new phone applications and updates from August 31, 2026. This was verified on October 14, 2026 against the [official target API requirement](https://developer.android.com/google/play/requirements/target-sdk). Recheck the rule when publishing.
 
 ## Requirements
 
-Install Godot **4.5.1** and its matching export templates, JDK 17, Android SDK Platform36, platform-tools, command-line tools, and build-tools36. Configure your JDK and SDK directories in **Godot → Editor Settings → Export → Android**. The existing `GodotPlayGameServices` addon must remain enabled. Follow the [Godot Android export instructions](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_android.html).
+Install Godot **4.5.1** and its matching export templates, JDK 17, Android SDK Platform36, platform-tools, command-line tools, and build-tools36. Configure your JDK and SDK directories in **Godot â†’ Editor Settings â†’ Export â†’ Android**. The existing `GodotPlayGameServices` addon must remain enabled. Follow the [Godot Android export instructions](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_android.html).
 
 The build helper extracts the stock `android_source.zip` to ignored `android/build` if necessary and changes that template's compile SDK from 35 to 36. The default Gradle build directory setting is intentionally blank: Godot resolves it to `res://android/build`. Setting the option to that exact path incorrectly appends another `build` directory.
 
-The upstream editor plugin removes its autoload declaration when an exporting editor exits. The build helper restores the existing declaration in its cleanup step so subsequent direct desktop runs still parse correctly. It also requests explicit editor shutdown after export.
+The upstream editor plugin removes its autoload declaration when an exporting editor exits. The build helper restores the existing declaration in its cleanup step so subsequent direct desktop runs still parse correctly. It also requests explicit editor shutdown after export. Keep the autoload order `Progression`, `GodotPlayGameServices`, `PlayServices`. For the recorded exports, the entire original `project.godot` was restored byte-for-byte after export. The Windows console launcher remained open after the actual exporter finished; only the owned completed launchers were closed, after `[ DONE ] export` and fresh artifacts were confirmed.
 
 Keep `textures/vram_compression/import_etc2_astc=true` in the project's rendering settings. Godot's Android export validation requires mobile texture import support even for this Compatibility renderer project; otherwise 4.5.1 may report an empty configuration error. Generated Android resources, caches, and native build outputs remain ignored.
 
@@ -45,26 +45,30 @@ The template shipped with Godot 4.5.1 uses Android Gradle Plugin 8.6.1. Compilin
 
 ## Build status
 
-Both version **0.2.0 / code 2** debug exports completed successfully on October 15, 2026 with SDK 36 and JDK 17:
+Both version **0.2.1 / code 3** debug exports completed successfully on October 17, 2026 with SDK 36 and JDK 17:
 
 | Artifact | Size | Validation |
 | --- | ---: | --- |
-| `builds/PiratePlunder-debug.apk` | 85,331,873 bytes | APK signature v2; ARM64; manifest min24/target36/compile36; portrait; 16KB ZIP alignment; ELF LOAD alignment 16,384 bytes |
-| `builds/PiratePlunder-debug.aab` | 61,728,735 bytes | Google bundletool 1.18.3 validation; ARMv7+ARM64 libraries and identical packaged gameplay scripts/campaign/configuration data |
+| `builds/PiratePlunder-debug.apk` | 85,332,509 bytes | APK signature v2; ARM64; manifest min24/target36/compile36; portrait; 16KB ZIP alignment; ELF LOAD alignment 16,384 bytes |
+| `builds/PiratePlunder-debug.aab` | 61,729,344 bytes | Google bundletool 1.18.3 validation; ARMv7+ARM64 libraries and identical packaged gameplay scripts/campaign/configuration data |
 
-These final artifacts include the revised finite campaign (50 levels, 142 authored encounters and 526 ships), nine purchasable upgrades per ship, manual primary cannon controls, rank-gated grapeshot and purchased automation, and backward-compatible save version 3. The campaign catalog uses `finite_authored_fleets_v2` and topology revision 3. Compiled APK scripts were exercised to confirm the finite encounter/grapeshot methods and the read-only screenshot reward guard; the matching AAB scripts and catalogs are byte-identical. Direct-run UI smoke testing after export passed 28 checks.
+These final artifacts include the revised finite campaign (50 levels, 142 authored encounters and 526 ships), nine purchasable upgrades per ship, manual primary cannon controls, rank-gated grapeshot and purchased automation, and backward-compatible save version 3. The campaign catalog uses `finite_authored_fleets_v2` and topology revision 3. Compiled APK scripts were exercised to confirm the finite encounter/grapeshot methods and the read-only screenshot reward guard; the matching AAB scripts and catalogs are byte-identical. Direct-run rendered UI smoke testing after export passed 29 checks with zero failures. The gameplay implementation is unchanged from the validated 0.2.0 builds; this update packages the configured Play Games IDs and revised public setup metadata.
+
+Both artifacts contain all **28 achievement IDs and four leaderboard IDs**, exactly matching `config/play_games.json` and each catalog's `google_play_id`. Play Games integration and saved games are enabled in the packaged configuration, with sign-in initiated explicitly by the player. The public achievement setup CSV now totals **975 points**. APK/AAB JSON catalogs and all four compiled gameplay/service scripts are byte-identical between artifacts and match the frozen source configuration. The APK's Android APP_ID resource and the AAB's corresponding resource both resolve to `837392218124`.
 
 The APK includes ship/achievement/leaderboard catalogs, the public Play Games configuration, the plugin's native classes and autoload, Google Play Games/Snapshots SDK classes, and an APP_ID manifest reference resolving to `837392218124`. Packaged fonts, ocean waves, particle textures, adaptive icon layers, and all four ships' direct sprite references were checked. Unused original asset variants, store/docs/test assets, and generated build verification fixtures are excluded from game exports. The store kit contains 18 refreshed actual gameplay/UI captures across phone, 7-inch tablet, and 10-inch tablet sizes.
 
 Final SHA-256 checksums:
 
 ```text
-PiratePlunder-debug.apk  8010002D2D2D94FC034723469C06D062D0AD9F7F4794D29960540CDEA885A804
-PiratePlunder-debug.aab  6BF6A0903113A55765DEC59B9CEEEC1E2A86B7C7F4A80ABB27CC63CC5BDC9F7B
+PiratePlunder-debug.apk  8B5E90AB75B3116E21224A67916DBE917F93E60C53B78F12EA83B01C883DB106
+PiratePlunder-debug.aab  C7E5CEB5BE225A89650C8DF0C83C0C960B4E24B4150D93B5971A44588CFA2D1F
 ```
 
 The public SHA-1 fingerprint for the debug certificate used for these local artifacts is `EE:50:07:90:8C:4A:8C:D2:48:E5:42:CA:A8:8A:1B:00:7C:58:DD:DE`. It can be registered for the debug Android credential. A future release/Play signing certificate will have a different fingerprint. This fingerprint is public certificate metadata, not a signing secret.
 
-The debug AAB is an **unsigned packaging preview** produced by Godot's debug bundle export. Its game assets are in an install-time asset pack, and all 50 campaign levels are present. Google bundletool validates its structure and manifests. It must not be submitted as a production bundle. Release signing must be configured separately.
+The debug AAB is an **unsigned packaging preview** produced by Godot's debug bundle export. Its game assets are in an install-time asset pack, and all 50 campaign levels are present. Google bundletool validates its structure and manifests. It must not be submitted as a production bundle. Release signing must be configured separately. Both ARM64 native libraries have 16,384-byte ELF LOAD alignment; the AAB's ARMv7 library has 4,096-byte LOAD alignment. These packaging checks do not substitute for validating the signed release and its generated device APKs.
 
-No Android device was connected, and the available local emulator image was API 30/x86 rather than ARM64. Accordingly, on-device performance, Android 16 behavior, and account-authorized Play Games operation remain unverified. The debug artifacts are for testing; no production signing key was created and no artifact was uploaded to Google Play.
+Local verification records are in ignored `builds/package-check/verification-0.2.1.json`, `apk-signature-0.2.1.log`, `apk-zipalign-0.2.1.log`, `aab-validation-0.2.1.log`, and `aab-manifest-0.2.1.xml`; the final rendered launch check is `builds/final-0.2.1-ui-smoke.log`.
+
+These exports were not installed on Android hardware during this build refresh. On-device performance, Android 16 behavior, and account-authorized Play Games operation remain unverified. The debug artifacts are for testing; no production signing key was created and no artifact was uploaded to Google Play.

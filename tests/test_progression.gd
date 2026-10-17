@@ -2,6 +2,43 @@ extends SceneTree
 ## Run: godot --headless --path . --script res://tests/test_progression.gd
 
 const ProgressionScript = preload("res://scripts/progression.gd")
+# Independent regression fixture copied from the supplied Play Console IDs.
+const CONFIGURED_ACHIEVEMENT_IDS := {
+	"sea_legs": "CgkIjPDcw68YEAIQAQ",
+	"first_broadside": "CgkIjPDcw68YEAIQAg",
+	"first_plunder": "CgkIjPDcw68YEAIQAw",
+	"deck_clear": "CgkIjPDcw68YEAIQBA",
+	"fleet_breaker": "CgkIjPDcw68YEAIQBQ",
+	"sea_scourge": "CgkIjPDcw68YEAIQBg",
+	"powder_monkey": "CgkIjPDcw68YEAIQBw",
+	"flawless_voyage": "CgkIjPDcw68YEAIQCA",
+	"shoal_sheriff": "CgkIjPDcw68YEAIQCQ",
+	"swamp_escape": "CgkIjPDcw68YEAIQCg",
+	"hot_streak": "CgkIjPDcw68YEAIQCw",
+	"ice_breaker": "CgkIjPDcw68YEAIQDA",
+	"pirate_king": "CgkIjPDcw68YEAIQDQ",
+	"boss_buster": "CgkIjPDcw68YEAIQDg",
+	"tyrant_tamer": "CgkIjPDcw68YEAIQDw",
+	"treasure_tide": "CgkIjPDcw68YEAIQEA",
+	"power_pirate": "CgkIjPDcw68YEAIQEQ",
+	"four_of_a_kind": "CgkIjPDcw68YEAIQEg",
+	"seasoned_captain": "CgkIjPDcw68YEAIQEw",
+	"fleet_of_legends": "CgkIjPDcw68YEAIQFA",
+	"endless_appetite": "CgkIjPDcw68YEAIQFQ",
+	"marathon_marauder": "CgkIjPDcw68YEAIQFg",
+	"high_tide": "CgkIjPDcw68YEAIQFw",
+	"star_chart": "CgkIjPDcw68YEAIQGA",
+	"constellation_captain": "CgkIjPDcw68YEAIQGQ",
+	"daily_deckhand": "CgkIjPDcw68YEAIQGg",
+	"welcome_aboard": "CgkIjPDcw68YEAIQGw",
+	"chain_reaction": "CgkIjPDcw68YEAIQHA"
+}
+const CONFIGURED_LEADERBOARD_IDS := {
+	"endless_score": "CgkIjPDcw68YEAIQHQ",
+	"endless_survival": "CgkIjPDcw68YEAIQHg",
+	"campaign_stars": "CgkIjPDcw68YEAIQHw",
+	"total_plunder": "CgkIjPDcw68YEAIQIA"
+}
 var failures := 0
 var checks := 0
 var test_nodes: Array = []
@@ -130,6 +167,7 @@ func _run() -> void:
 	_check(sanitized.devices.persistence.metrics.enemies_sunk == 0 and sanitized.devices.persistence.metrics.coins_collected == 0, "invalid counters sanitized")
 	_check(not sanitized.levels.has("51"), "cloud cannot add levels outside campaign")
 	_test_service_queues()
+	_test_configured_service_ids()
 	_test_upgrade_tree()
 	_test_upgrade_migration()
 	_test_upgrade_cloud_merge()
@@ -150,6 +188,13 @@ func _test_service_queues() -> void:
 	var previous: Dictionary = game_progress.data.duplicate(true)
 	var previous_settings: Dictionary = game_progress.settings.duplicate(true)
 	var previous_path: String = game_progress.save_path
+	var previous_achievements: Array = game_progress.achievements
+	var previous_leaderboards: Array = game_progress.leaderboards
+	# Keep blank-ID and synthetic-ID behavior independent of the real catalog.
+	game_progress.achievements = previous_achievements.duplicate(true)
+	game_progress.leaderboards = previous_leaderboards.duplicate(true)
+	for definition in game_progress.achievements + game_progress.leaderboards:
+		definition.google_play_id = ""
 	game_progress.save_path = "res://tests/.test-services.json"
 	game_progress.reset_data("service-test")
 	game_progress.record_run({"run_id": "queued-run", "mode": "endless", "ship_id": "swiftfin", "kills": 12, "treasure": 10, "seconds": 300, "score": 12345, "shots": 20})
@@ -164,7 +209,7 @@ func _test_service_queues() -> void:
 	adapter.available = true
 	adapter.signed_in = true
 	adapter.flush_queues()
-	_check(achievements_client.steps.is_empty() and boards_client.scores.is_empty(), "blank backend IDs never send fabricated remote requests")
+	_check(achievements_client.steps.is_empty() and achievements_client.unlocks.is_empty() and boards_client.scores.is_empty(), "blank backend IDs never send fabricated remote requests")
 	adapter.config = {"achievement_ids": {"first_plunder": "real-incremental-id", "sea_legs": "real-standard-id"}, "leaderboard_ids": {"endless_survival": "real-time-id", "endless_score": "real-score-id"}}
 	adapter.flush_queues()
 	_check(achievements_client.steps.get("real-incremental-id", 0) == 10, "incremental upload uses absolute accumulated steps")
@@ -186,6 +231,85 @@ func _test_service_queues() -> void:
 		var path: String = game_progress.save_path + suffix
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(path)
+	game_progress.save_path = previous_path
+	game_progress.data = previous
+	game_progress.settings = previous_settings
+	game_progress.achievements = previous_achievements
+	game_progress.leaderboards = previous_leaderboards
+	achievements_client.free()
+	boards_client.free()
+	adapter.free()
+
+func _test_configured_service_ids() -> void:
+	var game_progress: Node = root.get_node("Progression")
+	var previous: Dictionary = game_progress.data.duplicate(true)
+	var previous_settings: Dictionary = game_progress.settings.duplicate(true)
+	var previous_path: String = game_progress.save_path
+	game_progress.save_path = "res://tests/.test-configured-services.json"
+	game_progress.reset_data("configured-service-test")
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://config/play_games.json"))
+	var actual_config: Dictionary = parsed if parsed is Dictionary else {}
+	_check(actual_config.get("achievement_ids", {}) == CONFIGURED_ACHIEVEMENT_IDS, "actual configuration contains all 28 exact Console achievement mappings")
+	_check(actual_config.get("leaderboard_ids", {}) == CONFIGURED_LEADERBOARD_IDS, "actual configuration contains all four exact Console leaderboard mappings")
+	_check(game_progress.achievements.size() == 28 and game_progress.leaderboards.size() == 4, "configured catalog totals remain 28 achievements and four leaderboards")
+	var services_script: Script = root.get_node("PlayServices").get_script()
+	var adapter = services_script.new()
+	var achievements_client := MockAchievements.new()
+	var boards_client := MockLeaderboards.new()
+	adapter._achievements = achievements_client
+	adapter._leaderboards = boards_client
+	adapter.config = actual_config
+	for definition in game_progress.achievements:
+		var expected: String = CONFIGURED_ACHIEVEMENT_IDS.get(definition.id, "")
+		_check(not expected.is_empty() and definition.get("google_play_id", "") == expected and adapter._backend_id("achievement", definition) == expected, "%s resolves to its supplied Console achievement ID" % definition.id)
+	for definition in game_progress.leaderboards:
+		var expected: String = CONFIGURED_LEADERBOARD_IDS.get(definition.id, "")
+		_check(not expected.is_empty() and definition.get("google_play_id", "") == expected and adapter._backend_id("leaderboard", definition) == expected, "%s resolves to its supplied Console leaderboard ID" % definition.id)
+	_check(adapter._backend_id("achievement", {"id":"sea_legs", "google_play_id":"catalog-fallback"}) == CONFIGURED_ACHIEVEMENT_IDS.sea_legs, "canonical achievement mapping takes precedence over catalog fallback")
+	_check(adapter._backend_id("leaderboard", {"id":"endless_survival", "google_play_id":"catalog-fallback"}) == CONFIGURED_LEADERBOARD_IDS.endless_survival, "canonical leaderboard mapping takes precedence over catalog fallback")
+	adapter.config = {}
+	for definition in game_progress.achievements:
+		_check(adapter._backend_id("achievement", definition) == CONFIGURED_ACHIEVEMENT_IDS.get(definition.id, ""), "%s catalog mirror resolves without a config mapping" % definition.id)
+	for definition in game_progress.leaderboards:
+		_check(adapter._backend_id("leaderboard", definition) == CONFIGURED_LEADERBOARD_IDS.get(definition.id, ""), "%s catalog mirror resolves without a config mapping" % definition.id)
+	adapter.config = actual_config
+	game_progress.data.maxima.endless_best_seconds = 300.25
+	game_progress.data.maxima.endless_best_score = 54321
+	game_progress.data.levels["1"] = {"stars":3,"completed":true}
+	game_progress.data.levels["2"] = {"stars":2,"completed":true}
+	game_progress.data.devices[game_progress.data.device_id].metrics.coins_collected = 4321
+	adapter._rebuild_queues()
+	var expected_scores := {"endless_score":54321,"endless_survival":300250,"campaign_stars":5,"total_plunder":4321}
+	for key in expected_scores:
+		_check(game_progress.data.services.score_queue.get(key, 0) == expected_scores[key], "%s queues its actual metric with the catalog unit conversion" % key)
+	# Seed completed achievement totals so every standard/incremental dispatch
+	# branch is exercised through the actual config and the existing mock clients.
+	var expected_standard := 0
+	var expected_incremental := 0
+	for definition in game_progress.achievements:
+		game_progress.data.services.achievement_queue[definition.id] = int(definition.target)
+		if definition.get("incremental", false): expected_incremental += 1
+		else: expected_standard += 1
+	adapter.available = true
+	adapter.signed_in = true
+	adapter.flush_queues()
+	_check(achievements_client.steps.size() == expected_incremental and achievements_client.unlocks.size() == expected_standard and boards_client.scores.size() == 4, "actual-config flush dispatches every achievement and all four leaderboards")
+	var dispatched: Array = achievements_client.steps.keys() + achievements_client.unlocks + boards_client.scores.keys()
+	var unique: Dictionary = {}
+	for backend_id in dispatched:
+		unique[backend_id] = true
+	_check(dispatched.size() == 32 and unique.size() == 32, "all 32 outgoing Console IDs are unique without cross-feature collisions")
+	for definition in game_progress.achievements:
+		var backend_id: String = CONFIGURED_ACHIEVEMENT_IDS.get(definition.id, "")
+		if definition.get("incremental", false):
+			_check(achievements_client.steps.get(backend_id, 0) == int(definition.target), "%s sends the absolute completed target to its real ID" % definition.id)
+		else:
+			_check(backend_id in achievements_client.unlocks, "%s sends its standard unlock to its real ID" % definition.id)
+	for key in expected_scores:
+		_check(boards_client.scores.get(CONFIGURED_LEADERBOARD_IDS[key], 0) == expected_scores[key], "%s submits the expected value to its real ID" % key)
+	for suffix in ["", ".bak", ".tmp"]:
+		var path: String = game_progress.save_path + suffix
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
 	game_progress.save_path = previous_path
 	game_progress.data = previous
 	game_progress.settings = previous_settings

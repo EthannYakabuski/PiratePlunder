@@ -1,6 +1,6 @@
 # PiratePlunder
 
-A portrait pirate arcade game built with **Godot 4.5.1** for Android. Chart a voyage, pick a ship, and cause an unreasonable amount of trouble. The game works offline; Google Play Games integration is optional until its backend is configured. The October 15 gameplay revision is version **0.2.0**.
+A portrait pirate arcade game built with **Godot 4.5.1** for Android. Chart a voyage, pick a ship, and cause an unreasonable amount of trouble. The game works offline; Google Play Games integration is optional. Version **0.2.1** adds the owner's 28 achievement IDs and four leaderboard IDs supplied on October 17, 2026.
 
 [What changed in gameplay update 0.2.0](docs/GAMEPLAY_UPDATE.md) covers the A–F feedback, upgrade ranks, finite missions, navigation and save compatibility.
 
@@ -51,7 +51,7 @@ For a connected device, install `builds/PiratePlunder-debug.apk` with `adb insta
 
 The requested [Godot Play Game Services plugin](https://github.com/godot-sdk-integrations/godot-play-game-services) is included and pinned to v3.4.0. The application has real adapters for sign-in, achievements, leaderboards, and Saved Games, with local progress and durable submission queues when offline.
 
-Game ID **837392218124** and the supplied public OAuth client identifier are in `config/play_games.json`. Configure Android credentials with the final package and signing certificates, add testers, create the 28 achievements/four boards, and paste their generated IDs into the configuration or data catalogs. Empty IDs never produce bogus submissions. No server authorization flow or client secret is required by this implementation.
+Game ID **837392218124**, the supplied public OAuth client identifier, and all **28 achievement / four leaderboard IDs** are populated in `config/play_games.json`, with matching catalog and setup-worksheet entries. The owner supplied the Console entries in draft state on October 17; their achievement points total **975**. Android credentials, signing certificates, tester access, Console publication and authenticated device testing remain owner setup. Empty IDs still never produce bogus submissions. No server authorization flow or client secret is required by this implementation.
 
 [Play Games setup and cloud limitations](docs/PLAY_GAMES.md) explains native automatic conflict resolution, merged local saves, and two upstream snapshot limitations that must be checked before production. Cloud operation has not been authenticated against your unfinished backend.
 
@@ -79,7 +79,7 @@ To reproduce exact-size store captures:
 
 ## Publishing next steps
 
-1. Confirm package identity, support contact, and signing setup; complete Play Games credentials, IDs, and test accounts.
+1. Confirm package identity, support contact, and signing setup; complete Play Games credentials and test accounts, then test and publish the already-mapped Console entries.
 2. Install the debug APK on real phones/tablets. Test one-thumb play, simultaneous touch, safe areas, audio interruptions, save/restart, and a 20-minute thermal/performance session. Validate cloud round trips on two accounts/devices as appropriate.
 3. Review release signing, Android16/large-screen behavior, native 16KB page compatibility, and Play's pre-launch report. Export a signed release AAB and increase its version code.
 4. Use the [store listing kit](docs/STORE_LISTING.md); replace or supplement desktop-rendered screenshots with final Android captures. Supply a hosted privacy policy/support email and complete Data safety, content-rating, audience, app-access, and account-specific testing requirements.
