@@ -1,0 +1,294 @@
+{
+  "plugin_version": "5.1.0",
+  "godot_template": "4.5.1",
+  "archive_url": "https://github.com/poingstudios/godot-admob-plugin/releases/download/v5.1.0/android-template-v4.5.1.zip",
+  "archive_bytes": 359197,
+  "archive_sha256": "f7fdf644d50c0e231d8f02ae044057e489d0bcafcf50e908a4858477e7ee05ee",
+  "files": [
+    {
+      "path": "ads/libs/poing-godot-admob-ads-debug.aar",
+      "bytes": 134019,
+      "sha256": "fac3128d6e64b59666b1bac3097952bbbde2f1b1573656cd51b9f64f745edd79"
+    },
+    {
+      "path": "ads/libs/poing-godot-admob-ads-release.aar",
+      "bytes": 127494,
+      "sha256": "aeca6a3c813da770390dc1d574765b17d8ba78fe0cf1cb61438dc08df1fe1c67"
+    },
+    {
+      "path": "ads/libs/poing-godot-admob-core-debug.aar",
+      "bytes": 4776,
+      "sha256": "f78a4075635d4d3f27d7de66d350fb77c16f21e60e24ceee702c80efe5b96e29"
+    },
+    {
+      "path": "ads/libs/poing-godot-admob-core-release.aar",
+      "bytes": 4674,
+      "sha256": "f89e3f1096047fabc83208e4e00a3f0aef847229bcb68cc01e791bd57468fda0"
+    },
+    {
+      "path": "ads/poing_godot_admob_ads.gd",
+      "bytes": 1949,
+      "sha256": "aaf3ba790995e030fd677791d275952ef3d92561fcba1589ed2324dfe49550f2"
+    },
+    {
+      "path": "applovin/libs/poing-godot-admob-applovin-debug.aar",
+      "bytes": 2881,
+      "sha256": "25898d7db375f33ddf997008a4b41f483161ad71d2cb6e79f7c75e864d57217d"
+    },
+    {
+      "path": "applovin/libs/poing-godot-admob-applovin-release.aar",
+      "bytes": 2838,
+      "sha256": "1dc3ef4f2b51e8990fd1b1981ee2526114c543f444294cac74009675561db608"
+    },
+    {
+      "path": "applovin/poing_godot_admob_applovin.gd",
+      "bytes": 1828,
+      "sha256": "7471454d5b3e50af6c441c082f6406432ca8560ca87a989d633f6cbe63c26e84"
+    },
+    {
+      "path": "bidmachine/libs/poing-godot-admob-bidmachine-debug.aar",
+      "bytes": 2680,
+      "sha256": "fdd9c479c1a7f629fd16d2c469390ccc4458112215921a0c7cf0d7d2c70a3056"
+    },
+    {
+      "path": "bidmachine/libs/poing-godot-admob-bidmachine-release.aar",
+      "bytes": 2648,
+      "sha256": "73f791aa9468e9cb885118377648892b6ae297c37d6c5e33ef16ae1d5237ceaa"
+    },
+    {
+      "path": "bidmachine/poing_godot_admob_bidmachine.gd",
+      "bytes": 2022,
+      "sha256": "c0fd7caea1831286fa65f55dd700e252ab6cc633bcedfe0f360075b7be70c513"
+    },
+    {
+      "path": "chartboost/libs/poing-godot-admob-chartboost-debug.aar",
+      "bytes": 3015,
+      "sha256": "493fe2921ed0713391574dc9e7338fe6d8925255aa32c72866a70e4a6cf5cbe6"
+    },
+    {
+      "path": "chartboost/libs/poing-godot-admob-chartboost-release.aar",
+      "bytes": 2962,
+      "sha256": "7730cb8ad2c1ce49aa41508c6a1571463a99c9cf6c660ae24bc20e813bc487c2"
+    },
+    {
+      "path": "chartboost/poing_godot_admob_chartboost.gd",
+      "bytes": 2034,
+      "sha256": "f5d69ac71e6bbf7ceb06c1f6aa35a62343d05e3940109a6b8e499c5c2eeff33c"
+    },
+    {
+      "path": "dtexchange/libs/poing-godot-admob-dtexchange-debug.aar",
+      "bytes": 2652,
+      "sha256": "7cdd7d43105d0dbd9b6ba161617fd2c1e96998889c42c72892fe81df1ecc2ac3"
+    },
+    {
+      "path": "dtexchange/libs/poing-godot-admob-dtexchange-release.aar",
+      "bytes": 2609,
+      "sha256": "0cc24a43b4d6febfe1359a99885e8f72a1919917c4a94c991b419118028ea7b5"
+    },
+    {
+      "path": "dtexchange/poing_godot_admob_dtexchange.gd",
+      "bytes": 1970,
+      "sha256": "3cf6ee53f37fa696f478c1434d33cf86e7064c7e5242f66630cfca6b231cd81f"
+    },
+    {
+      "path": "imobile/libs/poing-godot-admob-imobile-debug.aar",
+      "bytes": 793,
+      "sha256": "e263a248101f48dd69c9985968b1a8f177ce3d788f27581321290702c75e4958"
+    },
+    {
+      "path": "imobile/libs/poing-godot-admob-imobile-release.aar",
+      "bytes": 793,
+      "sha256": "e263a248101f48dd69c9985968b1a8f177ce3d788f27581321290702c75e4958"
+    },
+    {
+      "path": "imobile/poing_godot_admob_imobile.gd",
+      "bytes": 2018,
+      "sha256": "9c74def383923dc242117341b20f5a48ad53d3cbe05d6966ed58a39e8c522e90"
+    },
+    {
+      "path": "inmobi/libs/poing-godot-admob-inmobi-debug.aar",
+      "bytes": 792,
+      "sha256": "3667eb446655d4fcb4452cd496241eac06690593119e0cbfcad96f951357026e"
+    },
+    {
+      "path": "inmobi/libs/poing-godot-admob-inmobi-release.aar",
+      "bytes": 792,
+      "sha256": "3667eb446655d4fcb4452cd496241eac06690593119e0cbfcad96f951357026e"
+    },
+    {
+      "path": "inmobi/poing_godot_admob_inmobi.gd",
+      "bytes": 2022,
+      "sha256": "7e0d0af3cc8862cda9f3d599bb1bad4610300033a3362b6071f91c87713343da"
+    },
+    {
+      "path": "ironsource/libs/poing-godot-admob-ironsource-debug.aar",
+      "bytes": 2697,
+      "sha256": "6f3903132550c8e0baa5e505e1060745493691285313e29a512c04e8964b7171"
+    },
+    {
+      "path": "ironsource/libs/poing-godot-admob-ironsource-release.aar",
+      "bytes": 2665,
+      "sha256": "861e75b4fc24acb77b843e0f2bf1a28d3f1ac33e3d1acd8bdc4049185a283535"
+    },
+    {
+      "path": "ironsource/poing_godot_admob_ironsource.gd",
+      "bytes": 1996,
+      "sha256": "cd1fe5a9f40b1edd42e6b860393566663b1ea9bbec553e1acf123d0e18174079"
+    },
+    {
+      "path": "line/libs/poing-godot-admob-line-debug.aar",
+      "bytes": 4632,
+      "sha256": "07845001198c1c7e129f28c00d690d466341593dbe7fdeb88484ebd5764af7ad"
+    },
+    {
+      "path": "line/libs/poing-godot-admob-line-release.aar",
+      "bytes": 4538,
+      "sha256": "ccc7039aed9ae562ae1273c8a6d81f0f0f9d9b0de897aea1317181fefa8708f4"
+    },
+    {
+      "path": "line/poing_godot_admob_line.gd",
+      "bytes": 1963,
+      "sha256": "5dd38dc466543b4ada0c109329b97af134ca3fc0b10ce6a819c963842447d507"
+    },
+    {
+      "path": "maio/libs/poing-godot-admob-maio-debug.aar",
+      "bytes": 790,
+      "sha256": "1de168d4247ad0aa2ef256796a82d3bf6fc4e39390b333a00f0678bc0c7eddd4"
+    },
+    {
+      "path": "maio/libs/poing-godot-admob-maio-release.aar",
+      "bytes": 790,
+      "sha256": "1de168d4247ad0aa2ef256796a82d3bf6fc4e39390b333a00f0678bc0c7eddd4"
+    },
+    {
+      "path": "maio/poing_godot_admob_maio.gd",
+      "bytes": 2001,
+      "sha256": "69dc6f8a5ee2d619deee2e037a7537128e7e1eb5b1c5c71a4ecb14a6113546b3"
+    },
+    {
+      "path": "meta/libs/poing-godot-admob-meta-debug.aar",
+      "bytes": 1054,
+      "sha256": "479208c3fdf9ca6a83a86dc8dd75851598f0583fa3303e668b72f166cade8a17"
+    },
+    {
+      "path": "meta/libs/poing-godot-admob-meta-release.aar",
+      "bytes": 1054,
+      "sha256": "479208c3fdf9ca6a83a86dc8dd75851598f0583fa3303e668b72f166cade8a17"
+    },
+    {
+      "path": "meta/poing_godot_admob_meta.gd",
+      "bytes": 1816,
+      "sha256": "e12a67758e0765455e7946f002572b7b1977c0ce99d286e9f28ccd1203294afc"
+    },
+    {
+      "path": "mintegral/libs/poing-godot-admob-mintegral-debug.aar",
+      "bytes": 793,
+      "sha256": "ae0efa85891fa85a8ffbcc673c6932db8174cd73eaa231f251efa63cb4888101"
+    },
+    {
+      "path": "mintegral/libs/poing-godot-admob-mintegral-release.aar",
+      "bytes": 793,
+      "sha256": "ae0efa85891fa85a8ffbcc673c6932db8174cd73eaa231f251efa63cb4888101"
+    },
+    {
+      "path": "mintegral/poing_godot_admob_mintegral.gd",
+      "bytes": 2050,
+      "sha256": "c9fe463cf0c95d9d202002a431cb13946c77183128fdbaafa08f86d7612d7fac"
+    },
+    {
+      "path": "moloco/libs/poing-godot-admob-moloco-debug.aar",
+      "bytes": 791,
+      "sha256": "47dcf4e47b37c80258a0cd1f12cc0a4ab6cb32b97ddb94e598dbce354c5780fa"
+    },
+    {
+      "path": "moloco/libs/poing-godot-admob-moloco-release.aar",
+      "bytes": 791,
+      "sha256": "47dcf4e47b37c80258a0cd1f12cc0a4ab6cb32b97ddb94e598dbce354c5780fa"
+    },
+    {
+      "path": "moloco/poing_godot_admob_moloco.gd",
+      "bytes": 1962,
+      "sha256": "b237a6260de33690717504fde1bbdefd02f2d3bbaf561de490db6eaee824625c"
+    },
+    {
+      "path": "mytarget/libs/poing-godot-admob-mytarget-debug.aar",
+      "bytes": 1114,
+      "sha256": "03b2f4425c8cb89717698b0b9c18c2dd349e143732ae2dfdd84855772f7f1569"
+    },
+    {
+      "path": "mytarget/libs/poing-godot-admob-mytarget-release.aar",
+      "bytes": 1114,
+      "sha256": "03b2f4425c8cb89717698b0b9c18c2dd349e143732ae2dfdd84855772f7f1569"
+    },
+    {
+      "path": "mytarget/poing_godot_admob_mytarget.gd",
+      "bytes": 1966,
+      "sha256": "b410bc7f96c419b88906d28718aae17f39fc672bd45655c4c4ad273de3aeab1c"
+    },
+    {
+      "path": "package.gd",
+      "bytes": 27,
+      "sha256": "69bc652af97d340c608931adc4ec23f3e3bd4246f5cc7bf5a2d1498505549144"
+    },
+    {
+      "path": "pangle/libs/poing-godot-admob-pangle-debug.aar",
+      "bytes": 791,
+      "sha256": "9510859a16e31f86133525322793954b9e8a46cb0a2a2bdcab20636ca16101a2"
+    },
+    {
+      "path": "pangle/libs/poing-godot-admob-pangle-release.aar",
+      "bytes": 791,
+      "sha256": "9510859a16e31f86133525322793954b9e8a46cb0a2a2bdcab20636ca16101a2"
+    },
+    {
+      "path": "pangle/poing_godot_admob_pangle.gd",
+      "bytes": 2016,
+      "sha256": "b095771a30f8806ed86e5cbc8b7227d240d147ea471f0481673eaa0b048d9734"
+    },
+    {
+      "path": "pubmatic/libs/poing-godot-admob-pubmatic-debug.aar",
+      "bytes": 793,
+      "sha256": "07d2116d3a2fcf322bb44f01291a6fa79e35c8d1c15b0ecb1d60f21126037131"
+    },
+    {
+      "path": "pubmatic/libs/poing-godot-admob-pubmatic-release.aar",
+      "bytes": 793,
+      "sha256": "07d2116d3a2fcf322bb44f01291a6fa79e35c8d1c15b0ecb1d60f21126037131"
+    },
+    {
+      "path": "pubmatic/poing_godot_admob_pubmatic.gd",
+      "bytes": 2019,
+      "sha256": "1123d7bcffca9f213e7aba1e2452c34013bba36ef2cd8c03a7925b8c885e59cf"
+    },
+    {
+      "path": "unity_ads/libs/poing-godot-admob-unity_ads-debug.aar",
+      "bytes": 2527,
+      "sha256": "a6c987e5708b47e075ca037dc0588ee3d0932d1ef85a7e3eefb5b3ee0ddd91de"
+    },
+    {
+      "path": "unity_ads/libs/poing-godot-admob-unity_ads-release.aar",
+      "bytes": 2488,
+      "sha256": "4a3914dedc8e00a28db00c53fef82f86a2018e530e8c2dce0ecd39ecaa01e751"
+    },
+    {
+      "path": "unity_ads/poing_godot_admob_unity_ads.gd",
+      "bytes": 1866,
+      "sha256": "a06948a9c66d618b083ab6c7b81121760bb54b1b06198940df58b2241e2c078b"
+    },
+    {
+      "path": "vungle/libs/poing-godot-admob-vungle-debug.aar",
+      "bytes": 5942,
+      "sha256": "6d911ba2a3993231ea000e2aad355fe92f31b1797e6f5fae51f637cf3256f99a"
+    },
+    {
+      "path": "vungle/libs/poing-godot-admob-vungle-release.aar",
+      "bytes": 5855,
+      "sha256": "df2ac06dcb122af24f2cb0b23cdbabef291f6b7f04888c88f940acc5a838d16b"
+    },
+    {
+      "path": "vungle/poing_godot_admob_vungle.gd",
+      "bytes": 1815,
+      "sha256": "115bf7eb54c61cd192e2771d509ffdbd42df4edc4bd3d01ed70df80f6dc51a9c"
+    }
+  ]
+}

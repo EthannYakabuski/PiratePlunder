@@ -1,6 +1,6 @@
 # Store listing and publishing assets
 
-Prepared October 14, refreshed for gameplay 0.2.0 on October 15, 2026. This is the submission kit, not a record of publication. Copy now describes manual cannons, earned-gold upgrades and finite authored campaign battles. It does not promise operational Google cloud services before owner configuration and device testing.
+Prepared October 14, refreshed for ad-supported version 0.3.0 on October 17, 2026. This is the submission kit, not a record of publication. Copy describes manual cannons, earned-gold upgrades, finite authored campaign battles and the Android ad placements/rewarded rescue. It does not promise operational Google cloud services before owner configuration and device testing.
 
 ## Copy-ready files
 
@@ -54,4 +54,4 @@ For entry points that open Google's built-in achievement/leaderboard UI, use the
 
 As verified October 14, 2026, new phone/tablet apps and updates must target **Android 16 / API 36 or higher** under the policy effective August 31, 2026. Install the matching SDK and use a compatible Android export/build toolchain. Recheck the Console policy when releasing later. [Google Play target API requirements](https://support.google.com/googleplay/android-developer/answer/11926878?hl=en-EN).
 
-The MVP does not introduce advertising, billing or a developer-operated analytics backend. Revisit the listing and privacy declarations if these are added later. All supplied Kenney art/audio is CC0, original generated art/audio is CC0, and the bundled fonts retain their included SIL Open Font Licenses.
+Version 0.3.0 introduces AdMob advertising and UMP consent on Android. Declare **Contains ads** and review Data safety/privacy-policy disclosures for Google Mobile Ads and UMP alongside Play Games. No billing or developer-operated analytics backend was added. Google documents SDK data collection, sharing and encryption in its [Next-Gen SDK disclosure guide](https://developers.google.com/admob/android/next-gen/privacy/play-data-disclosure); use the exact SDK versions and behavior recorded in [ADMOB.md](ADMOB.md) when completing the release declarations. Internal builds currently use Google test ads; production units and account configuration remain owner setup. All supplied Kenney art/audio is CC0, original generated art/audio is CC0, and the bundled fonts retain their included SIL Open Font Licenses.

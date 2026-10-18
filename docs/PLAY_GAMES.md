@@ -6,7 +6,7 @@ PiratePlunder is playable offline. Campaign unlocks, best stars, ship XP, achiev
 
 The requested [Godot Play Game Services plugin](https://github.com/godot-sdk-integrations/godot-play-game-services) is vendored at `addons/GodotPlayGameServices`, including its MIT license and debug/release Android libraries. The pinned release is [v3.4.0](https://github.com/godot-sdk-integrations/godot-play-game-services/releases/tag/v3.4.0), downloaded October 14, 2026. The addon editor plugin is enabled, and its exact autoload name is `GodotPlayGameServices`.
 
-`scripts/play_services.gd` initializes the plugin on Android, creates the upstream `PlayGamesSignInClient`, `PlayGamesAchievementsClient`, `PlayGamesLeaderboardsClient`, and `PlayGamesSnapshotsClient` nodes, and connects their documented signals. Sign-in is optional and user initiated by default. There are no server authorization requests, authorization tokens, client secrets, analytics, advertisements, or payment SDKs in this MVP.
+`scripts/play_services.gd` initializes the plugin on Android, creates the upstream `PlayGamesSignInClient`, `PlayGamesAchievementsClient`, `PlayGamesLeaderboardsClient`, and `PlayGamesSnapshotsClient` nodes, and connects their documented signals. Sign-in is optional and user initiated by default. This adapter uses no server authorization requests, authorization tokens or client secrets. Android advertising and UMP privacy handling are provided separately by the [AdMob integration](ADMOB.md) as of version 0.3.0; no billing SDK or developer-operated analytics server was added.
 
 Public configuration lives in `config/play_games.json`:
 

@@ -1,0 +1,2642 @@
+{
+  "plugin": "Poing Godot AdMob",
+  "version": "5.1.0",
+  "license": "MIT",
+  "upstream": "https://github.com/poingstudios/godot-admob-plugin/releases/tag/v5.1.0",
+  "local_source": "user-provided addons/admob directory",
+  "source_file_count": 526,
+  "source_bytes": 3589518,
+  "source_manifest_sha256": "81b12e9eedc20b1b75ccc59a4784ea07bb6fcd2019aeca6e70ccc86ed0275f9d",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 76,
+      "sha256": "29d03900d8126ff17f849b9263534d3e1189617faaf94e9d90dd5c3990e39513"
+    },
+    {
+      "path": "admob.gd",
+      "bytes": 2375,
+      "sha256": "1e1cd77654362343230bdcdf1c82220b7492bd7983117dc1b0573973f3ab946a"
+    },
+    {
+      "path": "admob.gd.uid",
+      "bytes": 20,
+      "sha256": "e48b66d2698bc4984a81fde32ce4b199521dc021944a9711b7ebfc84f6baf99b"
+    },
+    {
+      "path": "android/.gitignore",
+      "bytes": 53,
+      "sha256": "795c404b861c4f7fad8af26d412ca65bfa2c84c346aa143054e6347092c2eb5e"
+    },
+    {
+      "path": "assets/android.png",
+      "bytes": 6674,
+      "sha256": "77fb41efbe709aa107b4acf72a7deb407fabb80087e270aec910a7814c1c5dd7"
+    },
+    {
+      "path": "assets/android.png.import",
+      "bytes": 945,
+      "sha256": "b8f548d0d28bfaf9d777a27c2f7d1cb035b147faf71bb89a02362bbee118c3de"
+    },
+    {
+      "path": "assets/arrow_left.svg",
+      "bytes": 211,
+      "sha256": "f6cd575e85b8c05c6570d6047745bb3869230ad48eca370eef644dd631d03751"
+    },
+    {
+      "path": "assets/arrow_left.svg.import",
+      "bytes": 1051,
+      "sha256": "2b91230b3ac548ff6a39b5dcb6da5c65ea30d21d576638e19a98cebbd78af8d1"
+    },
+    {
+      "path": "assets/arrow_right.svg",
+      "bytes": 210,
+      "sha256": "da5cee7cbfd4593e177ae62f3a8c7fc83ec8ec7877000c13d3238a7beeda257c"
+    },
+    {
+      "path": "assets/arrow_right.svg.import",
+      "bytes": 1054,
+      "sha256": "ae23dafbcae44d5a45d257a256e7d3fe31518aff56fa0a8c5d26e67af7b75710"
+    },
+    {
+      "path": "assets/donate/Ko-fi_Logo_RGB_ColorBg.png",
+      "bytes": 20680,
+      "sha256": "2d2fc6f5b9c946e248a2cc39934c906c008c61f3e139b4a74ca5175cd30f6dec"
+    },
+    {
+      "path": "assets/donate/Ko-fi_Logo_RGB_ColorBg.png.import",
+      "bytes": 997,
+      "sha256": "7629d94562e9e48aa4ee1c6e7c062a229dc3e13b89038fe2f15dc53955c00f47"
+    },
+    {
+      "path": "assets/donate/Patreon_logo_with_wordmark.svg",
+      "bytes": 38477,
+      "sha256": "cbabc43b6e51f5d7565956474c3cd3db434254f111a9a3749584db48d3e75417"
+    },
+    {
+      "path": "assets/donate/Patreon_logo_with_wordmark.svg.import",
+      "bytes": 1106,
+      "sha256": "0981414c5f55e1e07569aecd6945885e7c9e2d9aae751856ee880320492ae30b"
+    },
+    {
+      "path": "assets/donate/PayPal.svg",
+      "bytes": 3476,
+      "sha256": "3132624c4d5ba0aa966a8027219298ceec51551579ca4a1278bc54d73294b2b4"
+    },
+    {
+      "path": "assets/donate/PayPal.svg.import",
+      "bytes": 1045,
+      "sha256": "f4f12655a48fc620b7f1602b6d1ef02792e92c071cf7b1e5ce0b914ca0fc149c"
+    },
+    {
+      "path": "assets/flood_it_icon.svg",
+      "bytes": 836,
+      "sha256": "cd78c09a00fc00105530012137f293f51fc3741c73b082a93d3d7b501e0f4d57"
+    },
+    {
+      "path": "assets/flood_it_icon.svg.import",
+      "bytes": 1060,
+      "sha256": "4939952205cd517d00a0e5de4932492bdb66bb0cb973e745917134e7daf8d7e4"
+    },
+    {
+      "path": "assets/fonts/NotoSansSC-Regular.otf",
+      "bytes": 207680,
+      "sha256": "0832cf607170f42922aaeb8dd590e346174e247800c35aa4137055542462dbfa"
+    },
+    {
+      "path": "assets/fonts/NotoSansSC-Regular.otf.import",
+      "bytes": 804,
+      "sha256": "28883c043f0a866e896335cf025ebf859a9e594ad995cf24e6d71399083a381e"
+    },
+    {
+      "path": "assets/format-app-open.svg",
+      "bytes": 10269,
+      "sha256": "ca3d2afa837cf2143c887b7dbc8a98bcb14d8afce129d814efb24376e8619a28"
+    },
+    {
+      "path": "assets/format-app-open.svg.import",
+      "bytes": 1066,
+      "sha256": "2bcfc3b3c466ee5ff88361952392f8e8fc38b33a3ef65dc6cd9284026b58bf3d"
+    },
+    {
+      "path": "assets/format-banner.svg",
+      "bytes": 4977,
+      "sha256": "edd808ebfd82272192acdfb90c52215210c550a5f5e0381216d3c1f36c10c0c8"
+    },
+    {
+      "path": "assets/format-banner.svg.import",
+      "bytes": 1059,
+      "sha256": "7b86ad7e49b58a3238b64944d59d723135a7d7842343a01acae3abfabec14a70"
+    },
+    {
+      "path": "assets/format-interstitial.svg",
+      "bytes": 5912,
+      "sha256": "e1d4502816a173f5d3f7eb29ccefc2d271cb9da890b5305d6d3e1ca1e802d487"
+    },
+    {
+      "path": "assets/format-interstitial.svg.import",
+      "bytes": 1078,
+      "sha256": "92be0e849db04b4a6b43a808e1e6c0fcfcc9a785fb2c1fbca203579830f3044f"
+    },
+    {
+      "path": "assets/format-native.svg",
+      "bytes": 13234,
+      "sha256": "d6f4254a13bf251158aedd6bddbd044a39bf309a4d5860cac8cb09612f87c22f"
+    },
+    {
+      "path": "assets/format-native.svg.import",
+      "bytes": 1059,
+      "sha256": "91c553928920eefc0fe1392cd0caf46687591da2be75be17a4282846f3466fb3"
+    },
+    {
+      "path": "assets/format-rewarded-interstitial.svg",
+      "bytes": 4222,
+      "sha256": "6ed80b15370b97eddc34750f71ad515083c298e818b2d52354e6afa6c3c94736"
+    },
+    {
+      "path": "assets/format-rewarded-interstitial.svg.import",
+      "bytes": 1104,
+      "sha256": "b0c998a4eb0eaee847875ef398d61194dd648f44ec97c0587a582576f28b72a1"
+    },
+    {
+      "path": "assets/google_play_icon.svg",
+      "bytes": 292,
+      "sha256": "25ddaaa7f1039f44b6d58acc85a30dfc7976799d7c980b3cacd1b2c444a5c7e2"
+    },
+    {
+      "path": "assets/google_play_icon.svg.import",
+      "bytes": 1069,
+      "sha256": "66f859ffb4f5fdfc2f97c5d8940f62fedaed93c3f466252f56882243a82a709f"
+    },
+    {
+      "path": "assets/icon-1024.png",
+      "bytes": 264159,
+      "sha256": "de18d7f0586af4885d278969f259759403f9453cfb3cb962c478982a621c98f8"
+    },
+    {
+      "path": "assets/icon-1024.png.import",
+      "bytes": 951,
+      "sha256": "4cb05d87c158b37d2094da71f7e036fbac43df7e5cc66d14d0ece404ff512237"
+    },
+    {
+      "path": "assets/icon-120.png",
+      "bytes": 13368,
+      "sha256": "2849a40d2e8b230476707127565b1ec37154b62a3ec75fb95cbf348d44bb9260"
+    },
+    {
+      "path": "assets/icon-120.png.import",
+      "bytes": 947,
+      "sha256": "5129a197a665d16b5a32407895b991351bddee9a0908c452ab028ba61518bc22"
+    },
+    {
+      "path": "assets/icon-15.png",
+      "bytes": 2507,
+      "sha256": "547debc198bd8a98bf89da4c301dc192ef27bfe13d4fd5ef7f6beb3457d2dd6e"
+    },
+    {
+      "path": "assets/icon-15.png.import",
+      "bytes": 945,
+      "sha256": "6294fc91b1fc0a87e6119e4412e8d2ac337a174199b9c513f0d14f8bb94d43a7"
+    },
+    {
+      "path": "assets/icon-500.png",
+      "bytes": 56624,
+      "sha256": "cda04d458b9b1ffa183a40ddd6bd1e86a24270e4f8072a73e855641afccba963"
+    },
+    {
+      "path": "assets/icon-500.png.import",
+      "bytes": 948,
+      "sha256": "5ce871b14db5675e000b8980e13bb45078371af37076c5c44f28f5da1429054d"
+    },
+    {
+      "path": "assets/icon-76.png",
+      "bytes": 7491,
+      "sha256": "9dd97dcd70a1dd1751868bde436ee8d33d9f732c1ac72954016666bd6f42eaa5"
+    },
+    {
+      "path": "assets/icon-76.png.import",
+      "bytes": 944,
+      "sha256": "7ca351db9f6da0b962d3e16fed32140d8ccc066a3cdf276a7dbd1c837209b9a5"
+    },
+    {
+      "path": "assets/ios.png",
+      "bytes": 23445,
+      "sha256": "68ccc979942953cb14d4bed86f82f5a4a234e6579a4b7fde3143850fcdec8fa7"
+    },
+    {
+      "path": "assets/ios.png.import",
+      "bytes": 933,
+      "sha256": "853beae537b3b8815b7a4fa86536d5e14d04b7ce5e93e431ad108ecf2c376f37"
+    },
+    {
+      "path": "assets/music.ogg",
+      "bytes": 1801126,
+      "sha256": "9ac11fce7416bd66af9bdc4d71af9023b24f2ec2604773b00d675f5b4029655c"
+    },
+    {
+      "path": "assets/music.ogg.import",
+      "bytes": 389,
+      "sha256": "a384770df707564c64b7a776356794ee0c413a069b8a705868b5a9033772f30f"
+    },
+    {
+      "path": "assets/poing.jpeg",
+      "bytes": 8232,
+      "sha256": "69d53b94104eec5fbcc5ff2f37636bd8fd295221c0f6834d22229dc46e22b9df"
+    },
+    {
+      "path": "assets/poing.jpeg.import",
+      "bytes": 941,
+      "sha256": "de17a1afb5b6937367c721605afed4eef69d16a98418722e652080fc8c4d5bc0"
+    },
+    {
+      "path": "assets/pos_bottom.svg",
+      "bytes": 252,
+      "sha256": "1dcea04665cc0dcd688ef465ff5316ee8e5643d969c599891f3f8f63debc14d7"
+    },
+    {
+      "path": "assets/pos_bottom.svg.import",
+      "bytes": 1050,
+      "sha256": "39b7f495a877e5a0d9fa48389630bbbb13f864cc6a73c8e84ea0bc2872b71317"
+    },
+    {
+      "path": "assets/pos_bottom_left.svg",
+      "bytes": 251,
+      "sha256": "0ab022ddbb31b2cc2582819eecce88d7cace8f1ab533249dfef1dec137d4367b"
+    },
+    {
+      "path": "assets/pos_bottom_left.svg.import",
+      "bytes": 1066,
+      "sha256": "b418390df1f748b9c5dab20bbab36fe3ebfc5c10e356a0fdb82606fc75d4c773"
+    },
+    {
+      "path": "assets/pos_bottom_right.svg",
+      "bytes": 252,
+      "sha256": "8fee6bdcd62ae2c1d9fb9886acba6ff70b0d76d6c428efdbca75f9e00452a976"
+    },
+    {
+      "path": "assets/pos_bottom_right.svg.import",
+      "bytes": 1068,
+      "sha256": "cf3b09fc35eca867ec3a5e8f3cdc42db6480170697565d39770d54e941532984"
+    },
+    {
+      "path": "assets/pos_center.svg",
+      "bytes": 252,
+      "sha256": "fb960103562440df34b612594a572e0b306ea3f3d31b445bb192b27678aec5bd"
+    },
+    {
+      "path": "assets/pos_center.svg.import",
+      "bytes": 1051,
+      "sha256": "2f26e695e978d06c096486209add9309bab98618437d376e08728c6c9d9ba390"
+    },
+    {
+      "path": "assets/pos_left.svg",
+      "bytes": 251,
+      "sha256": "a694b625f57b5b58e3746680e423e41940cf9a140bb2076d200bd32ea2814498"
+    },
+    {
+      "path": "assets/pos_left.svg.import",
+      "bytes": 1045,
+      "sha256": "fe516f253be5c7cfefe7dffe934529196c51746d566347e21be741e961385ea1"
+    },
+    {
+      "path": "assets/pos_right.svg",
+      "bytes": 252,
+      "sha256": "ea397b2baa3a614c20f678ed7b1a8e303c6c8e584194565c0b702eea6de838ff"
+    },
+    {
+      "path": "assets/pos_right.svg.import",
+      "bytes": 1048,
+      "sha256": "8900d3efb26c72ca8a729f2e12892425684bb1eb763d93502b9812602d70e61f"
+    },
+    {
+      "path": "assets/pos_top.svg",
+      "bytes": 251,
+      "sha256": "537f7218aad42919080ed5d9335350056dbe3f1b67c8614188207365107d2a20"
+    },
+    {
+      "path": "assets/pos_top.svg.import",
+      "bytes": 1041,
+      "sha256": "024b03869af30d7fa1d4e0854157449f45375867d3163d0370d2f65479ca6e5c"
+    },
+    {
+      "path": "assets/pos_top_left.svg",
+      "bytes": 250,
+      "sha256": "d0fd80a379a15b06eceb2fc5c97d6801c397b3cebaa0531ad304895a9b068417"
+    },
+    {
+      "path": "assets/pos_top_left.svg.import",
+      "bytes": 1057,
+      "sha256": "469b45097001476045e8288b26853dac5bbcde171188a320443050f50fb234bb"
+    },
+    {
+      "path": "assets/pos_top_right.svg",
+      "bytes": 251,
+      "sha256": "437db13b35856198a7342ebf5b922742757230ceabde907b8c4edd2b0beebbb1"
+    },
+    {
+      "path": "assets/pos_top_right.svg.import",
+      "bytes": 1060,
+      "sha256": "42d5925595356baf1c90919b69bb0368d94f4d81660609340ab5429c59ff18fe"
+    },
+    {
+      "path": "assets/theme_modern.tres",
+      "bytes": 10176,
+      "sha256": "03ffc6a2ce71ae34d48f1100f273d8242d666582f732f8575213337978dd0178"
+    },
+    {
+      "path": "csharp/sample/MainCSharpExample.cs",
+      "bytes": 7401,
+      "sha256": "692a23c8d49a974470f27b95d0e34701f7aa3df10145fd13d7596d213b884555"
+    },
+    {
+      "path": "csharp/sample/MainCSharpExample.cs.uid",
+      "bytes": 20,
+      "sha256": "74a2fcc678c4148b699df4360abfebe81b2574ec05af2eb1d6ee356dd8a34b22"
+    },
+    {
+      "path": "csharp/sample/MainCSharpExample.tscn",
+      "bytes": 12317,
+      "sha256": "16d0f8f2cfb7cff5254ce52f958ecd74cfaeb20eb64971350481b11022395924"
+    },
+    {
+      "path": "csharp/sample/SafeArea.cs",
+      "bytes": 4813,
+      "sha256": "0d796f248640c8fe360dbf9bdf1f98c144091d2465614e2f093e3b06cfa11f78"
+    },
+    {
+      "path": "csharp/sample/SafeArea.cs.uid",
+      "bytes": 20,
+      "sha256": "f68cd97eb4d7265a3933d63110d22f6fafe966ff54092ae24b6e8cd01ea52546"
+    },
+    {
+      "path": "csharp/sample/SampleRegistry.cs",
+      "bytes": 1577,
+      "sha256": "25e2cc38833b5f06991b3d6372aefcb0441f31c842a03d8bdb04757c55d57749"
+    },
+    {
+      "path": "csharp/sample/SampleRegistry.cs.uid",
+      "bytes": 20,
+      "sha256": "03138890e77645d7bc55dfc4b073a8a15fffb158a58e21c8c6f7e895666a3d28"
+    },
+    {
+      "path": "csharp/sample/tabs/AppOpen.cs",
+      "bytes": 5906,
+      "sha256": "7342868d95bcc1375c5344887b47a24cc8f3975a976d63fd03f62ad9ff053ebd"
+    },
+    {
+      "path": "csharp/sample/tabs/AppOpen.cs.uid",
+      "bytes": 20,
+      "sha256": "2670aa8279ba9b614bdfc0e238ad32629844201aa87cbeaaaba74e06d394e285"
+    },
+    {
+      "path": "csharp/sample/tabs/AppOpen.tscn",
+      "bytes": 1727,
+      "sha256": "8ddab6fbc11e3096ad2f30be1b73ed0b06b04c1c2d5d73043864aa9cf35a7858"
+    },
+    {
+      "path": "csharp/sample/tabs/Banner.cs",
+      "bytes": 9925,
+      "sha256": "6346cd9b6c0a842d96820b621947314d37af679a65f66b5a767234865f5b6f0d"
+    },
+    {
+      "path": "csharp/sample/tabs/Banner.cs.uid",
+      "bytes": 20,
+      "sha256": "0700b58567b61efc8e8617dfe49d4e94321e870e492e5b1a62b2950cb2e794ef"
+    },
+    {
+      "path": "csharp/sample/tabs/Banner.tscn",
+      "bytes": 10483,
+      "sha256": "fa6058455c6a7afe948e46ec3d9007256580b4871748789a465860eb6787b39c"
+    },
+    {
+      "path": "csharp/sample/tabs/BaseTab.cs",
+      "bytes": 2935,
+      "sha256": "ad3a7fe3fa277aea1e98ecb012020d6a509eebd6b263af2d45ea4e1e420c239d"
+    },
+    {
+      "path": "csharp/sample/tabs/BaseTab.cs.uid",
+      "bytes": 20,
+      "sha256": "6536dd6e432e130279d0fe0ab2802991b922c160194c56b7a52d70c12d19c28a"
+    },
+    {
+      "path": "csharp/sample/tabs/Interstitial.cs",
+      "bytes": 3763,
+      "sha256": "347d2a67a8a96f032f13db2b2a209741987ed4f7b5137be893417e009419ae87"
+    },
+    {
+      "path": "csharp/sample/tabs/Interstitial.cs.uid",
+      "bytes": 20,
+      "sha256": "47207cd679b662553d791069f16521b6ec10d1d42e9b76c7a9174253e4da45e4"
+    },
+    {
+      "path": "csharp/sample/tabs/Interstitial.tscn",
+      "bytes": 1527,
+      "sha256": "2d6ce3711db0dcd703275ebdc6459aefc7a8ee4d79bd082a0a1a7af17d4b1f9d"
+    },
+    {
+      "path": "csharp/sample/tabs/MobileAds.cs",
+      "bytes": 6441,
+      "sha256": "81925fdebd01168cc4fa5f5186be35624a7149605e944d0928112a16256524a2"
+    },
+    {
+      "path": "csharp/sample/tabs/MobileAds.cs.uid",
+      "bytes": 20,
+      "sha256": "d351a32a55d9f885b01d2c656755334dbe6976af9d0654e7dfd3a0ee66f77eae"
+    },
+    {
+      "path": "csharp/sample/tabs/MobileAds.tscn",
+      "bytes": 3236,
+      "sha256": "a858f03de6c4d77a8a05fe925f3c95070b0fff30987db9aac79de1de51ddd335"
+    },
+    {
+      "path": "csharp/sample/tabs/Native.cs",
+      "bytes": 14199,
+      "sha256": "8df0b69faef0408c8c15eed52e802bdf5de823980eab0efdc3843b99be738764"
+    },
+    {
+      "path": "csharp/sample/tabs/Native.cs.uid",
+      "bytes": 19,
+      "sha256": "5a2d0ad34c9e3f518f710f886a9c263833f3464637212f00d1da182ad9df0e94"
+    },
+    {
+      "path": "csharp/sample/tabs/Native.tscn",
+      "bytes": 16452,
+      "sha256": "c5fb8e3978e70c384bb9e52ebf7ef2661c91b938ae736fd4039939c756a5eda6"
+    },
+    {
+      "path": "csharp/sample/tabs/Rewarded.cs",
+      "bytes": 3918,
+      "sha256": "83d6835987bfb0876c67955d2b59f0cdfcd05c862c31c9594125184f97637731"
+    },
+    {
+      "path": "csharp/sample/tabs/Rewarded.cs.uid",
+      "bytes": 20,
+      "sha256": "1b3cd1f57ceb40e1e19515455132f0e4dc97cf8d80a0ababcb35aef6afb70e04"
+    },
+    {
+      "path": "csharp/sample/tabs/Rewarded.tscn",
+      "bytes": 1519,
+      "sha256": "b6e52d48b9619c5d4a2fa22eb06931e3f1239e27aa6d2e3d487cd2c80340e033"
+    },
+    {
+      "path": "csharp/sample/tabs/RewardedInterstitial.cs",
+      "bytes": 4110,
+      "sha256": "5984ffee1815b7baca646b804d70aa7feb450379fd2a9b37269225c66b4ee786"
+    },
+    {
+      "path": "csharp/sample/tabs/RewardedInterstitial.cs.uid",
+      "bytes": 20,
+      "sha256": "c6189b0edceb6f42437f55e6d3a0c3beffd1bb64dd4bd37df42d36a1d847c30c"
+    },
+    {
+      "path": "csharp/sample/tabs/RewardedInterstitial.tscn",
+      "bytes": 1542,
+      "sha256": "708289a5db89bd6cfa1337f6d8384a628b610b318cd7eb8ddc6354cb6d5282c0"
+    },
+    {
+      "path": "csharp/sample/tabs/Ump.cs",
+      "bytes": 3298,
+      "sha256": "8a0167ac3d79413e831cd5b8ba80aab2df12a97b3a8eea0f860d47008a7604cf"
+    },
+    {
+      "path": "csharp/sample/tabs/Ump.cs.uid",
+      "bytes": 19,
+      "sha256": "359c933418fa16f51605359d06395489d93f563ed2c15469faa9425c7dcc9113"
+    },
+    {
+      "path": "csharp/sample/tabs/Ump.tscn",
+      "bytes": 836,
+      "sha256": "270a6c1bb13c4a6192e6cf11c0e7f329070aa2ac23c5a1e5a840c869aef817bd"
+    },
+    {
+      "path": "csharp/sample/UIScaler.cs",
+      "bytes": 13463,
+      "sha256": "bedc4f31a4d971fc8ad93f97b47f8f93b3a67306b4388851f693c9e062c6bcbb"
+    },
+    {
+      "path": "csharp/sample/UIScaler.cs.uid",
+      "bytes": 20,
+      "sha256": "7530d050c7f8e320fee4053aaf29f118c079b62d81216dd0d11b04fb96eb4807"
+    },
+    {
+      "path": "csharp/src/Api/AdView.cs",
+      "bytes": 6251,
+      "sha256": "f22a28c7e21dd59b79f2003e68e8cf372c1aca88af56910abb9d58948b737f70"
+    },
+    {
+      "path": "csharp/src/Api/AdView.cs.uid",
+      "bytes": 20,
+      "sha256": "64750e41fc4778ef56816c2431a673d7acb704868ba61463f3ee12035e9bc56d"
+    },
+    {
+      "path": "csharp/src/Api/AppOpenAd.cs",
+      "bytes": 5409,
+      "sha256": "f59ddd587a2e03dd17e0568d2fea3407c9f9eea5b41115dce4dd0b568a8b6e3d"
+    },
+    {
+      "path": "csharp/src/Api/AppOpenAd.cs.uid",
+      "bytes": 20,
+      "sha256": "b4173ecfd4c3ca044ae92cc51106aa9ddf000dad4d52a26f40bfb6abb2fe75e4"
+    },
+    {
+      "path": "csharp/src/Api/AppOpenAdLoader.cs",
+      "bytes": 3437,
+      "sha256": "f33152a8478506bd99793e9dc16033cd803ea426f4506ab8a2da313b8b073829"
+    },
+    {
+      "path": "csharp/src/Api/AppOpenAdLoader.cs.uid",
+      "bytes": 20,
+      "sha256": "ecebb0d33a115a0b67a3b7ff7826cf8fd22eb4bc7b89aa727f18209e8d1cc063"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdapterResponseInfo.cs",
+      "bytes": 3940,
+      "sha256": "544e2442262661c7d11fdf9e2b099bc6fd69da11c5587ee4db8279b97800e360"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdapterResponseInfo.cs.uid",
+      "bytes": 19,
+      "sha256": "9cbd6fccdda9c48e12a332d1649d644974c0ace96fedd8e8c8ca5be4ef658aeb"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdapterStatus.cs",
+      "bytes": 1675,
+      "sha256": "fb27d2f850c8c594dd1dc679e8c4cf1eb747106d62878edc6a14e71734fa9667"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdapterStatus.cs.uid",
+      "bytes": 18,
+      "sha256": "00b40765ac04a8cebbb9d3a02acb52a6c80bac843e9d2bcb03124af757bc3c4d"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdChoicesPlacement.cs",
+      "bytes": 240,
+      "sha256": "6d532fd677484b77c9b460225920c80583cc0b038d60d801ee5c54d79409f504"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdChoicesPlacement.cs.uid",
+      "bytes": 20,
+      "sha256": "48975c51e98a7a9bb90551f68727a5b2f784874b2f42f3627107b1a2cc22bf8a"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdError.cs",
+      "bytes": 2143,
+      "sha256": "ff20a1645858684fb7752207ff6cb09d9d15758900ad866529e1771713852628"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdError.cs.uid",
+      "bytes": 19,
+      "sha256": "3e19408aeb578538043ea84ed50f8c9e73f21314211557a746142197833bbf7b"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdPosition.cs",
+      "bytes": 2696,
+      "sha256": "cb9b615e7374a8a032ab36c4923992bd6d969a9fa6ff0fbbdab1371a75c3b25e"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdPosition.cs.uid",
+      "bytes": 20,
+      "sha256": "2ac62925bf00c8db5eaa88aa926bc7fe8080f8a9ecd90b85c5d06ddf42da6fb3"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdRequest.cs",
+      "bytes": 2679,
+      "sha256": "2686ed812d94079f6885a9d71387864f99a851c3174bd9ec95ea667b05f7e740"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdRequest.cs.uid",
+      "bytes": 20,
+      "sha256": "b1c43a06ed08b2cac9fe15135a4647318ebf49016ce37c1bb39f37468ad6517f"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdSize.cs",
+      "bytes": 3385,
+      "sha256": "41ddb4a932792c2e4af5d8937bc897f674c6b78c7fdd61af5df1b5b93e02b942"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdSize.cs.uid",
+      "bytes": 20,
+      "sha256": "328291cddff62178063faa6a0f275d64e43e77d4a1a3ed52ab3aef5948402f04"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdValue.cs",
+      "bytes": 2162,
+      "sha256": "f25eec16132733202f362ce6d798ebc99743d7a0087d6728ed49f250335f3866"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdValue.cs.uid",
+      "bytes": 19,
+      "sha256": "7be4574945051cf219685105e595ade2caf35b9f007ce7b93174544eca97fd9b"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdVideoController.cs",
+      "bytes": 2013,
+      "sha256": "fc1b6fd010d718fb02aa9fe0eb2f3ab0aca95e3456cc351b06eacc28e66419f8"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdVideoController.cs.uid",
+      "bytes": 20,
+      "sha256": "ba241a15b9308b0328dd4fb2149618b25ec5c2677eb14827f44b82ebfef14bd2"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdVideoOptions.cs",
+      "bytes": 664,
+      "sha256": "748104f8cd16a6de7004cbc9067ea1177f82e22dd1bc4cce3e6130101c56fdd8"
+    },
+    {
+      "path": "csharp/src/Api/Core/AdVideoOptions.cs.uid",
+      "bytes": 19,
+      "sha256": "50b1ee95d536db71f6bf8da9f2c933bc80fd9b1ff4dbef955b96d22f4c0d788a"
+    },
+    {
+      "path": "csharp/src/Api/Core/LoadAdError.cs",
+      "bytes": 2020,
+      "sha256": "3d572189a876b47a804c020951719bc8743a0703f33aa49999014dbc119eefb6"
+    },
+    {
+      "path": "csharp/src/Api/Core/LoadAdError.cs.uid",
+      "bytes": 20,
+      "sha256": "61647af545108859c10bd08b8072f6abcbc7b208000e01a780b0cc8dce681211"
+    },
+    {
+      "path": "csharp/src/Api/Core/MediaContent.cs",
+      "bytes": 2333,
+      "sha256": "9b6d70c237725e7c808853433cd3de1abd290d2ecff856a4210ffaf272851a34"
+    },
+    {
+      "path": "csharp/src/Api/Core/MediaContent.cs.uid",
+      "bytes": 20,
+      "sha256": "22aebebc463df1152387d0ffda440567bee7f4f2279e39cabff12b4ecae01cf8"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeAdOptions.cs",
+      "bytes": 774,
+      "sha256": "c9e4822d78b6a571cfdbacc4decf8485806d30430bd0471226d02ee917ceba38"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeAdOptions.cs.uid",
+      "bytes": 20,
+      "sha256": "4e01951f4ebbcb7a9d40bcd071dfd565ba1c863c10f9baaa3884abe3dfe4d512"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeMediaAspectRatio.cs",
+      "bytes": 255,
+      "sha256": "33171fa57fa4dc2eba2c77995bef697bceec9340c6ccd2081a843891f5eef6c4"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeMediaAspectRatio.cs.uid",
+      "bytes": 19,
+      "sha256": "435c8eff3e6bdf382c0abbd8021a6133da4730cf3803c37b644efa3212786319"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeTemplateFontStyle.cs",
+      "bytes": 234,
+      "sha256": "433d61340a3cf7d4057c77557cdd7d31416720ae1430f01c411d7706701a61d9"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeTemplateFontStyle.cs.uid",
+      "bytes": 20,
+      "sha256": "a996b9037c91f54ca62a0ebf449b8b2cb21d35f1aa8a5ebdb773a2b240c50861"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeTemplateStyle.cs",
+      "bytes": 1171,
+      "sha256": "801532e2333cbd9cab61d8daaf3af59f08807ac033c17bedaa1b1356dc27755a"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeTemplateStyle.cs.uid",
+      "bytes": 20,
+      "sha256": "dd51731bc7ea5bb99e9c5571bc6121978d71d8f2b0f32c2f7097613cecb9c81b"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeTemplateTextStyle.cs",
+      "bytes": 745,
+      "sha256": "e3f4ca41a62f99716ae8ab53742bdbeea615752e018ef0c5828efab954d734be"
+    },
+    {
+      "path": "csharp/src/Api/Core/NativeTemplateTextStyle.cs.uid",
+      "bytes": 20,
+      "sha256": "af8eefaeb1323bb62e7d2f3c124ebe2255f54e9c095948a84c87cc75217e0ba2"
+    },
+    {
+      "path": "csharp/src/Api/Core/RequestConfiguration.cs",
+      "bytes": 2696,
+      "sha256": "1a35e3387940b68626a9a4afd9b6c5a698bf2c02149b24dda0e9f85e1d609557"
+    },
+    {
+      "path": "csharp/src/Api/Core/RequestConfiguration.cs.uid",
+      "bytes": 20,
+      "sha256": "fcedacd325637357518dce7c2c3780792543bc8f2f8a295232458bd806ad8604"
+    },
+    {
+      "path": "csharp/src/Api/Core/ResponseInfo.cs",
+      "bytes": 3055,
+      "sha256": "8172eab7a3e4f331940caf5b452aa5026346d30e5213eee8c1c89b57952d0a7b"
+    },
+    {
+      "path": "csharp/src/Api/Core/ResponseInfo.cs.uid",
+      "bytes": 19,
+      "sha256": "3078d9d887d0f73806cb5a2c0b9a839df8ba287e9f5a2779e322f1dca297a106"
+    },
+    {
+      "path": "csharp/src/Api/Core/RewardedItem.cs",
+      "bytes": 1784,
+      "sha256": "f6b2ab21bce7bdbcefd2dbd4a6b25f3eae992c0e27542bee973f86319f4efac5"
+    },
+    {
+      "path": "csharp/src/Api/Core/RewardedItem.cs.uid",
+      "bytes": 20,
+      "sha256": "84e21594050a3451cb6e7d2bf8c72315b57e710d499871c2d3a5cd9e8c72c030"
+    },
+    {
+      "path": "csharp/src/Api/Core/ServerSideVerificationOptions.cs",
+      "bytes": 1576,
+      "sha256": "1bdb4b77f16780f318aef528bed9b433015f508c303c663853e75b0fab310af4"
+    },
+    {
+      "path": "csharp/src/Api/Core/ServerSideVerificationOptions.cs.uid",
+      "bytes": 20,
+      "sha256": "03591b4a5f725eed9cff60ad54dcdb849844fe5577916f13d12e90de0b9addf7"
+    },
+    {
+      "path": "csharp/src/Api/InitializationStatus.cs",
+      "bytes": 2273,
+      "sha256": "ce15e0618d2e6ad01e69686d1913f8bbb1136e683b189bb7d80a09c08ab55a99"
+    },
+    {
+      "path": "csharp/src/Api/InitializationStatus.cs.uid",
+      "bytes": 20,
+      "sha256": "4ab6c70d91c54ad0d462535c098ae802cc13e6200ebffe1011109413572471ef"
+    },
+    {
+      "path": "csharp/src/Api/InterstitialAd.cs",
+      "bytes": 5044,
+      "sha256": "12024ceea572555fc6475f24f345e778a9779f4c28e65ec3020fb2a068524d4e"
+    },
+    {
+      "path": "csharp/src/Api/InterstitialAd.cs.uid",
+      "bytes": 20,
+      "sha256": "0ed8f0cc44f2f686333bd0211364eae8b65525337eb400cb6a1b3b3b989f3c2e"
+    },
+    {
+      "path": "csharp/src/Api/InterstitialAdLoader.cs",
+      "bytes": 3482,
+      "sha256": "6161b1e08234c501d62bab68ea192afb41576e74ff6e055207cf50c5dcee2d7d"
+    },
+    {
+      "path": "csharp/src/Api/InterstitialAdLoader.cs.uid",
+      "bytes": 20,
+      "sha256": "6a22d8373c368e2b8dba55abab7ae76007b387d3bff3dbb6a72d640a6b95dcf4"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/AdInspectorClosedListener.cs",
+      "bytes": 1354,
+      "sha256": "df49762545f7746a77dd994fc3c4e38c13886b993948b16e9e521727ac26112b"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/AdInspectorClosedListener.cs.uid",
+      "bytes": 19,
+      "sha256": "db9388cca3ac13d53a4368839a1e7a880c2cd18491cdbca5331431e55b56e90f"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/AdListener.cs",
+      "bytes": 1652,
+      "sha256": "3c4860067d2a9ebd26c7001274224fb904a24fe74cebd132f9128b5dfe50379f"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/AdListener.cs.uid",
+      "bytes": 20,
+      "sha256": "5d53c67ba4253fcc88ec7117a852f3a7aeb6a56391cb3a758e61c444aa47c591"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/AppOpenAdLoadCallback.cs",
+      "bytes": 1410,
+      "sha256": "79617c6a6879d945fdcdcc0510350fe06f55a15f7a26491de9cbb10532f97abd"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/AppOpenAdLoadCallback.cs.uid",
+      "bytes": 20,
+      "sha256": "eaa6f3982a9f0f08960ed595f8e302ff38a7d2cd218714b15bc91b35c1bd43dc"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/FullScreenContentCallback.cs",
+      "bytes": 1657,
+      "sha256": "cd8c82144787695f719e9fa1eb6fd462bcd551615f4f003dd63e8fa75424c47c"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/FullScreenContentCallback.cs.uid",
+      "bytes": 20,
+      "sha256": "f5cd4114eb8760473dfc2b6feecef612f1336182dd4c75e23338faa5821147a4"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/InterstitialAdLoadCallback.cs",
+      "bytes": 1440,
+      "sha256": "ea0fd39bc6c22c577ca28cfb9ce3b5268b5dd596f8ec5a9619ef5254af3bd680"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/InterstitialAdLoadCallback.cs.uid",
+      "bytes": 19,
+      "sha256": "fb4296fdbc79b2ee37eff94bf2bf5523784e60adbba83458a9d1b8ba697bcc92"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/OnInitializationCompleteListener.cs",
+      "bytes": 1351,
+      "sha256": "e9db0549322904d8cf997e18b834bc298fddf1909987b2b66929abe14897c8b4"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/OnInitializationCompleteListener.cs.uid",
+      "bytes": 20,
+      "sha256": "bbfca23a0a893116b342b906e057e28e18b0384858587e50fbc5a1ae18ede0f0"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/OnUserEarnedRewardListener.cs",
+      "bytes": 1366,
+      "sha256": "fd37c5f317348ad0c8b6edb399225f99a73f47bc0d5dc5030391b2732b7bfa20"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/OnUserEarnedRewardListener.cs.uid",
+      "bytes": 20,
+      "sha256": "b05d0716eb929b87cf09c4eb7507ca81583a505b9fb1909eb5ebb9721d0807c9"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/RewardedAdLoadCallback.cs",
+      "bytes": 1432,
+      "sha256": "1dbffdc118b291ec77940a160721339c9e787831f56d969fa845ec57a8575ab0"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/RewardedAdLoadCallback.cs.uid",
+      "bytes": 19,
+      "sha256": "c80abf9a94e674b95cf1e0093e8588a3361fd650fad5e6296b1cf6a0396d6362"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/RewardedInterstitialAdLoadCallback.cs",
+      "bytes": 1456,
+      "sha256": "71260208dfb1a3dc791446add2cf692a0c89c670247a2116b8decddb7345e2a1"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/RewardedInterstitialAdLoadCallback.cs.uid",
+      "bytes": 20,
+      "sha256": "51f24335d8420c71e79cb47c71d1dd5634d707059e3db8d49496061c0b7819fd"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/VideoLifecycleCallbacks.cs",
+      "bytes": 1493,
+      "sha256": "aaa6cf876f6fcfb31b0c9489aab501cdf9f12e5b483185823b6264b0bed59c82"
+    },
+    {
+      "path": "csharp/src/Api/Listeners/VideoLifecycleCallbacks.cs.uid",
+      "bytes": 20,
+      "sha256": "b1624f4df15ef1cf80ffc67efa33ae307bf43ee145fa0c06c835562b81abe584"
+    },
+    {
+      "path": "csharp/src/Api/MobileAds.cs",
+      "bytes": 5684,
+      "sha256": "1e2c15af2b05d93ae355eda9478654852bf40fe0072a106482e536722119ae77"
+    },
+    {
+      "path": "csharp/src/Api/MobileAds.cs.uid",
+      "bytes": 20,
+      "sha256": "5847131a123d3855b060e513d767dbda3d5490e654f7444135eee32e94b78afe"
+    },
+    {
+      "path": "csharp/src/Api/NativeOverlayAd.cs",
+      "bytes": 10704,
+      "sha256": "29413fd9cad77c7e1ac43c756b7fdbe902ae027ffd2928ffc24f0517a9931f38"
+    },
+    {
+      "path": "csharp/src/Api/NativeOverlayAd.cs.uid",
+      "bytes": 20,
+      "sha256": "e01af9a59d7866b49959b51929f56a6145611714d370c85fd98fc0b1f80e85e5"
+    },
+    {
+      "path": "csharp/src/Api/RewardedAd.cs",
+      "bytes": 5948,
+      "sha256": "140780b80999d7906f8d531bcc07b686c82c00b000860e3460566ba1892c61eb"
+    },
+    {
+      "path": "csharp/src/Api/RewardedAd.cs.uid",
+      "bytes": 20,
+      "sha256": "57669c775eb0e681176aa0d1b228ba1ff8ee13bb871f4f1ca05fc947a35b46d9"
+    },
+    {
+      "path": "csharp/src/Api/RewardedAdLoader.cs",
+      "bytes": 3392,
+      "sha256": "07b5afa7d2d093587c0dbd26a994a785b790839ff8743afa4ced6ae3f9742626"
+    },
+    {
+      "path": "csharp/src/Api/RewardedAdLoader.cs.uid",
+      "bytes": 20,
+      "sha256": "a212e3ece02d24fa6a9bb919b4309f6e4a54b52fd68343056d8bfb395f23d648"
+    },
+    {
+      "path": "csharp/src/Api/RewardedInterstitialAd.cs",
+      "bytes": 6075,
+      "sha256": "2c9b2fec0a784d49194249e49f6e0dc02c93ee70c46c69b4107c7edde9335cc2"
+    },
+    {
+      "path": "csharp/src/Api/RewardedInterstitialAd.cs.uid",
+      "bytes": 19,
+      "sha256": "40fd89475af74879401239ac84c82e81739f7a77730a4657e7bbda223f0a9a4a"
+    },
+    {
+      "path": "csharp/src/Api/RewardedInterstitialAdLoader.cs",
+      "bytes": 3538,
+      "sha256": "eae91e1bd255b6fdfce96ba34b4ad3afb087947addbbb3544e8278cebceb1f9b"
+    },
+    {
+      "path": "csharp/src/Api/RewardedInterstitialAdLoader.cs.uid",
+      "bytes": 19,
+      "sha256": "01015aefdbf7dcdb316c74c3dde1750033d76aee1b97ada666d86e684bd74bb1"
+    },
+    {
+      "path": "csharp/src/Core/MobileSingletonPlugin.cs",
+      "bytes": 2538,
+      "sha256": "640bcbc39a713cfcbd341c4048f20a388dbea99f6cda6a9c91176779bfd850c1"
+    },
+    {
+      "path": "csharp/src/Core/MobileSingletonPlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "fb2397c9657eec290640bd7ccb7965a861dd5fbc365cdf76140969a5ba0ad560"
+    },
+    {
+      "path": "csharp/src/Core/PluginConfig.cs",
+      "bytes": 1687,
+      "sha256": "3ab7f3bbfc6d51fa9483690f5cd985d687a4e08a6b743983928942cddcb7abde"
+    },
+    {
+      "path": "csharp/src/Core/PluginConfig.cs.uid",
+      "bytes": 20,
+      "sha256": "cb095e8c8a39b2269b0244612dfe3e27a3fb475abdd09f4ea4faccba64a7186a"
+    },
+    {
+      "path": "csharp/src/Core/PluginVersion.cs",
+      "bytes": 1887,
+      "sha256": "5c7badeac295187963ee50874a0443fbd458cb60ba50354ab0cdae426c3db98a"
+    },
+    {
+      "path": "csharp/src/Core/PluginVersion.cs.uid",
+      "bytes": 20,
+      "sha256": "b5fb8f0236bfd22580f532fbf27ffb57e2ef6af890e558aeb38dfb65750a92f2"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/AppLovin/AppLovin.cs",
+      "bytes": 1807,
+      "sha256": "0463e6dd20637c42c5faf3d52dad132caee60a81dadc0fa627a4146b557ee450"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/AppLovin/AppLovin.cs.uid",
+      "bytes": 20,
+      "sha256": "558c029ac40e723a47e18fac80e23da7b69f65b66112564eb976af455c1b3eb9"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/BidMachine/BidMachine.cs",
+      "bytes": 1900,
+      "sha256": "fcb9e542944fbcff38d4689097781d9c5c13e6caf0ab43c155c61742fc8f50e2"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/BidMachine/BidMachine.cs.uid",
+      "bytes": 20,
+      "sha256": "0036a6cb77c211d2662b1d9a1e615354c8046b55616e807b096efe0cc319586c"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Chartboost/Chartboost.cs",
+      "bytes": 1589,
+      "sha256": "18ba4981669af940c7800bb6fc7c128bb918b483a283eeb8151b125b27080b1b"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Chartboost/Chartboost.cs.uid",
+      "bytes": 20,
+      "sha256": "0556b4787430b6de7e00b01d966732da3528f327031cd4bf7b71146fd03adb4c"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/DTExchange/DTExchange.cs",
+      "bytes": 1745,
+      "sha256": "39e11921e6d850a2d324b5940c6d9138ec12a60a732247371f7e56f342210b8a"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/DTExchange/DTExchange.cs.uid",
+      "bytes": 19,
+      "sha256": "97c826ee0b29b8b71717dc583f64891127e120a69f2eaf0b2fb5b724ed37ecc8"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/IMobile/IMobile.cs",
+      "bytes": 1416,
+      "sha256": "8e9186eb253423e8fbaf63b11d1988c73ba78438781b2936db77e7a8722f7663"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/IMobile/IMobile.cs.uid",
+      "bytes": 19,
+      "sha256": "f5a9f407cd88eab5cac88c7716328dbefaa8942c0d52a78243f25fd49e1dad01"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/InMobi/InMobi.cs",
+      "bytes": 1413,
+      "sha256": "5e5d0e806d7cc12939505665b0e30e5871218848b13fd1688b3492d54afdf7c1"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/InMobi/InMobi.cs.uid",
+      "bytes": 19,
+      "sha256": "49509d9643acb1e153a5626295e083c40e716c34d963db6665af07498c31d99c"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/IronSource/IronSource.cs",
+      "bytes": 1797,
+      "sha256": "247949d89011bfa57aae0c7d8473f69f6be8c9716d67b61ea7c8005d72df054b"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/IronSource/IronSource.cs.uid",
+      "bytes": 20,
+      "sha256": "230e7f0779b75c019767c28d59ab1746960a41bbf3c4df1ed1743c98d4ee1b3b"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/LineAds/LineAds.cs",
+      "bytes": 1476,
+      "sha256": "2864ef63845441cfdf220feac54b01d26ca6c5a558c0bca881dfc3159fd405be"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/LineAds/LineAds.cs.uid",
+      "bytes": 20,
+      "sha256": "54df46d5bdc9728ef1d1bda2bc1121276c1f5b5b7eb33835f4d7b484fc1a2e86"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/LineAds/LineMediationExtras.cs",
+      "bytes": 1747,
+      "sha256": "e31eadfa5ea0e5966e9ea735ba1d363407f0b0c0576d24a9465813b7a3645405"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/LineAds/LineMediationExtras.cs.uid",
+      "bytes": 20,
+      "sha256": "3314cf8dc4e21686b7f11176b307f32949e09930bd4dda3de54999cdaceade5c"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Meta/FBAdSettings.cs",
+      "bytes": 1626,
+      "sha256": "9ccddd0645979feb1ea38eb04c84e24174c2a9172cd55c813cf780089471b934"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Meta/FBAdSettings.cs.uid",
+      "bytes": 20,
+      "sha256": "0bc95a913892135f909fd1dbf50755952fa0aa4d6251b2ec3e0a6607ec5ac5eb"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/UnityAds/UnityAds.cs",
+      "bytes": 1699,
+      "sha256": "a103d93fcf329f8a392fdd0e4be613fed988ffb727f053e93cb18fb0d32fca4d"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/UnityAds/UnityAds.cs.uid",
+      "bytes": 19,
+      "sha256": "386aebc8d359f48bcd5acb494e9c0d66242db41233e9566d47eb527eb1ef422f"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/Vungle.cs",
+      "bytes": 1837,
+      "sha256": "72c4ea582c75ecb8d3780a95b999dbfb5027aff172f0623e141591db5d49ea4e"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/Vungle.cs.uid",
+      "bytes": 20,
+      "sha256": "a128795e53f0e74297eef058f64b991b61737744f1db98c536493f12cf05525e"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/VungleInterstitialMediationExtras.cs",
+      "bytes": 1464,
+      "sha256": "aafe7b51f2d8b31f921d2ab865a5a9851403bb701a9224b41469e1aff3797d0c"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/VungleInterstitialMediationExtras.cs.uid",
+      "bytes": 20,
+      "sha256": "915bc163fe788ff710b3888e4122192f61b4bddd681233405245bef52c9f3379"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/VungleMediationExtras.cs",
+      "bytes": 1735,
+      "sha256": "d1e17f7e5e830ffac91ee59cddfb88a3755ce1c9755d740a0b2adb63e1e2674d"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/VungleMediationExtras.cs.uid",
+      "bytes": 19,
+      "sha256": "ea5ad883ab0606bb7afb35d408a32239c308a147c7fd15de43ab79bd5ba8ee9f"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/VungleRewardedMediationExtras.cs",
+      "bytes": 1456,
+      "sha256": "ea1525a8800c8b4ca33cb0662f827a31aa9c77e3189cf490575c2c1616d18d10"
+    },
+    {
+      "path": "csharp/src/Mediation/Extras/Vungle/VungleRewardedMediationExtras.cs.uid",
+      "bytes": 20,
+      "sha256": "e313b9d04df200073c69a5384ddb9b7f5fb76ca0654624978273694f92af463e"
+    },
+    {
+      "path": "csharp/src/Mediation/MediationExtras.cs",
+      "bytes": 1755,
+      "sha256": "bcadf26ccaecfe294d7b8069fae8e06e544ec28e3913646ae301295800f90c8b"
+    },
+    {
+      "path": "csharp/src/Mediation/MediationExtras.cs.uid",
+      "bytes": 20,
+      "sha256": "fc8c332716bb9210e7f460e7430000f1dbe5f6593c6ab21b91182c97d4753c34"
+    },
+    {
+      "path": "csharp/src/mock/MockAdMobFactory.cs",
+      "bytes": 2714,
+      "sha256": "5824dd08137d799d8206a58f3047983f759f4b46ee5c25a6227d38cbd1e13f78"
+    },
+    {
+      "path": "csharp/src/mock/MockAdMobFactory.cs.uid",
+      "bytes": 20,
+      "sha256": "4d95f3dfb7e4392f8b4ad4b04ca678260555e1e59e981178d8aa3211bcdb5420"
+    },
+    {
+      "path": "csharp/src/mock/MockAdSizePlugin.cs",
+      "bytes": 1793,
+      "sha256": "0731aab95900c63aca292fd148e2dbbe01d857f034c89b12a3e0d8d168697135"
+    },
+    {
+      "path": "csharp/src/mock/MockAdSizePlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "dd34df38e7d8e41dd65862a1e98a12c9c3167aee6be6770b5dfdbfcbd795da17"
+    },
+    {
+      "path": "csharp/src/mock/MockAdViewPlugin.cs",
+      "bytes": 22953,
+      "sha256": "e76b8281de1f8b6c804d5440cf469ebd49141ed2ce9fe1038afa08f0261f1140"
+    },
+    {
+      "path": "csharp/src/mock/MockAdViewPlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "90fb6e8772723503d8a2cc194b8382948e1cdabdaefc096adaafcee5d0d7fe27"
+    },
+    {
+      "path": "csharp/src/mock/MockAppOpenAdPlugin.cs",
+      "bytes": 19818,
+      "sha256": "993d049ab1476e00bed4a3184e330507f6ba3190616e31deb250afe4b8b3030b"
+    },
+    {
+      "path": "csharp/src/mock/MockAppOpenAdPlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "5689a04ed18159960dfe8b4bdd378debd640fd855e76628f91dd62e8af1b167f"
+    },
+    {
+      "path": "csharp/src/mock/MockInterstitialAdPlugin.cs",
+      "bytes": 12177,
+      "sha256": "046d3e6c5048574d0417c11a72a406c9e3f88df1106d375b41a6e5e820f98551"
+    },
+    {
+      "path": "csharp/src/mock/MockInterstitialAdPlugin.cs.uid",
+      "bytes": 19,
+      "sha256": "16a56df2b849b583ba0dbb9b5a775e55ff03fe0114d110b8b860757427f6d8cd"
+    },
+    {
+      "path": "csharp/src/mock/MockMobileAdsPlugin.cs",
+      "bytes": 3721,
+      "sha256": "4cdd156cba0fcee3d1883db7a18124d15aaa68f7218d258e78166aabad9fb7c7"
+    },
+    {
+      "path": "csharp/src/mock/MockMobileAdsPlugin.cs.uid",
+      "bytes": 19,
+      "sha256": "125dac03486e5cac3e89c72b299a53fd5edf512434703f7342ba11ee3b59873e"
+    },
+    {
+      "path": "csharp/src/mock/MockNativeOverlayAdPlugin.cs",
+      "bytes": 33064,
+      "sha256": "2d70fe0373ab5c40f68652ebdbecead8a9e57e974a31749d1e8bd592a6ec138f"
+    },
+    {
+      "path": "csharp/src/mock/MockNativeOverlayAdPlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "7510fc59d85c51344b35c80e57e56c6c265f547717d3f1d5ce15a9a33d56f067"
+    },
+    {
+      "path": "csharp/src/mock/MockRewardedAdPlugin.cs",
+      "bytes": 29220,
+      "sha256": "0b2c87dc89c2f0aed06e06c351ec9168d6a6847d87a6e516d2569364442303c5"
+    },
+    {
+      "path": "csharp/src/mock/MockRewardedAdPlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "b2d69d746f8ae609cb1a66cd73df05a507fb807ded3c07d38d7a1793269aa4fa"
+    },
+    {
+      "path": "csharp/src/mock/MockRewardedInterstitialAdPlugin.cs",
+      "bytes": 29427,
+      "sha256": "16768759fbab8d9ea32a7badda2c04a9e2f5fd859a8b9278c55aff11afbf3f72"
+    },
+    {
+      "path": "csharp/src/mock/MockRewardedInterstitialAdPlugin.cs.uid",
+      "bytes": 20,
+      "sha256": "0cc2b44f0bf91870873872073624af5ef53384f5887956655092bb239f20f909"
+    },
+    {
+      "path": "csharp/src/Ump/Api/ConsentForm.cs",
+      "bytes": 2610,
+      "sha256": "73e7a01a9f5db8a64ec4241e1a5d5d4357fe19285c84e9f55bd412eda6d9dc68"
+    },
+    {
+      "path": "csharp/src/Ump/Api/ConsentForm.cs.uid",
+      "bytes": 20,
+      "sha256": "87beaa81f5a44e988a3cba34629e7908edfc4d3a3c8576e7e323a6fba825d3f9"
+    },
+    {
+      "path": "csharp/src/Ump/Api/ConsentInformation.cs",
+      "bytes": 4014,
+      "sha256": "c7ead92d28e23c7b1f136f9a106278e96553037e19f50a9ff7e8645079a82b00"
+    },
+    {
+      "path": "csharp/src/Ump/Api/ConsentInformation.cs.uid",
+      "bytes": 19,
+      "sha256": "924f31615fc0307f5d22374beb95fe1d0dfe17b4d41b9acc14c6b42f772e01a2"
+    },
+    {
+      "path": "csharp/src/Ump/Api/UserMessagingPlatform.cs",
+      "bytes": 4156,
+      "sha256": "56ed8cc55518d0b3265e380c7f92e5b95ab735ed842ac970c756caf96a9a51dd"
+    },
+    {
+      "path": "csharp/src/Ump/Api/UserMessagingPlatform.cs.uid",
+      "bytes": 20,
+      "sha256": "1520499a43af8c0ce3687caedb0c02799fefccc4bf65d7ef9ca29ff1eb89f6b4"
+    },
+    {
+      "path": "csharp/src/Ump/Core/ConsentDebugSettings.cs",
+      "bytes": 2008,
+      "sha256": "fbb5f860e57c85f4bc0b88a601a36dcd0e5c135d646d586ec41bfde311bbcaad"
+    },
+    {
+      "path": "csharp/src/Ump/Core/ConsentDebugSettings.cs.uid",
+      "bytes": 20,
+      "sha256": "f6e28527e36b22eca0cfa75b970a01dc1ffd20d2d3b6484493f9d1038dbb2519"
+    },
+    {
+      "path": "csharp/src/Ump/Core/ConsentRequestParameters.cs",
+      "bytes": 1680,
+      "sha256": "aceb752a0dc27127f847b84786958d5e164cedd7e540fa1337767dd44ef5f5ad"
+    },
+    {
+      "path": "csharp/src/Ump/Core/ConsentRequestParameters.cs.uid",
+      "bytes": 20,
+      "sha256": "5106af017446c11f5f149d6db03ba2a824be76ce12423756ba3fbed3b12b9249"
+    },
+    {
+      "path": "csharp/src/Ump/Core/DebugGeography.cs",
+      "bytes": 1273,
+      "sha256": "88acfb6ffb010b529e0038fcbca38b996420b1ef237f7887f564134b7013a995"
+    },
+    {
+      "path": "csharp/src/Ump/Core/DebugGeography.cs.uid",
+      "bytes": 19,
+      "sha256": "606d75918c3bfa76fb91f3e148fb4078d7a4f435253a10be3823ef6501b192e0"
+    },
+    {
+      "path": "csharp/src/Ump/Core/FormError.cs",
+      "bytes": 1814,
+      "sha256": "f1eecf8f0b8fe673581bccc68f6a5b2211f4b9c68a786a496a844b907cf38da1"
+    },
+    {
+      "path": "csharp/src/Ump/Core/FormError.cs.uid",
+      "bytes": 20,
+      "sha256": "20c1eacf99a27bbd9fc80490cd84eff932161750c32eb4ebc5e3e4e9c8b419a1"
+    },
+    {
+      "path": "docs/architecture/general.md",
+      "bytes": 1645,
+      "sha256": "69c0f432c43614113c8487de9904beae309f7f05cac32e479108fe19a4048d4f"
+    },
+    {
+      "path": "docs/architecture/lifecycle.md",
+      "bytes": 1579,
+      "sha256": "7b3bc1ee3ce89330fc7311d7c246360872ba0dd8498f8a580080a543ea2c776e"
+    },
+    {
+      "path": "docs/errors/ERR_002.md",
+      "bytes": 1409,
+      "sha256": "04a9f70785d96c3cb6450fb4f884a751e5c494c10e281e96608cf2f4b7a83942"
+    },
+    {
+      "path": "gdscript/sample/Main.gd",
+      "bytes": 6704,
+      "sha256": "18b3618aec21f59968ea61e622873896ad06eb299a86f8cd75b2f2ea6b4e2c40"
+    },
+    {
+      "path": "gdscript/sample/Main.gd.uid",
+      "bytes": 20,
+      "sha256": "f70253e309e95715c683488ec8d37abb0fab9c5079f81d821256e6116c2a40a5"
+    },
+    {
+      "path": "gdscript/sample/Main.tscn",
+      "bytes": 12652,
+      "sha256": "22bc8c6b1db22d59c9edcdd2b744bfe4814e0ce04f0d016c4f1442220ba7bd5b"
+    },
+    {
+      "path": "gdscript/sample/SafeArea.gd",
+      "bytes": 4645,
+      "sha256": "92cba3d692d14df153dd0a39f61ffc3e0df752d7b821a46dc57000864665b906"
+    },
+    {
+      "path": "gdscript/sample/SafeArea.gd.uid",
+      "bytes": 19,
+      "sha256": "9b4773ab29368d40e0bd1c51b2aeb9c1ba61e8706ca65f6e200547fc5e108843"
+    },
+    {
+      "path": "gdscript/sample/SampleTranslationLoader.gd",
+      "bytes": 1411,
+      "sha256": "22ba3644f57a492457632c38038a2370ccb26e721fa6b293cfa0a73ccc79e8da"
+    },
+    {
+      "path": "gdscript/sample/SampleTranslationLoader.gd.uid",
+      "bytes": 19,
+      "sha256": "73b8470506f0b4ceb637bf9570eb289b13f548e48fa61a79192de02894f7b853"
+    },
+    {
+      "path": "gdscript/sample/tabs/AppOpen.gd",
+      "bytes": 4565,
+      "sha256": "0b5ad7a4911ade4db08a19de7d99e4cb41e6d71226e9e51b3cebca291f1ff195"
+    },
+    {
+      "path": "gdscript/sample/tabs/AppOpen.gd.uid",
+      "bytes": 19,
+      "sha256": "7290b1351fde74e328880d0ec18c30061646fff2d7029c53751e7e257fd9abe1"
+    },
+    {
+      "path": "gdscript/sample/tabs/AppOpen.tscn",
+      "bytes": 1729,
+      "sha256": "b4f488527f8c01d39e67b78b9cbd4a712ec6658a262413874879aab4de0fdf63"
+    },
+    {
+      "path": "gdscript/sample/tabs/Banner.gd",
+      "bytes": 9302,
+      "sha256": "a5142ae43be1ea1d70b4dc484c6e40d87778aba3b989ef1247461a942d93604b"
+    },
+    {
+      "path": "gdscript/sample/tabs/Banner.gd.uid",
+      "bytes": 20,
+      "sha256": "caf3a707f04ccecf8b11a3996573f6f13f953efef750b6b1c3e484de81117ee9"
+    },
+    {
+      "path": "gdscript/sample/tabs/Banner.tscn",
+      "bytes": 12609,
+      "sha256": "ee49fe2e463c589283337437d42260323c7042968239689911883eb345cbe92b"
+    },
+    {
+      "path": "gdscript/sample/tabs/BaseTab.gd",
+      "bytes": 2254,
+      "sha256": "cfd8f0e5eb989a66d93dcdfecf8781ad3a71a7dec6b6ed1d9b4cf02edcf838b9"
+    },
+    {
+      "path": "gdscript/sample/tabs/BaseTab.gd.uid",
+      "bytes": 20,
+      "sha256": "67bab23886a78de217cfc2bd922a5042d15711b8d0855e41cf6b010035c97d39"
+    },
+    {
+      "path": "gdscript/sample/tabs/Interstitial.gd",
+      "bytes": 4000,
+      "sha256": "66061fa94ae064f489c143a30aaa5e006ff54b3603b56442cb91cdb80f5ec737"
+    },
+    {
+      "path": "gdscript/sample/tabs/Interstitial.gd.uid",
+      "bytes": 19,
+      "sha256": "439b24557b6d766e0f3fb98530f2cce757083f610eb20941cbe6da22c1133a0b"
+    },
+    {
+      "path": "gdscript/sample/tabs/Interstitial.tscn",
+      "bytes": 1758,
+      "sha256": "91cad766764a63e10b494f707caeb05ba48965c47a0d53aeef91279ecf1b5b8c"
+    },
+    {
+      "path": "gdscript/sample/tabs/MobileAds.gd",
+      "bytes": 5253,
+      "sha256": "9b82f98824cb6ce6535468f7d6b8734cd713450e0e123b28f90b0d18b6a02b62"
+    },
+    {
+      "path": "gdscript/sample/tabs/MobileAds.gd.uid",
+      "bytes": 20,
+      "sha256": "a173621137c0a55a899c5cb99aca6c9a3407e5e58f765644b4b4e36199aee467"
+    },
+    {
+      "path": "gdscript/sample/tabs/MobileAds.tscn",
+      "bytes": 3924,
+      "sha256": "a2624aa7adf1c929b2533660076391a9e0a19d93de9d604d9d4ec97a1ee02b08"
+    },
+    {
+      "path": "gdscript/sample/tabs/Native.gd",
+      "bytes": 11816,
+      "sha256": "b0dc94070b7f393c4d1084eea25abbe214e816b95a2ce93550fbdb6abab8efde"
+    },
+    {
+      "path": "gdscript/sample/tabs/Native.gd.uid",
+      "bytes": 20,
+      "sha256": "2f23c559a2d72da845b09a40fd208ad34a1f72fdb81dacd30e689875fa8338d6"
+    },
+    {
+      "path": "gdscript/sample/tabs/Native.tscn",
+      "bytes": 17472,
+      "sha256": "39d4cf43ea4c2e85fd88c2abb5c9d3589dddd1f5ac32c34076343fce8f897ab7"
+    },
+    {
+      "path": "gdscript/sample/tabs/Rewarded.gd",
+      "bytes": 4422,
+      "sha256": "ab435193f66fd239665eb3d1004ae5a0637e90aa279aee8767c665b345e8388f"
+    },
+    {
+      "path": "gdscript/sample/tabs/Rewarded.gd.uid",
+      "bytes": 20,
+      "sha256": "baf6a410da2e417f17e01e8f943d0887a760b95e374ce95fc965f95460cd4163"
+    },
+    {
+      "path": "gdscript/sample/tabs/Rewarded.tscn",
+      "bytes": 1724,
+      "sha256": "4e9a9ba120d7c30503cac6ff6fa7b48c3877cd73213bfb4372201d200ef1e5d7"
+    },
+    {
+      "path": "gdscript/sample/tabs/RewardedInterstitial.gd",
+      "bytes": 4535,
+      "sha256": "ed13766ee520460f848d66aaacbd6584bcf58f253a6bcdce14ef57c3ea95c578"
+    },
+    {
+      "path": "gdscript/sample/tabs/RewardedInterstitial.gd.uid",
+      "bytes": 20,
+      "sha256": "2d46995808c697eba27c20cfcd7e038b7765d64649a868ed5ef22423f2fc55e7"
+    },
+    {
+      "path": "gdscript/sample/tabs/RewardedInterstitial.tscn",
+      "bytes": 1749,
+      "sha256": "5d25e06d2526f73f15ad3c27c9532b3e932953036b3e2f77eacef71a592b33d3"
+    },
+    {
+      "path": "gdscript/sample/tabs/Ump.gd",
+      "bytes": 4270,
+      "sha256": "f5f0f10f0a849cf5268a62e733d5d09755317f6d177ea36d560d306c1efd5b7e"
+    },
+    {
+      "path": "gdscript/sample/tabs/Ump.gd.uid",
+      "bytes": 20,
+      "sha256": "840cd4c870bd8ee8703bbde4297eb228ce022512e930ccd6d12398b970525b9d"
+    },
+    {
+      "path": "gdscript/sample/tabs/Ump.tscn",
+      "bytes": 1169,
+      "sha256": "1717b30df615d1bd9d2456058457cb6183eed448e1f67a2971130a575d29080f"
+    },
+    {
+      "path": "gdscript/sample/UIScaler.gd",
+      "bytes": 9625,
+      "sha256": "7b0338bee6e2316345fa0e412bdc488e2bc763e0859334c0726a8aac627ee96b"
+    },
+    {
+      "path": "gdscript/sample/UIScaler.gd.uid",
+      "bytes": 19,
+      "sha256": "c037e493fa119f890623488d3f6fe09b46cb6008e90995039f12811f508dfdc7"
+    },
+    {
+      "path": "gdscript/src/api/AdView.gd",
+      "bytes": 4453,
+      "sha256": "cc6f97beaa80c38d0473db1f13f559d7ab12cc11a63b82d4be4b7ce97b96ec5f"
+    },
+    {
+      "path": "gdscript/src/api/AdView.gd.uid",
+      "bytes": 19,
+      "sha256": "6d739eb0d5301d0fe6c4712fab13e9cfa0ab6c7a502322af1fb6855dd1c6eea0"
+    },
+    {
+      "path": "gdscript/src/api/AppOpenAd.gd",
+      "bytes": 3713,
+      "sha256": "d8a30c6c04a57d861a1774fa32cc00bfd39cb55bb6712a2687fdeae9d70fa127"
+    },
+    {
+      "path": "gdscript/src/api/AppOpenAd.gd.uid",
+      "bytes": 20,
+      "sha256": "d16c6b65a5564ad8338772c35234092405e37e4e20c5e8de10d289b07dd664b3"
+    },
+    {
+      "path": "gdscript/src/api/AppOpenAdLoader.gd",
+      "bytes": 2289,
+      "sha256": "83fa3fa42d24ef2710f98ae0f3ec613c1d1eed33ca07884b327ef12b04297b6f"
+    },
+    {
+      "path": "gdscript/src/api/AppOpenAdLoader.gd.uid",
+      "bytes": 19,
+      "sha256": "c1a6fa4e70a519ce7cd2e857157155ea5a3e0bb15fad7cfbcc16da54b5b35bcb"
+    },
+    {
+      "path": "gdscript/src/api/core/AdapterResponseInfo.gd",
+      "bytes": 3367,
+      "sha256": "126103d893f5391824607b0e16adbb307eb7f862a15e1c6da2147044ec31ad26"
+    },
+    {
+      "path": "gdscript/src/api/core/AdapterResponseInfo.gd.uid",
+      "bytes": 20,
+      "sha256": "bc92807adcfc09ab5b37cadefa49cdd431ea223037b0ccded61f8a4775af43ee"
+    },
+    {
+      "path": "gdscript/src/api/core/AdapterStatus.gd",
+      "bytes": 1479,
+      "sha256": "45a60b7ac646785f4a3f80507d32b26dff2de38620c67adcca01b8fd5a9dd69a"
+    },
+    {
+      "path": "gdscript/src/api/core/AdapterStatus.gd.uid",
+      "bytes": 20,
+      "sha256": "f75ec2712992193f687defb8ee32afd951a054d659883002668473f575aa809e"
+    },
+    {
+      "path": "gdscript/src/api/core/AdChoicesPlacement.gd",
+      "bytes": 1227,
+      "sha256": "d3f527792b8bdb43cb2cbb80478a89ac337d8be1d99f6bd0b9bf3d19d3d56749"
+    },
+    {
+      "path": "gdscript/src/api/core/AdChoicesPlacement.gd.uid",
+      "bytes": 20,
+      "sha256": "8f380506e35d2b86267fa90a9bd55afffb7c3a6aef304935a9bfe00056106e70"
+    },
+    {
+      "path": "gdscript/src/api/core/AdError.gd",
+      "bytes": 1748,
+      "sha256": "fb1e2893ebcf079b6f69bcaff45c078cbbfa26fb5f39bcdabaf55a7005f5e4aa"
+    },
+    {
+      "path": "gdscript/src/api/core/AdError.gd.uid",
+      "bytes": 20,
+      "sha256": "8f7fe5445233bd03787ad02cee54a92787fcabba84581a247cb50deb5cdc3676"
+    },
+    {
+      "path": "gdscript/src/api/core/AdPosition.gd",
+      "bytes": 2032,
+      "sha256": "92feb19da000daae28e7f18dd4dd688924e03794544e9393bae20c6a235a1716"
+    },
+    {
+      "path": "gdscript/src/api/core/AdPosition.gd.uid",
+      "bytes": 20,
+      "sha256": "ec767b4f1fed617bb25064fadf4cf137d5263b1303c8154072fc92c623a509b4"
+    },
+    {
+      "path": "gdscript/src/api/core/AdRequest.gd",
+      "bytes": 1879,
+      "sha256": "f8bbb5a0953545483a25db71cb3cf9f2a1be4f31315d7f8d96a02cc74f37e7cd"
+    },
+    {
+      "path": "gdscript/src/api/core/AdRequest.gd.uid",
+      "bytes": 19,
+      "sha256": "a31cfb66b2a12e5648127f7932a2c914764d3ddaff5a419d1c28dfae9693439a"
+    },
+    {
+      "path": "gdscript/src/api/core/AdSize.gd",
+      "bytes": 2573,
+      "sha256": "1b0e071abd0c8bbcdf6a4e02245cbb03724a0d5642e2a4bc621d4ad721f86dd3"
+    },
+    {
+      "path": "gdscript/src/api/core/AdSize.gd.uid",
+      "bytes": 20,
+      "sha256": "ce680b33037eb0af313c8cdff3b2c8f8af6127316f259d00a0babcb9629984f9"
+    },
+    {
+      "path": "gdscript/src/api/core/AdValue.gd",
+      "bytes": 1772,
+      "sha256": "5016d43f4fe789428718bc4996ba42f98d600088a793d0f32b88f9fe7ea82a6f"
+    },
+    {
+      "path": "gdscript/src/api/core/AdValue.gd.uid",
+      "bytes": 20,
+      "sha256": "89c10c962bc3d5bd881da06ea8b6e031f7b6caf4c028eaa0400835ed84e9e16d"
+    },
+    {
+      "path": "gdscript/src/api/core/AdVideoController.gd",
+      "bytes": 1548,
+      "sha256": "a7ad90d99c29ce0cf23ac2734857719cc6edd2a25a5a88f124c8f6b9f9d896de"
+    },
+    {
+      "path": "gdscript/src/api/core/AdVideoController.gd.uid",
+      "bytes": 20,
+      "sha256": "9ad34a0ac9e54f85c76afa47225736ab4387554890387275e301fd5a04f65be1"
+    },
+    {
+      "path": "gdscript/src/api/core/LoadAdError.gd",
+      "bytes": 1748,
+      "sha256": "9f6a8290975f3cb34c7cb2430b7addaf65789faedeaee296e4426ef1297e0b60"
+    },
+    {
+      "path": "gdscript/src/api/core/LoadAdError.gd.uid",
+      "bytes": 20,
+      "sha256": "33fffa63d7230e1379f0cbf6c21497626c438971b7c25874482e337639eb19d8"
+    },
+    {
+      "path": "gdscript/src/api/core/MediaContent.gd",
+      "bytes": 1768,
+      "sha256": "f927d1b7b8d63c68bc933571a526cad444c657edca07211488b5ed5d2389c892"
+    },
+    {
+      "path": "gdscript/src/api/core/MediaContent.gd.uid",
+      "bytes": 20,
+      "sha256": "d509d7ed9958bd2a8633947c297eace9eacdfc8c0975b03c7333a1174ee098f0"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeAdOptions.gd",
+      "bytes": 1594,
+      "sha256": "84a7d66f007d6734553726b9a827dabc35201240f8d071893b5334f1b945d8fc"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeAdOptions.gd.uid",
+      "bytes": 20,
+      "sha256": "72ca3daea3ba0b9984d3a277e7335d98c421dd8713dcf2fbef924f2995d417ec"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeMediaAspectRatio.gd",
+      "bytes": 1230,
+      "sha256": "f4dfd5d8402d2cc3f0b29c2771ce2d092373942259b5ad00776d8d3c1fafa7f8"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeMediaAspectRatio.gd.uid",
+      "bytes": 19,
+      "sha256": "e1b76d8d085f39485b15559833150421528ac2347ea663c6c28d60d9cfd22bf2"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeTemplateFontStyle.gd",
+      "bytes": 1217,
+      "sha256": "0a8f39fdcb5f96eaf40f36d582ab14074451e42809b31f82087e0d8575d45440"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeTemplateFontStyle.gd.uid",
+      "bytes": 20,
+      "sha256": "9cd6e3384266246d34259f6fcb8a0a0ebb927fa6f1370151cde7a13d511b11a9"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeTemplateStyle.gd",
+      "bytes": 2081,
+      "sha256": "0989b0a9c7d2b559f5c7af5ee7a7079cf7f770cdef3e2e4780b651a5f934c73c"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeTemplateStyle.gd.uid",
+      "bytes": 20,
+      "sha256": "4fdd400a99596744d6e8249b6f0ab92dd7114071a52dfac278f508869901d7f6"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeTemplateTextStyle.gd",
+      "bytes": 1644,
+      "sha256": "1b8e7879ff56b6ff40647408dc146366a2a760dbdc4ff19ac4cda8c32fc09794"
+    },
+    {
+      "path": "gdscript/src/api/core/NativeTemplateTextStyle.gd.uid",
+      "bytes": 20,
+      "sha256": "7a8c827895679bc482ec0ccfd43ee53dd7694cbe058c2bf8c09db0bb75a62546"
+    },
+    {
+      "path": "gdscript/src/api/core/RequestConfiguration.gd",
+      "bytes": 2068,
+      "sha256": "b123c64cf7300b87f1eda28222046ae1737614bf5da9be5c04dc1a587e0b14c4"
+    },
+    {
+      "path": "gdscript/src/api/core/RequestConfiguration.gd.uid",
+      "bytes": 20,
+      "sha256": "b48ec581662ec2c94bbb15485fd617361ff4f427ae3926b1b712d84c34fce629"
+    },
+    {
+      "path": "gdscript/src/api/core/ResponseInfo.gd",
+      "bytes": 2589,
+      "sha256": "9c8b9723f7661905aee129c41be78bd6d9890a9ddc13fd1946ed68c96605de9c"
+    },
+    {
+      "path": "gdscript/src/api/core/ResponseInfo.gd.uid",
+      "bytes": 20,
+      "sha256": "63897e8f47c3c07368e029ed3f7c1d8e278af65f1e2cbb071965072b6deea3ec"
+    },
+    {
+      "path": "gdscript/src/api/core/RewardedItem.gd",
+      "bytes": 1536,
+      "sha256": "edc627ed873fa598bdfb25b9252fc1c3c842258f84d06e7dad71a006c8fb903a"
+    },
+    {
+      "path": "gdscript/src/api/core/RewardedItem.gd.uid",
+      "bytes": 20,
+      "sha256": "f0c23bd8a47258da1115b807f8d31a519a931162fc06e375ab2f43fb5ab852e1"
+    },
+    {
+      "path": "gdscript/src/api/core/ServerSideVerificationOptions.gd",
+      "bytes": 1302,
+      "sha256": "8f9eba45ba0716e272ba535c7a5b79dac6dad86e1df3b82e65eb2227d924204e"
+    },
+    {
+      "path": "gdscript/src/api/core/ServerSideVerificationOptions.gd.uid",
+      "bytes": 20,
+      "sha256": "3ca9ff5bfb48b2da1e2e7f31f3f217ef3e4e908bbb27c7c600565186b1d9660f"
+    },
+    {
+      "path": "gdscript/src/api/core/VideoOptions.gd",
+      "bytes": 1465,
+      "sha256": "53099a7f5732bdf922533b98e281af1aa8e1b2de4ba7d4b378aaf8522bf6e1b7"
+    },
+    {
+      "path": "gdscript/src/api/core/VideoOptions.gd.uid",
+      "bytes": 20,
+      "sha256": "376f1a6a4a0b72170c8f434dfff9b14e2b41c3aaf24b2077e89f594217576fa8"
+    },
+    {
+      "path": "gdscript/src/api/InitializationStatus.gd",
+      "bytes": 2015,
+      "sha256": "6d2ea9b71198604441a4f95ec39aaeb4e7f51111ab8a7386239d30708bdcc77e"
+    },
+    {
+      "path": "gdscript/src/api/InitializationStatus.gd.uid",
+      "bytes": 20,
+      "sha256": "f2a00b768a4b7b60d32e28031cdad4ec41cd71e6bba0927c62a9b880c4db8c07"
+    },
+    {
+      "path": "gdscript/src/api/InterstitialAd.gd",
+      "bytes": 3530,
+      "sha256": "11ca93081bcbb44ab033d4078fbccbee0b83215b2d73b46246117a5ba4d29c9d"
+    },
+    {
+      "path": "gdscript/src/api/InterstitialAd.gd.uid",
+      "bytes": 20,
+      "sha256": "784605f3df639eff8c4c6d643a27cb34e8deb0c2894f4087b2ce1d8ccbfb9ba1"
+    },
+    {
+      "path": "gdscript/src/api/InterstitialAdLoader.gd",
+      "bytes": 2365,
+      "sha256": "8deb8870be64cda91087b5ef17005ea4a32929dd8168c683561d8f20201d4028"
+    },
+    {
+      "path": "gdscript/src/api/InterstitialAdLoader.gd.uid",
+      "bytes": 20,
+      "sha256": "959e345da9d3015df7c4874c26f67ec3c33e09d98d8e849d66b200f249c5b895"
+    },
+    {
+      "path": "gdscript/src/api/listeners/AdInspectorClosedListener.gd",
+      "bytes": 1220,
+      "sha256": "75f15fc99e8848d6f3c075e1b4e8db4602f35dd672ad9423b9bd75068f3e3c98"
+    },
+    {
+      "path": "gdscript/src/api/listeners/AdInspectorClosedListener.gd.uid",
+      "bytes": 20,
+      "sha256": "e9093de6945c83e29e93cc65898b20f8f7a7cf5c91329b480db7f39e6360c8f0"
+    },
+    {
+      "path": "gdscript/src/api/listeners/AdListener.gd",
+      "bytes": 1428,
+      "sha256": "8562d3061079ff2d279ad6aba845414cc9c3179baf46201a6265c25dfb5d9322"
+    },
+    {
+      "path": "gdscript/src/api/listeners/AdListener.gd.uid",
+      "bytes": 20,
+      "sha256": "e6bbc07d65e7b061b96509992c3d9382cd6b228a223ace0a44880d526ce615cf"
+    },
+    {
+      "path": "gdscript/src/api/listeners/AppOpenAdLoadCallback.gd",
+      "bytes": 1313,
+      "sha256": "0eda538c2248af35bea381a9846dca2a21f12636029c0945e654abd943f6bba9"
+    },
+    {
+      "path": "gdscript/src/api/listeners/AppOpenAdLoadCallback.gd.uid",
+      "bytes": 20,
+      "sha256": "7930705e5bd6fe5f82a5a8523cca2e8c5b8d5eafa2d5dba417f8faa5dac682c9"
+    },
+    {
+      "path": "gdscript/src/api/listeners/FullScreenContentCallback.gd",
+      "bytes": 1493,
+      "sha256": "50e7e2194b8ecceec23f005d8b8a58e12132889360a6d3941557fc65e84672e0"
+    },
+    {
+      "path": "gdscript/src/api/listeners/FullScreenContentCallback.gd.uid",
+      "bytes": 20,
+      "sha256": "b7f27fd0700a842fbfd96f128e2eba9609c89f5b7eadfae6bbf34cfdae6f6364"
+    },
+    {
+      "path": "gdscript/src/api/listeners/InterstitialAdLoadCallback.gd",
+      "bytes": 1310,
+      "sha256": "d50fee29d28c82732a30c521c4f370360efdcf1cc55c729c70b074992c023a9d"
+    },
+    {
+      "path": "gdscript/src/api/listeners/InterstitialAdLoadCallback.gd.uid",
+      "bytes": 20,
+      "sha256": "d6e88761a1b79074be5bddd0b77d7a17e19294c3b895366cf4369dd684ed657f"
+    },
+    {
+      "path": "gdscript/src/api/listeners/OnInitializationCompleteListener.gd",
+      "bytes": 1257,
+      "sha256": "8ead181780f1baecedeb0eb5ca4ad7ca7cab1ac7b920a455ba46fcc302c3bf55"
+    },
+    {
+      "path": "gdscript/src/api/listeners/OnInitializationCompleteListener.gd.uid",
+      "bytes": 19,
+      "sha256": "90bffb50790a7ff7530b4b431f94bb03eda9b660de203827fc655da683887691"
+    },
+    {
+      "path": "gdscript/src/api/listeners/OnUserEarnedRewardListener.gd",
+      "bytes": 1230,
+      "sha256": "09d391d1959b2d6297ffdaf188675ff3fb8ff1b2b23016e565761e81b8cd8e5d"
+    },
+    {
+      "path": "gdscript/src/api/listeners/OnUserEarnedRewardListener.gd.uid",
+      "bytes": 20,
+      "sha256": "ce178e6185421caa4fb067c6acf6a0d1c1f6a0168007e7bc728fb17c39e72ea0"
+    },
+    {
+      "path": "gdscript/src/api/listeners/RewardedAdLoadCallback.gd",
+      "bytes": 1298,
+      "sha256": "39c31b539fa51365e97ba11cc8540c4cebfdd375bd34bb16878f8004311bc493"
+    },
+    {
+      "path": "gdscript/src/api/listeners/RewardedAdLoadCallback.gd.uid",
+      "bytes": 19,
+      "sha256": "e7b7b045536316d46907ae3d5ce457a101b53faff375ebeef8f91e0ae55fdb52"
+    },
+    {
+      "path": "gdscript/src/api/listeners/RewardedInterstitialAdLoadCallback.gd",
+      "bytes": 1326,
+      "sha256": "52c0607a778a838e2ba701fed9de6b5eda916125497889783969bb2d51bfce48"
+    },
+    {
+      "path": "gdscript/src/api/listeners/RewardedInterstitialAdLoadCallback.gd.uid",
+      "bytes": 20,
+      "sha256": "4952f28ee560487c7b8416b814abd133064cc27888326a4d5a9e6dc201a23871"
+    },
+    {
+      "path": "gdscript/src/api/listeners/VideoLifecycleCallbacks.gd",
+      "bytes": 1400,
+      "sha256": "27e0eed30f479c112b8aaa1925f4cb982f2b3691f5703ed1f12deb5385a51e81"
+    },
+    {
+      "path": "gdscript/src/api/listeners/VideoLifecycleCallbacks.gd.uid",
+      "bytes": 20,
+      "sha256": "0d1f16d30a3615a6f68ca7f1558a603a6c6a2bd71b33e76cc9459831d4ef0432"
+    },
+    {
+      "path": "gdscript/src/api/MobileAds.gd",
+      "bytes": 4353,
+      "sha256": "33a86e0bdceb2298392b7b4fd255251e438defe24ba4dbeabb80037e89c74c00"
+    },
+    {
+      "path": "gdscript/src/api/MobileAds.gd.uid",
+      "bytes": 20,
+      "sha256": "b442b19775a84e43297becd2a1c268634db0f4aa3e054b627594a23403e520e7"
+    },
+    {
+      "path": "gdscript/src/api/NativeOverlayAd.gd",
+      "bytes": 8595,
+      "sha256": "36990e5beae84d4d1ed18e4ed7618c71e383f6723496085a57dac925f59c951c"
+    },
+    {
+      "path": "gdscript/src/api/NativeOverlayAd.gd.uid",
+      "bytes": 19,
+      "sha256": "4859bc9180995aa58a1d220c608fbd244490d29dfa26b5dc6e91f54803ddcce6"
+    },
+    {
+      "path": "gdscript/src/api/RewardedAd.gd",
+      "bytes": 4242,
+      "sha256": "e4d72c4fa695cee84943c2f741a60c34ff9939d932a5449f1fafb64e90310c4b"
+    },
+    {
+      "path": "gdscript/src/api/RewardedAd.gd.uid",
+      "bytes": 20,
+      "sha256": "57ef1fb98b6cf42a35d5a4815b1e33a4cdf9f5a26c96a98028283564fb6c151d"
+    },
+    {
+      "path": "gdscript/src/api/RewardedAdLoader.gd",
+      "bytes": 2290,
+      "sha256": "456fcd3cf7e71aeecd8c3f20a7c6cd824a13f28363ff766bee3f3df27ba82409"
+    },
+    {
+      "path": "gdscript/src/api/RewardedAdLoader.gd.uid",
+      "bytes": 20,
+      "sha256": "8a93ec0b9736251b4eee1ea0621553a10acace4835c9f26f654d09ee5990186e"
+    },
+    {
+      "path": "gdscript/src/api/RewardedInterstitialAd.gd",
+      "bytes": 4568,
+      "sha256": "85ef3c30344527badec42ab5fda1a6d03d3670266cd575792af6281d8b59688c"
+    },
+    {
+      "path": "gdscript/src/api/RewardedInterstitialAd.gd.uid",
+      "bytes": 20,
+      "sha256": "86c4b5ea102d143b8a22b4337c8c8146252603c3192770f7058cd337390bf6b9"
+    },
+    {
+      "path": "gdscript/src/api/RewardedInterstitialAdLoader.gd",
+      "bytes": 2447,
+      "sha256": "871ed276d91d0565b9873fdc920c5a4116dcc2a41a52b4194e75eb0b565535d7"
+    },
+    {
+      "path": "gdscript/src/api/RewardedInterstitialAdLoader.gd.uid",
+      "bytes": 20,
+      "sha256": "31641264e56b6008125969204a762aa6c4b4e703f055ae902796279222d6b575"
+    },
+    {
+      "path": "gdscript/src/core/MobileSingletonPlugin.gd",
+      "bytes": 2417,
+      "sha256": "ae0d156a1be081f50730901101102e65c408b5bc1496d7764c9f731ad9e8bab5"
+    },
+    {
+      "path": "gdscript/src/core/MobileSingletonPlugin.gd.uid",
+      "bytes": 20,
+      "sha256": "111237a9497546a4a65ae957ea7d87f71088209495e11edbc469fe65d2c4ef97"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/applovin/AppLovin.gd",
+      "bytes": 1562,
+      "sha256": "58dc738a17e2d6a64cda65b064019d8fade8b1b78737490306c546c5ad0f7f11"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/applovin/AppLovin.gd.uid",
+      "bytes": 20,
+      "sha256": "e925dfec308879f8ccf64e0ec23fb2a40f09beaf5d1ec05bfbde7e4cd0ca8539"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/bidmachine/BidMachine.gd",
+      "bytes": 1624,
+      "sha256": "beb1d289ea817bee218fc7e00b51555c4297bda1bdb7563ff5ff66b8b483d5b0"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/bidmachine/BidMachine.gd.uid",
+      "bytes": 19,
+      "sha256": "aacf34d0ca2719fb1b3841b5902e4f9abbcc962c4dd4ccf65981df76b01ea6b6"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/chartboost/Chartboost.gd",
+      "bytes": 1434,
+      "sha256": "279fa45da9c1a3f1a73ce25391741db38eb41c4342e727b77c4253d8b8f80bfd"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/chartboost/Chartboost.gd.uid",
+      "bytes": 20,
+      "sha256": "3d54e4a438144ec45cedc5e02f022c97b1891b776e11d35dd95489d60d9c7b47"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/dtexchange/DTExchange.gd",
+      "bytes": 1590,
+      "sha256": "6838a2a10d1a5096e54d2a8114f77ed9efcbfbf59167f39ab3b978f84ad6840b"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/dtexchange/DTExchange.gd.uid",
+      "bytes": 20,
+      "sha256": "44c73d296e18aff05c2af34ef44aef0d05e89634030410a6c4674be465f1ecde"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/imobile/IMobile.gd",
+      "bytes": 1234,
+      "sha256": "3adb80146987304b2d3aa65bdd1bafbde52e6d60b454f19aa3b7046da6a5457b"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/imobile/IMobile.gd.uid",
+      "bytes": 19,
+      "sha256": "f4dcbb17d14447f42404344061d5c5933f387d536c5afaf6a42b4bbb6ef4cf7c"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/inmobi/InMobi.gd",
+      "bytes": 1232,
+      "sha256": "8580e472cde9ed625f9f9b45e6e5e9501154c0a7a54294fcf77b8f3316d196ab"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/inmobi/InMobi.gd.uid",
+      "bytes": 20,
+      "sha256": "993c5ec290a75ebc129258af06d5d7fb78aaae0681cf3c7084f1fa09225204d9"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/ironsource/IronSource.gd",
+      "bytes": 1542,
+      "sha256": "c3a5dd5989f01385df7dc8753ff8dacb78c00db62ba91d165b43ae27208305fd"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/ironsource/IronSource.gd.uid",
+      "bytes": 20,
+      "sha256": "d8f5d9524fa05fccf6b10e2eca85c9cb5492b614cfbd1a74b2e810a568679108"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/line/LineAds.gd",
+      "bytes": 1329,
+      "sha256": "e860f389d300f947b8f4d68efde6931dba89fcdb82553983a2909c062112e200"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/line/LineAds.gd.uid",
+      "bytes": 20,
+      "sha256": "f72b75087c22cc2a2462c94b311e152db190eb4e40cfe0b5b6354801ecac20b1"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/line/LineMediationExtras.gd",
+      "bytes": 1520,
+      "sha256": "36f78de53a4523bbadecf9d99715d9e73fa02f67abfccb63f6e05face2140659"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/line/LineMediationExtras.gd.uid",
+      "bytes": 20,
+      "sha256": "c502a52a34ad99eb7b0a20b1d54600c19aa487a4bea8fe6722f679179ef48453"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/meta/FBAdSettings.gd",
+      "bytes": 1439,
+      "sha256": "137532b879d6fc7982cde20adc8e444aa5c411fb3ce7889752b0ddb37f7e1d5c"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/meta/FBAdSettings.gd.uid",
+      "bytes": 20,
+      "sha256": "fa2c92c49fa47c2f5a20d47df6ae7ad2d5c97cbd6b751b4fed4506cfc66d8176"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/unity_ads/UnityAds.gd",
+      "bytes": 1476,
+      "sha256": "9201c7c33878ba86238fb98a7fa216599a6c02dc016f4613198c4f32d0626a6c"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/unity_ads/UnityAds.gd.uid",
+      "bytes": 20,
+      "sha256": "9c8a9b8345aeac807ffe8319f5c2f11f025e836d87b79fc131d781964abde704"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/Vungle.gd",
+      "bytes": 1552,
+      "sha256": "c6f9dbb29d458b14eb32a8afd7df62c9ef7b760426340c3e7be5867f7644f48d"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/Vungle.gd.uid",
+      "bytes": 19,
+      "sha256": "84bb06cef8aaa7ea9da9d06c972039d42ed05a0ab5c7d054a5834609776df08f"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/VungleInterstitialMediationExtras.gd",
+      "bytes": 1336,
+      "sha256": "2fa291dfd6c7d80a706d70dc04f9879ef0eb74d708334f0401b7f95d46e64c79"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/VungleInterstitialMediationExtras.gd.uid",
+      "bytes": 20,
+      "sha256": "6ffb514bb9ed4c17dbd44fe238c08f64a501f6eb6430fbb2e6e1d659960633d0"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/VungleMediationExtras.gd",
+      "bytes": 1362,
+      "sha256": "82a41890a957566c0abc9d94ecdcea18c5c59e0db56e798cdedd90d9dfedb0c7"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/VungleMediationExtras.gd.uid",
+      "bytes": 19,
+      "sha256": "28f09a5966569d2443df58b4192bd8b42174a3e731f642ecf6149773218c15d2"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/VungleRewardedMediationExtras.gd",
+      "bytes": 1328,
+      "sha256": "491abd28519d3e0c39ec5394d88a1bfabe832b7d62b7b61e492103b9aed30f29"
+    },
+    {
+      "path": "gdscript/src/mediation/extras/vungle/VungleRewardedMediationExtras.gd.uid",
+      "bytes": 20,
+      "sha256": "bc1765ef189b49887178551e3502102b70444ef1c33868952d09626fdff5858b"
+    },
+    {
+      "path": "gdscript/src/mediation/MediationExtras.gd",
+      "bytes": 1605,
+      "sha256": "15cd723cdfbc1cc8f5403228f3990893c8acb3d48d7730ccce36bd070f584b96"
+    },
+    {
+      "path": "gdscript/src/mediation/MediationExtras.gd.uid",
+      "bytes": 19,
+      "sha256": "fee6b0bb05ee1fa88e2cadce513839c0978910d821a2069c928f97529e4702c3"
+    },
+    {
+      "path": "gdscript/src/ump/api/ConsentForm.gd",
+      "bytes": 2014,
+      "sha256": "b98035d23610b9731c6e28753afa4ae7462a7f351039c4fb04dc179c58cdb8d8"
+    },
+    {
+      "path": "gdscript/src/ump/api/ConsentForm.gd.uid",
+      "bytes": 20,
+      "sha256": "dd1ca261cd5449f8d14f7c3f5eaec11bffb75e3589ba02799d73fd7268d9046b"
+    },
+    {
+      "path": "gdscript/src/ump/api/ConsentInformation.gd",
+      "bytes": 2891,
+      "sha256": "946604c4d61bb05941a5c8bbae9728451aa4e7777e4cfc540645e39ec6f76c08"
+    },
+    {
+      "path": "gdscript/src/ump/api/ConsentInformation.gd.uid",
+      "bytes": 20,
+      "sha256": "2ab58341b486f4689e3053704fc408613c3f2ef239309872675fa2930fbabc6d"
+    },
+    {
+      "path": "gdscript/src/ump/api/UserMessagingPlatform.gd",
+      "bytes": 3290,
+      "sha256": "7f81989362c55d42d48621d1923858f4a8ba693488d586d8a632b44d3cc0b0c6"
+    },
+    {
+      "path": "gdscript/src/ump/api/UserMessagingPlatform.gd.uid",
+      "bytes": 20,
+      "sha256": "1fe355681e6a97850481a15293ab32f9d22178f3f8ce336d964ee0023b260c58"
+    },
+    {
+      "path": "gdscript/src/ump/core/ConsentDebugSettings.gd",
+      "bytes": 1651,
+      "sha256": "4ad9ca68a89d12ef1a0981a368bd9f2e6118aa13a324588c18f13add7f803cb3"
+    },
+    {
+      "path": "gdscript/src/ump/core/ConsentDebugSettings.gd.uid",
+      "bytes": 19,
+      "sha256": "f7403804e228f61eadfd7a0c0eaf7012a5c37def3f2ca244d1ad2121488da3a5"
+    },
+    {
+      "path": "gdscript/src/ump/core/ConsentRequestParameters.gd",
+      "bytes": 1474,
+      "sha256": "9b7e5e2ab52291d139c82a7a391c820d6e896f26769a1189d1633676f0b68a9a"
+    },
+    {
+      "path": "gdscript/src/ump/core/ConsentRequestParameters.gd.uid",
+      "bytes": 20,
+      "sha256": "79e297430c0f50233e9c0244a50c671a0064009a763e7cab0880397ce2ff290b"
+    },
+    {
+      "path": "gdscript/src/ump/core/DebugGeography.gd",
+      "bytes": 1179,
+      "sha256": "10c52b50065190ae397aea3ce021eef0e49b768fd93792c8f5133130c2957f99"
+    },
+    {
+      "path": "gdscript/src/ump/core/DebugGeography.gd.uid",
+      "bytes": 20,
+      "sha256": "f7f7703301bcde20c69c989b3ab049996ced8ebf39a22aae1d01468f5c32fc91"
+    },
+    {
+      "path": "gdscript/src/ump/core/FormError.gd",
+      "bytes": 1492,
+      "sha256": "ea19b8366466abe0c3e10605c7557156dd6b48eb738c8bf074d50433046c2764"
+    },
+    {
+      "path": "gdscript/src/ump/core/FormError.gd.uid",
+      "bytes": 19,
+      "sha256": "832bd2c21527c1fc7e865157b51dc4836cff24d0645b5556a2e23dd5a119ca34"
+    },
+    {
+      "path": "internal/editor/components/ai_menu.gd",
+      "bytes": 2818,
+      "sha256": "54d9e762c06bd2a36c0fc318e3dd9248ca81ac67333572743ae7bd4a9ca1d85b"
+    },
+    {
+      "path": "internal/editor/components/ai_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "d2fb91c79c5be4a914a1e489528765e9148aaec87b40f77553428958a669669e"
+    },
+    {
+      "path": "internal/editor/components/android_menu.gd",
+      "bytes": 1761,
+      "sha256": "6675d527e66245411bbe7740102ae926fcfa1bfac27773147d48b4bb8fdb9ebb"
+    },
+    {
+      "path": "internal/editor/components/android_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "babc30fc1d38641492ec4ee4e1d7bd25aebf1162a90f3608f639eca950500c67"
+    },
+    {
+      "path": "internal/editor/components/documents_menu.gd",
+      "bytes": 1427,
+      "sha256": "ad779782a8235331ca4b71997014a97421780f307b544ce213f2aa0c14c5bae1"
+    },
+    {
+      "path": "internal/editor/components/documents_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "283111c22ed9b46f4c37d27b2f675e043c95775f18e25a5f35630406e96c689e"
+    },
+    {
+      "path": "internal/editor/components/help_menu.gd",
+      "bytes": 1431,
+      "sha256": "9249b1026c60956a5654cbc7314cbeac628dc8756a2dcbb012c885e910d7b122"
+    },
+    {
+      "path": "internal/editor/components/help_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "a2e664878ac1c8b0699896f3bf3990e78b8ac005527d8c060faaf445c9c6d2c2"
+    },
+    {
+      "path": "internal/editor/components/ios_menu.gd",
+      "bytes": 1721,
+      "sha256": "54b0ad4daa34c65c64b47190a023c586ef27133beabc638a81e9767e3b08939a"
+    },
+    {
+      "path": "internal/editor/components/ios_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "101f1c29908a97f365f93a654c4babb118f866f624a0df377425b0b22cc725cd"
+    },
+    {
+      "path": "internal/editor/components/support_menu.gd",
+      "bytes": 1519,
+      "sha256": "1f32a0ed526dde676216ed7f4139df7754bf086fb4fb67ff026d29e3fc560d3c"
+    },
+    {
+      "path": "internal/editor/components/support_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "dc24a8cfb45a202ccde00f97e42802c384e9d16408b96513e704a1caf1f4e524"
+    },
+    {
+      "path": "internal/editor/editor_menu.gd",
+      "bytes": 3503,
+      "sha256": "aff56e7aa8e65155f3903336852027972309046be7c119585360479021399d8f"
+    },
+    {
+      "path": "internal/editor/editor_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "4427b71152c2eaddfcfeb2793d126e922eb90412464e4ab6afc67112e7c1f5b7"
+    },
+    {
+      "path": "internal/editor/popup_menu.gd",
+      "bytes": 1436,
+      "sha256": "8eb5c8d0903ccb1bd30c61b2f98105ba0a141da0df59739cedf11007c1b0f458"
+    },
+    {
+      "path": "internal/editor/popup_menu.gd.uid",
+      "bytes": 20,
+      "sha256": "ae37d065e5e9277cb28dc066557fb281449f596a49c6336fe5dc7a7af0d0e700"
+    },
+    {
+      "path": "internal/exporters/android/export_plugin.gd",
+      "bytes": 9966,
+      "sha256": "7529acf83f9abb4c72d26b0b6486a6f166366809807c20fda35928420dbb213c"
+    },
+    {
+      "path": "internal/exporters/android/export_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "bedaf1e6a558b7a999683c5192629582c8141fccdde77242ac9349386dafacb6"
+    },
+    {
+      "path": "internal/exporters/android/library.gd",
+      "bytes": 1502,
+      "sha256": "9609840d8ebacb4c37df9884c1e35bef312ceba87b1b31a14c1605fc2c45d708"
+    },
+    {
+      "path": "internal/exporters/android/library.gd.uid",
+      "bytes": 20,
+      "sha256": "605780d50fdaae4605dc210409202d10616ba396c5014613263a1980c38328a6"
+    },
+    {
+      "path": "internal/exporters/base_export_plugin.gd",
+      "bytes": 2797,
+      "sha256": "170e916554af7f8ad64a6ce8e7722256d2e544e8712642bb8cfae3943d96f972"
+    },
+    {
+      "path": "internal/exporters/base_export_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "a2e2e8f109f1797f9d4baf433f9c76f54ca03da485025917f6caf7ddfdf0480c"
+    },
+    {
+      "path": "internal/exporters/ios/export_plugin.gd",
+      "bytes": 12644,
+      "sha256": "29b1f75550fa69198a4087f99971d23a5249bdde6591254529e84834a144298d"
+    },
+    {
+      "path": "internal/exporters/ios/export_plugin.gd.uid",
+      "bytes": 19,
+      "sha256": "cbc9169dc6688399cb21d8fc6c038fd25bfca13030402e2053c955d287b951ff"
+    },
+    {
+      "path": "internal/exporters/ios/library.gd",
+      "bytes": 1684,
+      "sha256": "d57157f6edfe74d8a99dd5f3b86e1bcd0f64844801da8129bb933d382c3433b5"
+    },
+    {
+      "path": "internal/exporters/ios/library.gd.uid",
+      "bytes": 20,
+      "sha256": "bec0d8605c350f54a2b28a6276f86e3af53b04a1c21129878ac4f94382fe64e5"
+    },
+    {
+      "path": "internal/exporters/main_export_plugin.gd",
+      "bytes": 1672,
+      "sha256": "a8872e23c4b1209f357b2abf89ffc4542c3a71cd042d5e13fcd107c77c69bf1f"
+    },
+    {
+      "path": "internal/exporters/main_export_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "7db629aa7ab42d23a8a4218e913fe605ce8c00fbb3e22ac47863556ae1901392"
+    },
+    {
+      "path": "internal/handlers/android_handler.gd",
+      "bytes": 3218,
+      "sha256": "a42a0fe7a74453d44af650a194e1b2d054ba0847cee058a0a4d56f227213648d"
+    },
+    {
+      "path": "internal/handlers/android_handler.gd.uid",
+      "bytes": 20,
+      "sha256": "d9a9e082eb28ae3f2a41045382486c44556bad889fbc95193733aa4e78bc8b35"
+    },
+    {
+      "path": "internal/handlers/ios_handler.gd",
+      "bytes": 3302,
+      "sha256": "67aa1a85ff1fe1707d1cbb9552e3e43d9d175bf7f9d46ace0bdbbe094b541cf7"
+    },
+    {
+      "path": "internal/handlers/ios_handler.gd.uid",
+      "bytes": 20,
+      "sha256": "ce2c04e35b3c68dfe85c955cd18ab26c4364235f14f6eb7f8e5f030d0bba9f82"
+    },
+    {
+      "path": "internal/mock/mock_ad_size_plugin.gd",
+      "bytes": 1513,
+      "sha256": "5ac321fc159621d8cca3f8d122b56744e4c77c728cf35097446fc1a92adaa7a5"
+    },
+    {
+      "path": "internal/mock/mock_ad_size_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "4f97cb2c5093a6bf392eddf252f3f7399bf5bb11ebb9c389dfecb9f30100ed9c"
+    },
+    {
+      "path": "internal/mock/mock_ad_view_plugin.gd",
+      "bytes": 20118,
+      "sha256": "bf2b4e72c1e09379c9653f4f14f79fcc25e2249e377678bbcc3d1e9fb3157647"
+    },
+    {
+      "path": "internal/mock/mock_ad_view_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "7d84708a6697b50a452e98bc15c0bb602eaa80e15fc8d6e4d22c1c4f6e56b5e0"
+    },
+    {
+      "path": "internal/mock/mock_admob_factory.gd",
+      "bytes": 2924,
+      "sha256": "70db234b74a55e67d15f13bd4a17f76c663677b8bd656bf286c46c9b04bd0a79"
+    },
+    {
+      "path": "internal/mock/mock_admob_factory.gd.uid",
+      "bytes": 20,
+      "sha256": "81f0f7abcb055c17bf7af08ac42d576e93d570f230bb7d29d25b57e122139734"
+    },
+    {
+      "path": "internal/mock/mock_app_open_ad_plugin.gd",
+      "bytes": 17890,
+      "sha256": "d68091a681157e4be4ca660cf17de972523701f363e3ec0d9b37d954ae877367"
+    },
+    {
+      "path": "internal/mock/mock_app_open_ad_plugin.gd.uid",
+      "bytes": 19,
+      "sha256": "ec90b266284f9626f21e20c99aff45095c0d816566dbba941f014a8aca439645"
+    },
+    {
+      "path": "internal/mock/mock_interstitial_ad_plugin.gd",
+      "bytes": 10596,
+      "sha256": "e260a23c4edcc2eeb621822464f594e28b17085916f1e433421203286f1e1bc1"
+    },
+    {
+      "path": "internal/mock/mock_interstitial_ad_plugin.gd.uid",
+      "bytes": 19,
+      "sha256": "db40e8949d3cc70ff644e6a6aa3154ae5e905659fcc7011483e83854e4a52a78"
+    },
+    {
+      "path": "internal/mock/mock_mobile_ads_plugin.gd",
+      "bytes": 2994,
+      "sha256": "ff76a099652481c8d6aa75c49572203a056b7523b55a1769679f7359580a411b"
+    },
+    {
+      "path": "internal/mock/mock_mobile_ads_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "d1945e0e9b29308c3eb945a37064ce494dbe1b81620b0e7ac9ab354c89221acb"
+    },
+    {
+      "path": "internal/mock/mock_native_overlay_ad_plugin.gd",
+      "bytes": 28990,
+      "sha256": "fd76743665c16cdcae5847fea4dba27a87866353d4cb7a949e7d699d8ff917ff"
+    },
+    {
+      "path": "internal/mock/mock_native_overlay_ad_plugin.gd.uid",
+      "bytes": 19,
+      "sha256": "66aabced133680be31d5518568b02a36ae7991992be4e08af05f5aed6b5514f6"
+    },
+    {
+      "path": "internal/mock/mock_rewarded_ad_plugin.gd",
+      "bytes": 26244,
+      "sha256": "f884ef7dbe111ec1a7d8974a25b45776b2700c5d2b7cae8e39eddd7c85eb8772"
+    },
+    {
+      "path": "internal/mock/mock_rewarded_ad_plugin.gd.uid",
+      "bytes": 20,
+      "sha256": "de9d6f9b9801664a617f2b9c566bd54e160cc49b9e7f72a3cc1dbf0d3ea5b099"
+    },
+    {
+      "path": "internal/mock/mock_rewarded_interstitial_ad_plugin.gd",
+      "bytes": 26439,
+      "sha256": "20c5b6b3bf0d8f6defb712c4389614f2652b78314ad121da61daa2513b920a72"
+    },
+    {
+      "path": "internal/mock/mock_rewarded_interstitial_ad_plugin.gd.uid",
+      "bytes": 19,
+      "sha256": "165ccce6e239baebc28fe0941d1886214265690b46a14fe2d30326f6e76d39ef"
+    },
+    {
+      "path": "internal/sample_registry.gd",
+      "bytes": 1564,
+      "sha256": "359676166669f47b08294deb402f9fe9a3c67349c3ed0937269a6ecfa052dad7"
+    },
+    {
+      "path": "internal/sample_registry.gd.uid",
+      "bytes": 20,
+      "sha256": "42d8ea7731dfb97ce938272883b8b300c880e33850c6896f8bf76f5b66061031"
+    },
+    {
+      "path": "internal/services/archive/zip_service.gd",
+      "bytes": 4512,
+      "sha256": "74d94c72a28c2f55f61793366e7281ff2618592acb8f6636780626beb73f9419"
+    },
+    {
+      "path": "internal/services/archive/zip_service.gd.uid",
+      "bytes": 20,
+      "sha256": "07f7834a8431299d15673a34240c228e38bc74591c3d5f0f742e9f0615fdd35c"
+    },
+    {
+      "path": "internal/services/csharp_service.gd",
+      "bytes": 2541,
+      "sha256": "faf06ce5537b1382b6b955a0a12dcbae3134051f43290ccd2023560d73c1b7f6"
+    },
+    {
+      "path": "internal/services/csharp_service.gd.uid",
+      "bytes": 20,
+      "sha256": "1eb4db13ef84b11c7a9f12d89b2c559ce632a46362c5e26d67b2cce772a5b4e4"
+    },
+    {
+      "path": "internal/services/export_service.gd",
+      "bytes": 2162,
+      "sha256": "da66efdd70285d93ff84713258a3bfa361f0af981afa0b2c14b53d6e564de136"
+    },
+    {
+      "path": "internal/services/export_service.gd.uid",
+      "bytes": 19,
+      "sha256": "9aa3b64f90c2973631b5566a544aa63a81c7a408444de21180f3aff684ad93f0"
+    },
+    {
+      "path": "internal/services/installer_service.gd",
+      "bytes": 1992,
+      "sha256": "9d9a05d0ae9336dfd88f6312ec16b8e5989d8ce70a440f8edad47c92f13ab532"
+    },
+    {
+      "path": "internal/services/installer_service.gd.uid",
+      "bytes": 20,
+      "sha256": "878ec5b1131113021901af73022b8228a88da011cf9a686bb9d7efdd913c7ce4"
+    },
+    {
+      "path": "internal/services/network/binary_installer.gd",
+      "bytes": 4620,
+      "sha256": "7ae5bc69bae3ea9035b9710ae1591a4bc0cdaae540ac33431e444cc9900daff7"
+    },
+    {
+      "path": "internal/services/network/binary_installer.gd.uid",
+      "bytes": 20,
+      "sha256": "76ef99d4ad6612e1b48063db3ce0b45902dad8e14aea30e7a2772bb663d158dd"
+    },
+    {
+      "path": "internal/services/network/download_service.gd",
+      "bytes": 3607,
+      "sha256": "6df965b8e068cd519bdf6f95cc306b6aaa1b5377e0463f5f8c37a60e035b8288"
+    },
+    {
+      "path": "internal/services/network/download_service.gd.uid",
+      "bytes": 19,
+      "sha256": "a5b3308c3f17c1243f9bce76dbb6303892612a1899a21345664fa405b0c80942"
+    },
+    {
+      "path": "internal/services/pbxproj_service.gd",
+      "bytes": 4954,
+      "sha256": "9238aa5a20fd2263047613eac53f138ba869bd2f65d5d47f11f4ef36933d41d5"
+    },
+    {
+      "path": "internal/services/pbxproj_service.gd.uid",
+      "bytes": 19,
+      "sha256": "62f1a4a30d0ed198b7b9a6e17344cda4de5e901d9e2b19a9be36c89fb058c107"
+    },
+    {
+      "path": "internal/services/project_settings_service.gd",
+      "bytes": 4394,
+      "sha256": "9ca0be1ed0145c2f0a0d0993462d9930de8bb153d7ea566da872aa04a9508a4d"
+    },
+    {
+      "path": "internal/services/project_settings_service.gd.uid",
+      "bytes": 20,
+      "sha256": "8ded69596b6dbb126ef50f5c439a6846a63e0ce8bfef123ce90bc2317b69644b"
+    },
+    {
+      "path": "internal/services/translation_service.gd",
+      "bytes": 2679,
+      "sha256": "9f4200225ee3b5374d540838959fd9bfed977b0a53f85e2067124d45d567a903"
+    },
+    {
+      "path": "internal/services/translation_service.gd.uid",
+      "bytes": 19,
+      "sha256": "ee0a45a598cf764ed8271822b420aa4f670e8829bd87e708cd013fa3dea6486b"
+    },
+    {
+      "path": "internal/services/ui/dialog_service.gd",
+      "bytes": 1964,
+      "sha256": "dfe83f8dcc8079fb9b7b1bd9f06cd49787822247411d0c8417cb7c756af7f74a"
+    },
+    {
+      "path": "internal/services/ui/dialog_service.gd.uid",
+      "bytes": 19,
+      "sha256": "c4b28865df08109e856ef68ee492e44c04d7b2dfd125164861d08cc0c315acde"
+    },
+    {
+      "path": "internal/services/ui/file_service.gd",
+      "bytes": 1820,
+      "sha256": "2aa932db0a4fe2b31fe630fe872219e352aa089b232763fd64a087fb2bdd6ca2"
+    },
+    {
+      "path": "internal/services/ui/file_service.gd.uid",
+      "bytes": 19,
+      "sha256": "9dbc925031e20e26a395ed2fc591d9b2430ff2d881dd31e8387212fe442a0b34"
+    },
+    {
+      "path": "internal/translations/admob_sample.csv",
+      "bytes": 21416,
+      "sha256": "b2e9471084f3f2543b671123123e102f93c3b57cb3bfb7f85dec93c87b4c9393"
+    },
+    {
+      "path": "internal/translations/admob_sample.csv.import",
+      "bytes": 995,
+      "sha256": "42b759ba368210645669346eec30d4d8566f4f45728419c2d85662dbd5d64f28"
+    },
+    {
+      "path": "internal/translations/admob_sample.en.translation",
+      "bytes": 6568,
+      "sha256": "f30ad545df81bc1451a675107ea660802a09d7c0fce0cea5b770f79010a87462"
+    },
+    {
+      "path": "internal/translations/admob_sample.es.translation",
+      "bytes": 7219,
+      "sha256": "0fcc84134b6d97579af84c3c9ba80fbe211cf2367a91d164e3d7ddd2da88abc6"
+    },
+    {
+      "path": "internal/translations/admob_sample.ja.translation",
+      "bytes": 8739,
+      "sha256": "6ecaf60789f7540631786db56afbec9cd52c3fe69787c427899a0937531915fe"
+    },
+    {
+      "path": "internal/translations/admob_sample.pt_BR.translation",
+      "bytes": 7334,
+      "sha256": "f2f0a3a7cefe75b6be2c36e803cc892e11064fbeec7933b09d3f770e202c7d1c"
+    },
+    {
+      "path": "internal/translations/admob_sample.zh_CN.translation",
+      "bytes": 7006,
+      "sha256": "56b7c11569292799c7b20395b5081b4873890ff254b487018cea2cf852124817"
+    },
+    {
+      "path": "internal/version/plugin_version.gd",
+      "bytes": 4035,
+      "sha256": "f8fbf0f8376e0495d431c5db1ed11e046a30c7ed7e9b2cd3176755391cbe70dc"
+    },
+    {
+      "path": "internal/version/plugin_version.gd.uid",
+      "bytes": 20,
+      "sha256": "ff621a25880adc3a83e85debe0ddd0bfb14df6a841b1e121b7ab4f2243263f27"
+    },
+    {
+      "path": "ios/.gitignore",
+      "bytes": 53,
+      "sha256": "795c404b861c4f7fad8af26d412ca65bfa2c84c346aa143054e6347092c2eb5e"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1078,
+      "sha256": "9154d410d6795817a45e1a5f2caa9236111e313152c0b51ea39f48aaf7034834"
+    },
+    {
+      "path": "plugin.cfg",
+      "bytes": 132,
+      "sha256": "a71e116cde3a13eeae9df14260f37ccb6a2ccc9e04275a7b57ea5321c983c9d7"
+    },
+    {
+      "path": "skills/godot-admob-app-open/SKILL.md",
+      "bytes": 4045,
+      "sha256": "7aa0c68493aa03f8a7c5643fdf69040efba164404adebbaa16df70de087edefc"
+    },
+    {
+      "path": "skills/godot-admob-banner/SKILL.md",
+      "bytes": 2871,
+      "sha256": "58290e17859f8f4e912ad927686c288d42a20d52ead04387240e1a577ff0202d"
+    },
+    {
+      "path": "skills/godot-admob-get-started/SKILL.md",
+      "bytes": 4019,
+      "sha256": "25c1b07b2669b65e8fac779f3007287f8857b7e399eb0559d53415a46e15b9a3"
+    },
+    {
+      "path": "skills/godot-admob-interstitial/SKILL.md",
+      "bytes": 4499,
+      "sha256": "6ae1afbc3481313c2722bf0acde45e85c27d898a369284220b6e03668ebc9156"
+    },
+    {
+      "path": "skills/godot-admob-mediation/SKILL.md",
+      "bytes": 1455,
+      "sha256": "dd6ae7d2d0d40582c2fc7773be4cc35ecd06345a5bf2234870059bca6aae8560"
+    },
+    {
+      "path": "skills/godot-admob-migrate/SKILL.md",
+      "bytes": 4180,
+      "sha256": "79cad8217018a74ca4bff9e560b2d530a7640fe1b08a6dd74e9b921082019e61"
+    },
+    {
+      "path": "skills/godot-admob-native-overlay/SKILL.md",
+      "bytes": 4076,
+      "sha256": "362119846abbfa3be75c7343c35c2dbd0d280912f65f952785ebde55dade009b"
+    },
+    {
+      "path": "skills/godot-admob-privacy/SKILL.md",
+      "bytes": 2482,
+      "sha256": "2b8fbba9136a217affdd352b862efb1d8ef16b6e3054bc76c0651e50c1f13832"
+    },
+    {
+      "path": "skills/godot-admob-rewarded/SKILL.md",
+      "bytes": 4691,
+      "sha256": "b1be5b2c236c6d2c3737c6db85935a8e615f24f73f3ba2e46c2ac14ece3cdebb"
+    },
+    {
+      "path": "skills/godot-admob-troubleshoot/SKILL.md",
+      "bytes": 3248,
+      "sha256": "fa845a67f782d2b2a516c1e94bb136fcbe31e9a20b649705f30b885aecb43df4"
+    }
+  ]
+}

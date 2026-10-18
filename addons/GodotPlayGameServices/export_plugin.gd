@@ -2,6 +2,10 @@
 extends EditorPlugin
 
 const PLUGIN_AUTOLOAD := &"GodotPlayGameServices"
+const PLUGIN_AUTOLOAD_PATH := "res://addons/GodotPlayGameServices/scripts/autoloads/godot_play_game_services.gd"
+
+# Preserve project-authored autoloads across editor/export plugin lifecycles.
+var _created_autoload := false
 
 var _export_plugin: AndroidExportPlugin
 
@@ -22,10 +26,19 @@ func _remove_plugin() -> void:
 	_export_plugin = null
 
 func _add_autoloads() -> void:
-	add_autoload_singleton(PLUGIN_AUTOLOAD, "res://addons/GodotPlayGameServices/scripts/autoloads/godot_play_game_services.gd")
+	var key := "autoload/" + str(PLUGIN_AUTOLOAD)
+	if ProjectSettings.has_setting(key):
+		if ProjectSettings.get_setting(key) != "*" + PLUGIN_AUTOLOAD_PATH:
+			push_warning("GodotPlayGameServices: preserving the existing project-owned autoload configuration.")
+		return
+	add_autoload_singleton(PLUGIN_AUTOLOAD, PLUGIN_AUTOLOAD_PATH)
+	_created_autoload = ProjectSettings.get_setting(key, "") == "*" + PLUGIN_AUTOLOAD_PATH
 
 func _remove_autoloads() -> void:
-	remove_autoload_singleton(PLUGIN_AUTOLOAD)
+	var key := "autoload/" + str(PLUGIN_AUTOLOAD)
+	if _created_autoload and ProjectSettings.get_setting(key, "") == "*" + PLUGIN_AUTOLOAD_PATH:
+		remove_autoload_singleton(PLUGIN_AUTOLOAD)
+	_created_autoload = false
 
 class AndroidExportPlugin extends EditorExportPlugin:
 	var _plugin_name = &"GodotPlayGameServices"

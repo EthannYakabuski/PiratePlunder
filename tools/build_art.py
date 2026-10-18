@@ -393,6 +393,11 @@ def make_setup_worksheets():
     limits={'title':30,'short_description':80,'full_description':4000}
     for key,value in fields.items():assert len(value)<=limits[key],f'{key} exceeds limit'
     metadata={'locale':'en-US','status':'submission_draft','category_suggestion':'GAME_ARCADE',**fields,'character_counts':{key:len(value) for key,value in fields.items()},'limits':limits,'suggested_achievement_points_total':points_total,'support_email':'','privacy_policy_url':'','alt_text':{'app_icon':'A coral skull-sail pirate ship fires side cannons over a teal ocean.','feature_graphic':'PiratePlunder: colorful pirate ships trade broadsides beside a tropical island.'},'cloud_services_claimed_in_copy':False,'worksheet_note':'Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility.'}
+    ads_path=ROOT/'config'/'admob.json'
+    if ads_path.exists():
+        ads_config=json.loads(ads_path.read_text(encoding='utf-8'))
+        metadata['contains_ads']=bool(ads_config.get('enabled',False))
+        metadata['ad_testing_mode']='Google demo app and ad unit IDs; no production ad units configured' if ads_config.get('use_test_ads',True) else 'Production ad unit configuration selected'
     metadata_path=STORE/'listing_metadata.json'
     if metadata_path.exists():
         previous_metadata=json.loads(metadata_path.read_text(encoding='utf-8'))

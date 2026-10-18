@@ -1,0 +1,39 @@
+{
+  "patches": [
+    {
+      "path": "addons/admob/android/.gitignore",
+      "source_sha256": "795c404b861c4f7fad8af26d412ca65bfa2c84c346aa143054e6347092c2eb5e",
+      "patched_sha256": "918753f86dfb15e25aa7abde8f71c2651510975bb075529784d353afe3be824a",
+      "reason": "Track public pinned Android AARs for reproducible exports."
+    },
+    {
+      "path": "addons/admob/internal/editor/editor_menu.gd",
+      "source_sha256": "aff56e7aa8e65155f3903336852027972309046be7c119585360479021399d8f",
+      "patched_sha256": "f57f57679500ac1ad9b71e7e686bfd451305297a4b0d1cb6f0bc90ff83ae7c93",
+      "reason": "Check each platform-enabled setting before automatic graphical-editor dependency installation."
+    },
+    {
+      "path": "addons/admob/internal/services/network/binary_installer.gd",
+      "source_sha256": "7ae5bc69bae3ea9035b9710ae1591a4bc0cdaae540ac33431e444cc9900daff7",
+      "patched_sha256": "8585f9242a17610a412df13e3635a38e17c97578c6635bd345407fb4c70b4a42",
+      "reason": "Check each platform-enabled setting before automatic headless dependency installation; disabled iOS never downloads."
+    },
+    {
+      "path": "addons/admob/internal/services/project_settings_service.gd",
+      "source_sha256": "9ca0be1ed0145c2f0a0d0993462d9930de8bb153d7ea566da872aa04a9508a4d",
+      "patched_sha256": "060de6113237733dd4ee2e1232d41959a4ea52b178b8ccf0ab16ccacc49eafd9",
+      "reason": "Register editor property metadata without saving project.godot or pruning project-owned settings."
+    },
+    {
+      "path": "addons/GodotPlayGameServices/export_plugin.gd",
+      "source_sha256": "ce5edb84052d1bcf46966d780702bf1dba32f2a05ac73100fed2e97575138e76",
+      "patched_sha256": "c6d2861ed8069c0bfc0fc2c456d2b54a703dcb1fbb0afed44f2b4eba38d6fb5b",
+      "reason": "Preserve authored autoload on editor startup/exit; remove only unchanged entries created by this editor plugin instance."
+    }
+  ],
+  "generated": [
+    "addons/admob/csharp/.gdignore",
+    "addons/admob/android/bin/package.gd"
+  ],
+  "native_binaries_modified": false
+}

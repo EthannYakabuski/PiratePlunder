@@ -23,4 +23,7 @@ Collect repairs, shields and cannon powerups. Build a combo, dodge incoming fire
 MADE FOR SHORT VOYAGES
 Portrait controls keep the action within reach. Choose your voyage, then pick a ship and sail. A first-voyage tutorial helps you get moving, and local saving keeps your fleet ranks, upgrades, stars and achievements between sessions. Adjust music, sound and reduced motion to suit your play style.
 
+AD-SUPPORTED ADVENTURES
+The Android game includes home-screen banner ads and occasional ads between voyages. When an ad is available, choose to watch a rewarded ad after defeat for one full-hull rescue in that voyage. Your score and progress stay intact. Ads require a network connection; the core game remains playable offline.
+
 Whimsical seas. Tiny pirates. One more voyage.

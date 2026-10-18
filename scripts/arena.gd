@@ -1,6 +1,7 @@
 extends Node2D
 ## Bounded, deterministic ocean simulation; all world positions remain independent of UI.
 signal finished(summary: Dictionary)
+signal defeated
 signal hud_changed
 signal toast(message: String)
 
@@ -47,6 +48,10 @@ var hazards: Array[Dictionary] = []
 var island_cache: Dictionary = {}
 var textures: Dictionary = {}
 var running := false
+var allow_rewarded_continue := false
+var defeat_pending := false
+var revives_used := 0
+const MAX_REVIVES := 1
 var paused := false:
 	set(value):
 		paused=value
@@ -125,6 +130,7 @@ func start_run(ship_data: Dictionary, level_data: Dictionary, biome_data: Dictio
 	player=Vector2.ZERO; heading=-PI/2; desired_heading=heading; wave_index=0; spawn_clock=1.0
 	campaign_total_ships=0; campaign_deployed_count=0; encounter_index=0; encounter_wait=-1.0; current_encounter_name=""
 	boss_spawned=false; paused=false; tutorial_step=0; peak_entities=0
+	defeat_pending=false; revives_used=0
 	if mode != "campaign":
 		level.endless = level.get("endless",definitions.get("endless",{}))
 		boss_clock = float(level.endless.get("boss_every_seconds",90))
@@ -301,7 +307,9 @@ func step(dt: float) -> void:
 		_drop(player+Vector2.from_angle(heading)*160,supply_pool[rng.randi_range(0,3)])
 	if rng.randf() < dt * 16: _particle(player - Vector2.from_angle(heading) * 32, Color(0.65, 0.95, 0.94, 0.6), -velocity * 0.15, 1.4, 5)
 	peak_entities = maxi(peak_entities, enemies.size() + bullets.size() + particles.size() + pickups.size())
-	if hp <= 0: finish(false)
+	if hp <= 0:
+		_request_defeat()
+		return
 	if mode == "campaign":
 		if campaign_total_ships>0 and encounter_index>=campaign_encounters.size() and enemies.is_empty() and kills>=campaign_total_ships:
 			finish(true)
@@ -830,6 +838,7 @@ func _sound(key: String, pitch := 1.0) -> void:
 func finish(won: bool) -> Dictionary:
 	if not running: return {}
 	running = false
+	defeat_pending = false
 	release_controls()
 	var stars := 0
 	if won:
@@ -837,9 +846,34 @@ func finish(won: bool) -> Dictionary:
 		var targets: Dictionary = level.get("star_targets", {})
 		if hp / max_hp >= float(targets.get("health", 0.5)): stars += 1
 		if elapsed <= float(targets.get("time", 110)): stars += 1
-	var summary := {"mode":mode,"level_id":int(level.get("id",1)),"ship_id":str(ship.get("id","swiftfin")),"won":won,"stars":stars,"score":score,"kills":kills,"bosses":bosses,"treasure":treasure,"seconds":elapsed,"damage_taken":damage_taken,"shots":shots,"powerups":powerups,"max_combo":best_combo,"both_sides_kills":mini(kills_by_side[0],kills_by_side[1]),"health_ratio":hp/max_hp,"reward":level.get("reward",{})}
+	var summary := {"mode":mode,"level_id":int(level.get("id",1)),"ship_id":str(ship.get("id","swiftfin")),"won":won,"stars":stars,"score":score,"kills":kills,"bosses":bosses,"treasure":treasure,"seconds":elapsed,"damage_taken":damage_taken,"shots":shots,"powerups":powerups,"max_combo":best_combo,"both_sides_kills":mini(kills_by_side[0],kills_by_side[1]),"health_ratio":hp/max_hp,"revives":revives_used,"reward":level.get("reward",{})}
 	finished.emit(summary)
 	return summary
+
+func _request_defeat() -> void:
+	if not running or defeat_pending: return
+	if not allow_rewarded_continue or revives_used >= MAX_REVIVES:
+		finish(false)
+		return
+	defeat_pending = true
+	paused = true
+	defeated.emit()
+
+func resume_after_reward() -> bool:
+	if not running or not defeat_pending or revives_used >= MAX_REVIVES: return false
+	revives_used += 1
+	hp = max_hp
+	defeat_pending = false
+	invincible_time = maxf(invincible_time,3.0)
+	release_controls()
+	paused = false
+	hud_changed.emit()
+	queue_redraw()
+	return true
+
+func finalize_defeat() -> Dictionary:
+	if not running or not defeat_pending: return {}
+	return finish(false)
 
 func _draw() -> void:
 	if ship == null or ship.is_empty(): return

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "plugin_version": "5.1.0",
+  "enabled": true,
+  "use_test_ads": true,
+  "production_app_id": "ca-app-pub-7719473349082950~3314995170",
+  "test_app_id": "ca-app-pub-3940256099942544~3347511713",
+  "banner_unit_id": "",
+  "interstitial_unit_id": "",
+  "rewarded_unit_id": "",
+  "test_banner_unit_id": "ca-app-pub-3940256099942544/9214589741",
+  "test_interstitial_unit_id": "ca-app-pub-3940256099942544/1033173712",
+  "test_rewarded_unit_id": "ca-app-pub-3940256099942544/5224354917",
+  "notes": [
+    "Production app ID is retained as public setup metadata. Current exports use Google sample app/ad unit IDs only.",
+    "Production ad unit IDs must be configured separately before use_test_ads is disabled.",
+    "UMP consent is required before Mobile Ads initialization/ad requests; no child-directed or maximum-content-rating override is imposed."
+  ]
+}

@@ -6,7 +6,7 @@ try {
     New-Item -ItemType Directory -Force -Path 'tests/output' | Out-Null
     & $PythonExe tools/validate_data.py
     if ($LASTEXITCODE -ne 0) { throw 'Data validation failed' }
-    foreach ($suite in @('progression','game','balance','ui')) {
+    foreach ($suite in @('progression','ads','ad_flow','game','balance','ui')) {
         & $GodotExe --headless --path . --log-file "tests/output/$suite.log" --script "tests/test_$suite.gd"
         if ($LASTEXITCODE -ne 0) { throw "$suite suite failed" }
     }
