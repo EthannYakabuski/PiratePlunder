@@ -26,5 +26,5 @@
   "worksheet_note": "Setup CSVs are human-readable worksheets, not a claim of Console bulk-import compatibility.",
   "achievement_points_source": "Owner-supplied Play Console metadata, 2026-10-17",
   "contains_ads": true,
-  "ad_testing_mode": "Google demo app and ad unit IDs; no production ad units configured"
+  "ad_testing_mode": "Production ad unit configuration selected"
 }

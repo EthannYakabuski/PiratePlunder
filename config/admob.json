@@ -2,18 +2,18 @@
   "schema_version": 1,
   "plugin_version": "5.1.0",
   "enabled": true,
-  "use_test_ads": true,
+  "use_test_ads": false,
   "production_app_id": "ca-app-pub-7719473349082950~3314995170",
   "test_app_id": "ca-app-pub-3940256099942544~3347511713",
-  "banner_unit_id": "",
-  "interstitial_unit_id": "",
-  "rewarded_unit_id": "",
+  "banner_unit_id": "ca-app-pub-7719473349082950/2058613629",
+  "interstitial_unit_id": "ca-app-pub-7719473349082950/7452541579",
+  "rewarded_unit_id": "ca-app-pub-7719473349082950/8878138030",
   "test_banner_unit_id": "ca-app-pub-3940256099942544/9214589741",
   "test_interstitial_unit_id": "ca-app-pub-3940256099942544/1033173712",
   "test_rewarded_unit_id": "ca-app-pub-3940256099942544/5224354917",
   "notes": [
-    "Production app ID is retained as public setup metadata. Current exports use Google sample app/ad unit IDs only.",
-    "Production ad unit IDs must be configured separately before use_test_ads is disabled.",
+    "Production app and banner/interstitial/rewarded ad unit IDs are active. These public identifiers were supplied by the publisher.",
+    "Google sample IDs are retained only for explicit test mode; re-enable use_test_ads and switch the project.godot Android app ID together when testing with sample ads.",
     "UMP consent is required before Mobile Ads initialization/ad requests; no child-directed or maximum-content-rating override is imposed."
   ]
 }

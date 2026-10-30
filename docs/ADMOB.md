@@ -1,6 +1,6 @@
 # AdMob integration audit and setup
 
-PiratePlunder uses **Poing Godot AdMob 5.1.0**, alongside the existing **Godot Play Game Services 3.4.0** integration. The Android presets are version **0.3.0 / code 4**, min API24, compile/target API36, with Godot4.5.1 and JDK17. AdMob is configured for **Google test ads**. This document records the source, native dependency setup, and the boundary between local tests and real Android verification.
+PiratePlunder uses **Poing Godot AdMob 5.1.0**, alongside the existing **Godot Play Game Services 3.4.0** integration. The current Android APK preset is **0.3.0 / code 4** and the AAB preset is **0.4.0 / code 5**, min API24, compile/target API36, with Godot4.5.1 and JDK17. As of October 29, 2026, source configuration selects the supplied **production app and all three production ad units**. The recorded October 17 APK/AAB still contain Google test IDs; this switch does not rebuild them or verify live delivery. This document records the source, native dependency setup, and the boundary between local tests and real Android verification.
 
 ## Source and native artifacts
 
@@ -61,17 +61,17 @@ The native `PoingGodotAdMob.initialize()` method reads `com.google.android.gms.a
 
 ## Configuration and consent
 
-`config/admob.json` is the runtime configuration. Current public identifiers are:
+`config/admob.json` is the runtime configuration. Active source identifiers as of October 29, 2026 are:
 
 | Purpose | Identifier |
 | --- | --- |
-| Active test application | `ca-app-pub-3940256099942544~3347511713` |
-| Adaptive banner test unit | `ca-app-pub-3940256099942544/9214589741` |
-| Interstitial test unit | `ca-app-pub-3940256099942544/1033173712` |
-| Rewarded test unit | `ca-app-pub-3940256099942544/5224354917` |
-| Retained production app reference | `ca-app-pub-7719473349082950~3314995170` |
+| Production application | `ca-app-pub-7719473349082950~3314995170` |
+| Publisher | `pub-7719473349082950` |
+| Adaptive banner unit | `ca-app-pub-7719473349082950/2058613629` |
+| Interstitial unit | `ca-app-pub-7719473349082950/7452541579` |
+| Rewarded unit | `ca-app-pub-7719473349082950/8878138030` |
 
-`use_test_ads=true` selects Google's sample app and units. Production banner/interstitial/rewarded unit fields remain empty. The sample banner uses the anchored adaptive format; Google's `6300978111` sample is for a fixed-size banner and is not used for this adaptive placement. These IDs are public configuration, not credentials. They were checked against [Google's test ad documentation](https://developers.google.com/admob/android/test-ads).
+`enabled=true` and `use_test_ads=false` select these production identifiers. The authored Android application ID in `project.godot` matches. These are public identifiers, not credentials. Google's sample app and units remain in the configuration for explicit test mode, including adaptive banner `9214589741`; sample formats are described in [Google's test ad documentation](https://developers.google.com/admob/android/test-ads). Production account readiness, consent-message configuration and live delivery remain unverified.
 
 The `Ads` autoload is registered after `Progression`, `GodotPlayGameServices`, and `PlayServices`. The adapter delays Mobile Ads initialization and ad requests until the consent path permits them. It sets no forced COPPA flag, under-age flag, or G-rated content cap. Store audience declarations remain a separate publishing decision.
 
@@ -88,17 +88,17 @@ The plugin includes UMP4.0.0 through the ads SDK. Its `ConsentInformation` bridg
 - The AdMob Android `.gitignore` allows the pinned public native bridges to be tracked; C# bindings are hidden with `.gdignore` in this GDScript project.
 - GPGS's editor plugin preserves an already-authored singleton. It may remove only an unchanged singleton that this exact editor plugin instance created. A matching persistent singleton is never removed on editor exit.
 
-Two sequential headless editor import/start/exit passes returned exit0 with no script parse/load errors. The entire `project.godot` SHA-256 stayed `135307CABBE98BDA6FBC7914C622878C1ACFE14ED8A4AEB2872915ED2A29003F` across both passes, preserving all four entries and their order. Logs are in ignored `builds/admob-editor-preservation-1.log` and `-2.log`. The sandbox prevented writing global editor settings; it did not alter the project or cause script failures.
+On October 17, 2026, two sequential headless editor import/start/exit passes returned exit0 with no script parse/load errors. The entire `project.godot` SHA-256 stayed `135307CABBE98BDA6FBC7914C622878C1ACFE14ED8A4AEB2872915ED2A29003F` across both passes, preserving all four entries and their order. Logs are in ignored `builds/admob-editor-preservation-1.log` and `-2.log`. The sandbox prevented writing global editor settings; it did not alter the project or cause script failures.
 
 ## Reproducible Android setup
 
 Both tracked export presets enable INTERNET and ACCESS_NETWORK_STATE and declare the correct custom permission `com.google.android.gms.permission.AD_ID`. `tools/build_android.ps1` also inserts missing permissions into a fresh generated template without deleting existing XML. The bridge's upstream manifest includes an older `android.permission.AD_ID` entry; the correct Google permission is explicitly supplied by this project.
 
-The helper checks all four native AAR hashes and verifies that the active JSON app ID matches `admob/general/android/app_id` in `project.godot`. The plugin writes the ads application ID directly as manifest metadata, so GPGS's separate `res/values/strings.xml` update cannot erase it. The final APK/AAB checks must verify both:
+The helper checks all four native AAR hashes and verifies that the active JSON app ID matches `admob/general/android/app_id` in `project.godot`. The plugin writes the ads application ID directly as manifest metadata, so GPGS's separate `res/values/strings.xml` update cannot erase it. The next APK/AAB export using the current production source configuration must verify both:
 
 ```text
 com.google.android.gms.games.APP_ID -> @string/game_services_project_id -> 837392218124
-com.google.android.gms.ads.APPLICATION_ID -> ca-app-pub-3940256099942544~3347511713
+com.google.android.gms.ads.APPLICATION_ID -> ca-app-pub-7719473349082950~3314995170
 ```
 
 Run template/dependency/permission preparation without exporting:
@@ -109,10 +109,10 @@ Run template/dependency/permission preparation without exporting:
 
 Remove `-PrepareOnly` to build the debug APK; add `-Format AAB` for a debug bundle. The helper prefers the real Windows engine executable over its console shim so the tracked exporter process exits cleanly. Its final fallback merges only missing authored plugin autoload entries into the latest project file, preserving unrelated/concurrent settings and changed custom URI values. Synthetic merge fixtures verified those cases. No full project snapshot is restored over current edits. Release signing still requires private external credentials; see `ANDROID_BUILD.md`.
 
-## Before enabling production ads
+## Production readiness and explicit test mode
 
-Create the three production ad units and the appropriate AdMob Privacy & messaging configuration. Replace the empty production unit IDs, set `use_test_ads=false`, and change the authored Android app ID in `project.godot` to the retained production app ID. The helper rejects inconsistent app IDs or missing production units. Confirm the final Play Data safety/Advertising ID/contains-ads disclosures and privacy policy against the actual SDK use and [Google's Next-Gen SDK disclosure guide](https://developers.google.com/admob/android/next-gen/privacy/play-data-disclosure).
+The supplied production app and three unit IDs are configured. Complete and verify the appropriate AdMob Privacy & messaging configuration and account readiness before publication. The helper rejects inconsistent app IDs or missing production units. For development with Google demo ads, explicitly set `use_test_ads=true` and switch the authored Android app ID in `project.godot` to the retained Google sample app ID together; alternatively register the development device for test ads. The recorded October 17 artifacts remain demo-configured historical builds, with their original checksums. Confirm the final Play Data safety/Advertising ID/contains-ads disclosures and privacy policy against the actual SDK use and [Google's Next-Gen SDK disclosure guide](https://developers.google.com/admob/android/next-gen/privacy/play-data-disclosure).
 
 Complete the AdMob app verification/readiness steps and link the final store listing. New apps require app-ads.txt verification. `store/app-ads.txt` contains a candidate Google seller record derived from the publisher ID in the supplied app ID; compare it with the personalized snippet in AdMob, then host it at `/app-ads.txt` on the developer website linked from the store listing. Including the file in this repository or APK does not host or verify it. No website was published. See [Google's verification requirements](https://support.google.com/admob/answer/14538460?hl=en) and [app-ads.txt setup](https://developers.google.com/admob/android/next-gen/app-ads).
 
-Validate on an authorized Android test device: native initialization and sample labels, per-launch consent and privacy options, offline/update/form failures, adaptive banner insets/rotation, rewarded dismissal versus earned reward, duplicate callbacks, full-screen return/audio pause behavior, and coexistence with Play Games authentication/saved games. Desktop fake-ad tests verify adapter logic but do not demonstrate a served ad, native consent flow, or account configuration. No production ad request or backend change is needed to complete local integration.
+Validate on an authorized Android test device: native initialization and test-ad labels in explicit test mode, per-launch consent and privacy options, offline/update/form failures, adaptive banner insets/rotation, rewarded dismissal versus earned reward, duplicate callbacks, full-screen return/audio pause behavior, and coexistence with Play Games authentication/saved games. Desktop fake-ad tests verify adapter logic but do not demonstrate a served ad, native consent flow, or account configuration. The October 29 switch was checked with injected backends and preparation-only validation; it made no native ad requests, account changes or Android exports. See [the validation record](VALIDATION.md).

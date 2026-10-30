@@ -1,6 +1,6 @@
 # PiratePlunder
 
-A portrait pirate arcade game built with **Godot 4.5.1** for Android. Chart a voyage, pick a ship, and cause an unreasonable amount of trouble. The game works offline; Google Play Games integration is optional. Version **0.3.0** adds Android AdMob banners, interstitials and opt-in rewarded rescues, using Google test ads for internal testing.
+A portrait pirate arcade game built with **Godot 4.5.1** for Android. Chart a voyage, pick a ship, and cause an unreasonable amount of trouble. The game works offline; Google Play Games integration is optional. Version **0.3.0** adds Android AdMob banners, interstitials and opt-in rewarded rescues. Production ad IDs are selected in source configuration as of October 29, 2026; the recorded October 17 APK/AAB still use Google test IDs.
 
 [What changed in gameplay update 0.2.0](docs/GAMEPLAY_UPDATE.md) covers the A–F feedback, upgrade ranks, finite missions, navigation and save compatibility.
 
@@ -39,7 +39,7 @@ The Android game is ad supported. There are no real-money purchases, energy gate
 
 ## AdMob
 
-[Poing AdMob 5.1.0](https://github.com/poingstudios/godot-admob-plugin) is copied from the supplied local bundle, with its MIT license and pinned Android binaries. The adapter is `scripts/ads.gd`; public configuration is `config/admob.json`. **Google's test app and ad unit IDs are active**, while your production app ID is retained as a reference. Production unit IDs remain empty. Both Google plugins coexist, and editor/export cleanup preserves their authored settings and autoloads.
+[Poing AdMob 5.1.0](https://github.com/poingstudios/godot-admob-plugin) is copied from the supplied local bundle, with its MIT license and pinned Android binaries. The adapter is `scripts/ads.gd`; public configuration is `config/admob.json`. **The supplied production app and all three production ad unit IDs are selected**, with `use_test_ads=false`. Google sample IDs remain available for explicit test mode. This source configuration change does not rebuild the recorded artifacts or establish live ad delivery. Both Google plugins coexist, and editor/export cleanup preserves their authored settings and autoloads.
 
 The SDK defaults do not impose child-directed treatment or a G content-rating cap. UMP checks regional ad eligibility before initialization/requests; Settings shows **Ad privacy choices** when UMP requires that entry point. Missing consent, no fill, network failures or absent native support never prevent a voyage. [Plugin audit, exact IDs, Android requirements and production setup](docs/ADMOB.md).
 
@@ -90,7 +90,7 @@ To reproduce exact-size store captures:
 1. Confirm package identity, support contact, and signing setup; complete Play Games credentials and test accounts, then test and publish the already-mapped Console entries.
 2. Install the debug APK on real phones/tablets. Test one-thumb play, simultaneous touch, safe areas, audio interruptions, save/restart, and a 20-minute thermal/performance session. Validate cloud round trips on two accounts/devices as appropriate.
 3. Review release signing, Android16/large-screen behavior, native 16KB page compatibility, and Play's pre-launch report. Export a signed release AAB and increase its version code.
-4. Use the [store listing kit](docs/STORE_LISTING.md); replace or supplement desktop-rendered screenshots with final Android captures. Supply a hosted privacy policy/support email and complete Data safety, **Contains ads**, content-rating, audience, app-access, and account-specific testing requirements. Configure AdMob privacy messages and production units, then validate regional consent, reward/close behavior and real-device banner safe areas before switching out test IDs.
+4. Use the [store listing kit](docs/STORE_LISTING.md); replace or supplement desktop-rendered screenshots with final Android captures. Supply a hosted privacy policy/support email and complete Data safety, **Contains ads**, content-rating, audience, app-access, and account-specific testing requirements. Complete AdMob privacy messages and app readiness for the configured production units, then validate regional consent, reward/close behavior and real-device banner safe areas using explicit test mode or a registered test device before publication.
 5. Upload to internal testing, gather human playtest feedback on steering/difficulty, then proceed through the Console's required testing and release steps.
 
 The game and local submission kit are implemented. Physical-device, backend-authenticated, and production-signing checks remain publishing work; they are not represented as completed tests.

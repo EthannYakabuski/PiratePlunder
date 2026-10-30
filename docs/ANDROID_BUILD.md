@@ -1,6 +1,8 @@
 # Android builds
 
-The project includes two Gradle export presets: **Android APK** (ARM64 debug/device testing) and **Android AAB** (ARMv7 + ARM64 for eventual Play distribution). Both use `com.pirateplunder.game`, version `0.3.0` / code `4`, portrait orientation, optional Play Games services, Google-test AdMob integration, and separate adaptive launcher icon layers. Confirm the package name before first publication.
+The project includes two Gradle export presets: **Android APK** (ARM64 debug/device testing) and **Android AAB** (ARMv7 + ARM64 for Play distribution). Both use `com.pirateplunder.game`, portrait orientation, optional Play Games services, AdMob integration, and separate adaptive launcher icon layers. The currently authored APK preset is `0.3.0` / code `4`; the AAB preset is `0.4.0` / code `5`. Confirm the package name before first publication.
+
+As of October 29, 2026, source configuration selects the supplied production AdMob app and all three production ad units; see [ADMOB.md](ADMOB.md). Re-export to include these settings in an APK/AAB. The October 17 debug artifacts documented below still contain Google test IDs and were not rebuilt as part of this configuration update.
 
 The minimum API is 24. The target API is **36**: Google requires Android 16/API 36 for new phone applications and updates from August 31, 2026. This was verified on October 14, 2026 against the [official target API requirement](https://developer.android.com/google/play/requirements/target-sdk). Recheck the rule when publishing.
 
